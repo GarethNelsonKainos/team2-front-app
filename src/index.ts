@@ -6,7 +6,7 @@ dotenv.config();
 
 
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -18,7 +18,9 @@ app.set('views', path.join(__dirname, 'UI/views'));
 app.set('view engine', 'ejs');
 
 
+
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
 app.use('/', UIRoutes);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {

@@ -1,22 +1,13 @@
+import axios from 'axios';
 
 export class JobRoleService {
     async getJobRoles() {
-        // Mock data
-        return [
-            {
-                roleName: "Software Engineer",
-                location: "Belfast",
-                capability: "Engineering",
-                band: "5",
-                closingDate: "20/03/2026"
-            },
-            {
-                roleName: "QA Analyst",
-                location: "London",
-                capability: "Quality Assurance",
-                band: "4",
-                closingDate: "15/03/2026"
-            }
-        ];
+        try {
+            const response = await axios.get('http://localhost:3000/job-roles');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching job roles:', error);
+            throw new Error('Failed to fetch job roles');
+        }
     }
 }
