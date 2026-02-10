@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Roles</title>
+</head>
+<body>
+    <h1>Open Job Roles</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Role Name</th>
+                <th>Location</th>
+                <th>Capability</th>
+                <th>Band</th>
+                <th>Closing Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% roles.forEach(function(role) { %>
+                <tr>
+                    <td><%= role.roleName %></td>
+                    <td><%= role.location %></td>
+                    <td><%= role.capability %></td>
+                    <td><%= role.band %></td>
+                    <td><%= role.closingDate %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>
