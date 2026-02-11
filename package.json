@@ -33,6 +33,7 @@
 		"@types/express": "^5.0.6",
 		"@types/node": "^25.2.2",
 		"@vitest/coverage-v8": "^4.0.18",
+		"dotenv-cli": "^11.0.0",
 		"jsdom": "^23.0.0",
 		"pa11y-ci": "^4.0.1",
 		"start-server-and-test": "^2.1.3",
