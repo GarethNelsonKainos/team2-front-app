@@ -2,7 +2,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
  test: {
-  environment: "node",
+  environment: "jsdom",
   coverage: {
    provider: "v8",
    reporter: ["text", "json", "html", "lcov"],
@@ -11,6 +11,8 @@ export default defineConfig({
     functions: 80,
     branches: 80,
     statements: 80,
+    autoUpdate: false,
+    perFile: true,
    },
    exclude: [
     "node_modules/",
