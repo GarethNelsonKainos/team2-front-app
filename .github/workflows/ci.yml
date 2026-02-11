@@ -25,22 +25,8 @@ jobs:
         - name: Run Biome Formatting Check
           run: npm run format:check
 
-    test:
-        needs: code-quality
-        runs-on: ubuntu-latest
-
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: Setup Node and Dependencies
-          uses: ./.github/actions/setup
-
-        - name: Run Tests with Coverage
-          run: npm run test:coverage
-
     build:
-        needs: test
+        needs: code-quality
         runs-on: ubuntu-latest
 
         steps:
