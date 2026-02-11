@@ -1,34 +1,33 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
- test: {
-  environment: "jsdom",
-  coverage: {
-   provider: "v8",
-   reporter: ["text", "json", "html", "lcov"],
-   thresholds: {
-    lines: 80,
-    functions: 80,
-    branches: 80,
-    statements: 80,
-    autoUpdate: false,
-    perFile: true,
-   },
-   exclude: [
-    "node_modules/",
-    "dist/",
-    "coverage/",
-    "**/*.config.ts",
-    "**/*.config.js",
-    "**/types.ts",
-    "**/types/**",
-    "**/*.d.ts",
-    "**/index.ts",
-    "src/config/**",
-   ],
-  },
-  reporters: ["verbose"],
-  clearMocks: true,
- },
+	test: {
+		environment: "jsdom",
+		coverage: {
+			provider: "v8",
+			reporter: ["text", "json", "html", "lcov"],
+			thresholds: {
+				lines: 80,
+				functions: 80,
+				branches: 80,
+				statements: 80,
+				autoUpdate: false,
+				perFile: true,
+			},
+			exclude: [
+				"node_modules/",
+				"dist/",
+				"coverage/",
+				"**/*.config.ts",
+				"**/*.config.js",
+				"**/types.ts",
+				"**/types/**",
+				"**/*.d.ts",
+				"**/index.ts",
+				"src/config/**",
+			],
+		},
+		reporters: ["verbose"],
+		clearMocks: true,
+	},
 });
- 
