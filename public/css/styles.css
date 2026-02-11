@@ -1,0 +1,8 @@
+.footer {
+background: linear-gradient(180deg, #252d4f 0%, rgba(37, 45, 79, 0) 100%), linear-gradient(90deg, #004631 0.02%, #61a83f 27.47%, #61a83f 40.06%, #41679f 69.71%, #283583 100%);
+padding: 80px 0 0;
+}
+.footer {
+color: #fff;
+font-weight: 300;
+}
