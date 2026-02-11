@@ -14,7 +14,7 @@ export class JobRoleController {
             res.render('job-role-list', { roles });
         } catch (error) {
             console.error('Error fetching job roles:', error);
-            res.status(500).send('Failed to load job roles.');
+            res.render('job-role-no-data');
         }
     }
 }
