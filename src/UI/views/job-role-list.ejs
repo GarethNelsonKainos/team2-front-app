@@ -19,44 +19,51 @@
     </div>
 
     <div class="container my-5 kainos-font">
-        <div class="table-responsive rounded-4 shadow">
-            <table class="table table-hover table-striped align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th scope="col">Role Name</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Capability</th>
-                        <th scope="col">Band</th>
-                        <th scope="col">Closing Date</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% roles.forEach(function(role) { %>
+        <% if (roles && roles.length > 0) { %>
+            <div class="table-responsive rounded-4 shadow">
+                <table class="table table-hover table-striped align-middle mb-0">
+                    <thead>
                         <tr>
-                            <td>
-                                <%= role.roleName %>
-                            </td>
-                            <td>
-                                <%= role.location %>
-                            </td>
-                            <td>
-                                <%= role.capability.capabilityName %>
-                            </td>
-                            <td>
-                                <%= role.band.bandName %>
-                            </td>
-                            <td>
-                                <%= new Date(role.closingDate).toLocaleDateString('en-GB') %>
-                            </td>
-                            <td>
-                                <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-green btn-sm">View Details</a>
-                            </td>
+                            <th scope="col">Role Name</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Capability</th>
+                            <th scope="col">Band</th>
+                            <th scope="col">Closing Date</th>
+                            <th scope="col"></th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        <% roles.forEach(function(role) { %>
+                            <tr>
+                                <td>
+                                    <%= role.roleName %>
+                                </td>
+                                <td>
+                                    <%= role.location %>
+                                </td>
+                                <td>
+                                    <%= role.capability.capabilityName %>
+                                </td>
+                                <td>
+                                    <%= role.band.bandName %>
+                                </td>
+                                <td>
+                                    <%= new Date(role.closingDate).toLocaleDateString('en-GB') %>
+                                </td>
+                                <td>
+                                    <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-green btn-sm">View Details</a>
+                                </td>
+                            </tr>
                         <% }); %>
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info text-center my-5 rounded-4 shadow">
+                <i class="bi bi-info-circle me-2"></i>
+                No job roles available at the moment.
+            </div>
+        <% } %>
     </div>
     <footer class="text-center py-3 footer text-white mt-auto" id="footer">
         <div class="footer__logo flex justify-content-center">
