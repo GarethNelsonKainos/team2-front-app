@@ -22,31 +22,31 @@
 
     <div class="container my-5 kainos-font">
             <div class="card shadow rounded-4 mb-4">
-                <div class="card-header kainos-green text-white d-flex align-items-center justify-content-between">
+                <div class="card-header kainos-blue text-white d-flex align-items-center justify-content-between">
                     <h2 class="mb-0">
                         <%= role.roleName %>
                     </h2>
-                    <a href="/job-roles" class="btn btn-sm kainos-green back ms-2">Back</a>
+                    <a href="/job-roles" class="btn btn-sm kainos-blue back ms-2">Back</a>
                 </div>
             </div>
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm job-role-section">
                         <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Description</h5>
                         </div>
                         <div class="card-body">
-                            <p><%= role.description %></p>
+                            <p class="job-role-main-text"><%= role.description %></p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm job-role-section">
                         <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Responsibilities</h5>
                         </div>
                         <div class="card-body">
-                            <p><%= role.responsibilities %></p>
+                            <p class="job-role-main-text"><%= role.responsibilities %></p>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                             <h5 class="mb-0">Details</h5>
                             <span>
                                 <% if (role.sharepointUrl) { %>
-                                    <a href="<%= role.sharepointUrl %>" class="kainos-green-text text-white ms-2" rel="noopener">
+                                    <a href="<%= role.sharepointUrl %>" class="kainos-blue-text text-white ms-2" rel="noopener">
                                         <i class="bi bi-link-45deg"></i> View Job Spec
                                     </a>
                                 <% } else { %>
@@ -69,7 +69,7 @@
                         <div class="card-body p-3">
                             <div class="row g-3">
                                 <div class="col-6 col-md-2">
-                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white job-detail-card">
                                         <div class="card-body p-2">
                                             <div class="mb-1" style="font-size:1.5rem;">
                                                 <i class="bi bi-calendar-event kainos-blue-text"></i>
@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white job-detail-card">
                                         <div class="card-body p-2">
                                             <div class="mb-1" style="font-size:1.5rem;">
                                                 <i class="bi bi-flag kainos-blue-text"></i>
@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white job-detail-card">
                                         <div class="card-body p-2">
                                             <div class="mb-1" style="font-size:1.5rem;">
                                                 <i class="bi bi-people kainos-blue-text"></i>
@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white job-detail-card">
                                         <div class="card-body p-2">
                                             <div class="mb-1" style="font-size:1.5rem;">
                                                 <i class="bi bi-geo-alt kainos-blue-text"></i>
@@ -121,7 +121,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white job-detail-card">
                                         <div class="card-body p-2">
                                             <div class="mb-1" style="font-size:1.5rem;">
                                                 <i class="bi bi-diagram-3 kainos-blue-text"></i>
@@ -134,7 +134,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white job-detail-card">
                                         <div class="card-body p-2">
                                             <div class="mb-1" style="font-size:1.5rem;">
                                                 <i class="bi bi-lightbulb kainos-blue-text"></i>
