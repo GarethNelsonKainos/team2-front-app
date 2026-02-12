@@ -53,10 +53,39 @@
                                 <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-blue btn-sm">View Details</a>
                             </td>
                         </tr>
+                    </thead>
+                    <tbody>
+                        <% roles.forEach(function(role) { %>
+                            <tr>
+                                <td>
+                                    <%= role.roleName %>
+                                </td>
+                                <td>
+                                    <%= role.location %>
+                                </td>
+                                <td>
+                                    <%= role.capability.capabilityName %>
+                                </td>
+                                <td>
+                                    <%= role.band.bandName %>
+                                </td>
+                                <td>
+                                    <%= new Date(role.closingDate).toLocaleDateString('en-GB') %>
+                                </td>
+                                <td>
+                                    <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-green btn-sm">View Details</a>
+                                </td>
+                            </tr>
                         <% }); %>
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info text-center my-5 rounded-4 shadow">
+                <i class="bi bi-info-circle me-2"></i>
+                No job roles available at the moment.
+            </div>
+        <% } %>
     </div>
     <footer class="text-center py-3 footer text-white mt-auto" id="footer">
         <div class="footer__logo flex justify-content-center">

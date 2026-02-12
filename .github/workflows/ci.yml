@@ -24,7 +24,7 @@ jobs:
 
         - name: Run Biome Formatting Check
           run: npm run format:check
-      
+
     accessibility:
         needs: code-quality
         runs-on: ubuntu-latest

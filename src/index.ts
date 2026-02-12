@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 app.use("/", UIRoutes);
 
-app.get("/", (req: Request, res: Response, next: NextFunction) => {
+app.get("/", (_req: Request, res: Response, _next: NextFunction) => {
 	res.render("home-page", { title: "Home" });
 });
 

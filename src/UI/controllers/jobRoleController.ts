@@ -1,6 +1,14 @@
 import type { Request, Response } from "express";
 import { JobRoleService } from "../services/jobRoleService.js";
 
+type JobRoleStatus = {
+	statusName?: string;
+};
+
+type JobRole = {
+	status?: JobRoleStatus;
+};
+
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
 	constructor() {
@@ -9,29 +17,29 @@ export class JobRoleController {
 
 	async getJobRolesPage(req: Request, res: Response) {
 		try {
-			const roles = await this.jobRoleService.getJobRoles();
+			const roles = (await this.jobRoleService.getJobRoles()) as JobRole[];
 			const { statusName } = req.query;
 			let filteredRoles = roles;
 			if (statusName && typeof statusName === "string") {
-				filteredRoles = roles.filter((role: any) => {
+				filteredRoles = roles.filter((role) => {
 					// Case-insensitive match for status
 					return (
-						role.status.statusName &&
+						role.status?.statusName &&
 						role.status.statusName.toLowerCase() === statusName.toLowerCase()
 					);
 				});
 			}
 			res.render("job-role-list", { roles: filteredRoles });
-		} catch (error) {
+		} catch (_error) {
 			res.render("job-role-no-data");
 		}
 	}
 
-	async getOpenJobRoles(req: Request, res: Response) {
+	async getOpenJobRoles(_req: Request, res: Response) {
 		try {
 			const roles = await this.jobRoleService.getJobRoles();
 			res.render("job-role-list", { roles });
-		} catch (error) {
+		} catch (_error) {
 			res.render("job-role-no-data");
 		}
 	}
