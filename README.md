@@ -6,6 +6,7 @@ Create a `.env` file in the project root with the following content:
 ```env
 API_BASE_URL="http://localhost:3000"
 ```
+> If your backend server is running on a different port, update the '3000' in `API_BASE_URL` accordingly.
 
 Additionally, add `PORT` to the `.env` file if you want to specify a custom port for the frontend server (default is 3001):
 ```env
