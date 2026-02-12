@@ -29,6 +29,11 @@
                 </div>
                 <form id="loginForm" action="/login" method="POST">
                     <div class="modal-body">
+                        <% if (typeof error !== 'undefined' && error) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= error %>
+                            </div>
+                        <% } %>
                         <div class="mb-3">
                             <label for="loginEmail" class="form-label">Email</label>
                             <input type="email" class="form-control" id="loginEmail" name="email" placeholder="Email"
