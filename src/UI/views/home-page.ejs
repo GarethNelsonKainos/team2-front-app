@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -16,6 +16,36 @@
         <a href="/" class="d-inline-block">
             <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
         </a>
+        <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
+            data-bs-target="#loginModal">Login</button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="Email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn kainos-blue" data-bs-dismiss="modal">Register</button>
+                        <button type="button" class="btn kainos-blue" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn kainos-blue">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <main class="container flex-grow-1 d-flex align-items-center justify-content-center kainos-font">
@@ -25,7 +55,7 @@
                     <div class="card-body d-flex flex-column">
                         <h3 class="card-title">All Roles</h3>
                         <p class="card-text fs-5">Browse all current roles at Kainos.</p>
-                        <a href="/job-roles" class="btn kainos-green mt-auto btn-lg">View All Roles</a>
+                        <a href="/job-roles" class="btn kainos-blue mt-auto btn-lg">View All Roles</a>
                     </div>
                 </div>
             </div>
@@ -34,7 +64,7 @@
                     <div class="card-body d-flex flex-column">
                         <h3 class="card-title">Current Vacancies</h3>
                         <p class="card-text fs-5">See roles currently open for applications.</p>
-                        <a href="/job-roles?statusName=open" class="btn kainos-green hover mt-auto btn-lg">View
+                        <a href="/job-roles?statusName=open" class="btn kainos-blue hover mt-auto btn-lg">View
                             Vacancies</a>
                     </div>
                 </div>

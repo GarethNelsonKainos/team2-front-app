@@ -1,34 +1,3 @@
-body {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
-
-.footer {
-	background:
-		linear-gradient(180deg, #252d4f 0%, rgba(37, 45, 79, 0) 100%),
-		linear-gradient(
-			90deg,
-			#004631 0.02%,
-			#61a83f 27.47%,
-			#61a83f 40.06%,
-			#41679f 69.71%,
-			#283583 100%
-		);
-	padding: 80px 0 0;
-	margin-top: auto;
-}
-
-.container,
-.container-fluid,
-.container-md {
-	width: 100%;
-	padding-right: var(--bs-gutter-x, calc(min(3vw, 36px)));
-	padding-left: var(--bs-gutter-x, calc(min(3vw, 36px)));
-	margin-right: auto;
-	margin-left: auto;
-}
-
 .footer {
 	background:
 		linear-gradient(180deg, #252d4f 0%, rgba(37, 45, 79, 0) 100%),
@@ -58,6 +27,25 @@ body {
 	color: white;
 }
 
+.card-header.kainos-blue {
+	transition:
+		background-color 0.15s ease-in-out,
+		color 0.15s ease-in-out;
+}
+
+.card-header.kainos-blue * {
+	transition: color 0.15s ease-in-out;
+}
+
+.card:hover .card-header.kainos-blue {
+	background-color: #61a83f;
+	color: white;
+}
+
+.card:hover .card-header.kainos-blue * {
+	color: white;
+}
+
 .kainos-blue-text {
 	color: #283583;
 }
@@ -66,8 +54,20 @@ body {
 	color: #61a83f;
 }
 
+.back {
+	background-color: transparent;
+	transition:
+		background-color 0.15s ease-in-out,
+		color 0.15s ease-in-out !important;
+}
+
 .back:hover {
-	background-color: #4e8c2f;
+	background-color: #004631;
+	color: white;
+}
+
+.card-header.kainos-blue:hover .back:hover {
+	background-color: #004631;
 	color: white;
 }
 
@@ -99,4 +99,34 @@ body.bg-img {
 .kainos-blue-border {
 	border: 2px solid #283583 !important;
 	border-radius: 0.5rem;
+}
+
+.job-detail-card {
+	transition: border-color 0.15s ease-in-out;
+}
+
+.job-detail-card:hover {
+	border-color: #61a83f !important;
+}
+
+.job-role-main-text {
+	position: relative;
+	padding-bottom: 0.5rem;
+}
+
+.job-role-main-text::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 3px;
+	background-color: #61a83f;
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.15s ease;
+}
+
+.job-role-section:hover .job-role-main-text::after {
+	transform: scaleX(1);
 }
