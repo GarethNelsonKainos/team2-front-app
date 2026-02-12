@@ -12,24 +12,14 @@ export class JobRoleService {
 			throw new Error("Failed to fetch job roles");
 		}
 	}
-}
-    async getJobRoles() {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/job-roles`);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching job roles:', error);
-            throw new Error('Failed to fetch job roles');
-        }
-    }
 
-    async getJobRoleById(id: string) {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/job-roles/${id}`);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching job role with id ${id}:`, error);
-            throw new Error('Failed to fetch job role');
-        }
-    }
+	async getJobRoleById(id: string) {
+		try {
+			const response = await axios.get(`${API_BASE_URL}/job-roles/${id}`);
+			return response.data;
+		} catch (error) {
+			console.error(`Error fetching job role with id ${id}:`, error);
+			throw new Error("Failed to fetch job role");
+		}
+	}
 }

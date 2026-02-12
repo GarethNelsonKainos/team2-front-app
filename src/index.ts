@@ -1,5 +1,5 @@
 import express from "express";
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import UIRoutes from "./routes/UIRoutes.js";
 dotenv.config();
@@ -20,8 +20,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 app.use("/", UIRoutes);
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-res.render('home-page', { title: 'Home' });
+app.get("/", (_req: Request, res: Response, _next: NextFunction) => {
+	res.render("home-page", { title: "Home" });
 });
 
 app.listen(port, () => {
