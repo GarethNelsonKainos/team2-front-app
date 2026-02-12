@@ -27,4 +27,66 @@ body {
 	padding-left: var(--bs-gutter-x, calc(min(3vw, 36px)));
 	margin-right: auto;
 	margin-left: auto;
+.footer {
+    background: linear-gradient(180deg, #252d4f 0%, rgba(37, 45, 79, 0) 100%), linear-gradient(90deg, #004631 0.02%, #61a83f 27.47%, #61a83f 40.06%, #41679f 69.71%, #283583 100%);
+    padding: 80px 0 0;
+}
+
+.footer {
+    color: #fff;
+    font-weight: 300;
+}
+
+.kainos-green {
+    background-color: #61a83f;
+    color: white;
+}
+
+.kainos-blue {
+    background-color: #283583;
+    color: white;
+}
+
+.kainos-blue-text {
+    color: #283583;
+}
+
+.kainos-green-text {
+    color: #61a83f;
+}
+
+.back:hover {
+    background-color: #4e8c2f;
+    color: white;
+}
+
+body.bg-img {
+    background-image: url('/logos/flux.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+@font-face {
+  font-family: kainosBold;
+  src: url('/fonts/GOTHICB.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: kainosFont;
+    src: url('/fonts/GOTHIC.ttf') format('truetype');
+}
+
+
+.kainos-bold {
+  font-family: kainosBold;
+}
+.kainos-font {
+    font-family: kainosFont;
+}
+
+.kainos-blue-border {
+    border: 2px solid #283583 !important;
+    border-radius: 0.5rem;
 }
