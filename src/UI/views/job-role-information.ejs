@@ -21,78 +21,136 @@
     </div>
 
     <div class="container my-5 kainos-font">
-        <div class="card shadow rounded-4">
-            <div class="card-header kainos-green text-white d-flex align-items-center justify-content-between">
-                <h2 class="mb-0">
-                    <%= role.roleName %>
-                </h2>
-                <a href="/job-roles" class="btn btn-sm kainos-green back ms-2">Back</a>
+            <div class="card shadow rounded-4 mb-4">
+                <div class="card-header kainos-green text-white d-flex align-items-center justify-content-between">
+                    <h2 class="mb-0">
+                        <%= role.roleName %>
+                    </h2>
+                    <a href="/job-roles" class="btn btn-sm kainos-green back ms-2">Back</a>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="mb-4">
-                    <h5 class="fw-bold">Description</h5>
-                    <p><%= role.description %></p>
-                </div>
-                <div class="mb-4">
-                    <h5 class="fw-bold">Responsibilities</h5>
-                    <p><%= role.responsibilities %></p>
-                </div>
-                <div class="row mb-4 g-3">
-                    <div class="col-md-4">
-                        <div class="card kainos-blue h-100 text-center">
-                            <div class="card-body">
-                                <div class="mb-2" style="font-size:2rem;">
-                                    <span class="text-primary"><i class="bi bi-calendar-event text-white"></i></span>
-                                </div>
-                                <h6 class="card-title">Closing Date</h6>
-                                <p class="card-text"><%= role.closingDate ? new Date(role.closingDate).toLocaleDateString('en-GB') : '' %></p>
-                            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Description</h5>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card kainos-green h-100 text-center">
-                            <div class="card-body">
-                                <div class="mb-2" style="font-size:2rem;">
-                                    <span class="text-success"><i class="bi bi-flag kainos-blue-text"></i></span>
-                                </div>
-                                <h6 class="card-title">Status</h6>
-                                <p class="card-text"><%= role.status.statusName %></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card kainos-blue h-100 text-center">
-                            <div class="card-body">
-                                <div class="mb-2" style="font-size:2rem;">
-                                    <span class="text-info"><i class="bi bi-people text-white"></i></span>
-                                </div>
-                                <h6 class="card-title">Open Positions</h6>
-                                <p class="card-text"><%= role.numberOfOpenPositions %></p>
-                            </div>
+                        <div class="card-body">
+                            <p><%= role.description %></p>
                         </div>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-2">
-                        <strong>Location:</strong> <%= role.location %>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Capability:</strong> <%= role.capability && role.capability.capabilityName ? role.capability.capabilityName : '' %>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Band:</strong> <%= role.band && role.band.bandName ? role.band.bandName : '' %>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>SharePoint Job Spec:</strong>
-                        <% if (role.sharepointUrl) { %>
-                            <a href="<%= role.sharepointUrl %>" class="kainos-green-text" rel="noopener">View Job Spec</a>
-                        <% } else { %>
-                            Not available
-                        <% } %>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Responsibilities</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><%= role.responsibilities %></p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Details</h5>
+                            <span>
+                                <% if (role.sharepointUrl) { %>
+                                    <a href="<%= role.sharepointUrl %>" class="kainos-green-text text-white ms-2" rel="noopener">
+                                        <i class="bi bi-link-45deg"></i> View Job Spec
+                                    </a>
+                                <% } else { %>
+                                    <span class="text-white-50">No Job Spec</span>
+                                <% } %>
+                            </span>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-2">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-calendar-event kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Closing</strong><br>
+                                                <span><%= role.closingDate ? new Date(role.closingDate).toLocaleDateString('en-GB') : '' %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-flag kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Status</strong><br>
+                                                <span><%= role.status.statusName %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-people kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Open</strong><br>
+                                                <span><%= role.numberOfOpenPositions %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-geo-alt kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Location</strong><br>
+                                                <span><%= role.location %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-diagram-3 kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Band</strong><br>
+                                                <span><%= role.band && role.band.bandName ? role.band.bandName : '' %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                     <div class="card kainos-blue-border h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-lightbulb kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Capability</strong><br>
+                                                <span><%= role.capability && role.capability.capabilityName ? role.capability.capabilityName : '' %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <footer class="text-center py-3 footer text-white mt-auto" id="footer">
