@@ -8,6 +8,7 @@ export class LoginController {
             const data = await loginUser(email, password);
             if (data && data.token) {
                 res.render("logged-in");
+                console.log("Login successful, token received:", data.token);
             } else {
                 res.status(401).send("Login failed: Invalid response.");
             }
