@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/', UIRoutes);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
-res.send('Hello world!');
+res.render('home-page', { title: 'Home' });
 });
 
 app.listen(port, () => {
