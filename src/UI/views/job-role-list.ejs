@@ -19,39 +19,17 @@
     </div>
 
     <div class="container my-5 kainos-font">
-        <div class="table-responsive rounded-4 shadow">
-            <table class="table table-hover table-striped align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th scope="col">Role Name</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Capability</th>
-                        <th scope="col">Band</th>
-                        <th scope="col">Closing Date</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% roles.forEach(function(role) { %>
+        <% if (roles && roles.length > 0) { %>
+            <div class="table-responsive rounded-4 shadow">
+                <table class="table table-hover table-striped align-middle mb-0">
+                    <thead>
                         <tr>
-                            <td>
-                                <%= role.roleName %>
-                            </td>
-                            <td>
-                                <%= role.location %>
-                            </td>
-                            <td>
-                                <%= role.capability.capabilityName %>
-                            </td>
-                            <td>
-                                <%= role.band.bandName %>
-                            </td>
-                            <td>
-                                <%= new Date(role.closingDate).toLocaleDateString('en-GB') %>
-                            </td>
-                            <td>
-                                <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-blue btn-sm">View Details</a>
-                            </td>
+                            <th scope="col">Role Name</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Capability</th>
+                            <th scope="col">Band</th>
+                            <th scope="col">Closing Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,7 +51,7 @@
                                     <%= new Date(role.closingDate).toLocaleDateString('en-GB') %>
                                 </td>
                                 <td>
-                                    <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-green btn-sm">View Details</a>
+                                    <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-blue btn-sm">View Details</a>
                                 </td>
                             </tr>
                         <% }); %>

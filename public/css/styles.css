@@ -102,7 +102,7 @@ body.bg-img {
 }
 
 .job-detail-card {
-	transition: border-color 0.2s ease-in-out;
+	transition: border-color 0.15s ease-in-out;
 }
 
 .job-detail-card:hover {
@@ -124,7 +124,7 @@ body.bg-img {
 	background-color: #61a83f;
 	transform: scaleX(0);
 	transform-origin: left;
-	transition: transform 0.35s ease;
+	transition: transform 0.15s ease;
 }
 
 .job-role-section:hover .job-role-main-text::after {
