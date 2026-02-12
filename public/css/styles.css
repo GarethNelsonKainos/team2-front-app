@@ -27,13 +27,17 @@
 	color: white;
 }
 
-.kainos-blue :hover {
-	color: #283583;
+.kainos-blue-text {
+    color: #283583;
 }
 
-.kainos-green :hover {
-	background-color: #004631;
-	color: white;
+.kainos-green-text {
+    color: #61a83f;
+}
+
+.back:hover {
+    background-color: #4e8c2f;
+    color: white;
 }
 
 body.bg-img {
@@ -59,4 +63,9 @@ body.bg-img {
 }
 .kainos-font {
 	font-family: kainosFont, sans-serif;
+}
+
+.kainos-blue-border {
+    border: 2px solid #283583 !important;
+    border-radius: 0.5rem;
 }
