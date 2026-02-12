@@ -15,7 +15,7 @@
 		"format:check": "biome format .",
 		"format": "biome format --write .",
 		"test:pa11y": "pa11y-ci",
-		"test:pa11y:local": "start-server-and-test dev http://localhost:3001 test:pa11y"
+		"test:pa11y:local": "concurrently --kill-others --success first \"node .github/mock-backend.js\" \"start-server-and-test dev http://localhost:3001 test:pa11y\""
 	},
 	"repository": {
 		"type": "git",
@@ -33,6 +33,7 @@
 		"@types/express": "^5.0.6",
 		"@types/node": "^25.2.2",
 		"@vitest/coverage-v8": "^4.0.18",
+		"concurrently": "^8.2.2",
 		"dotenv-cli": "^11.0.0",
 		"jsdom": "^23.0.0",
 		"pa11y-ci": "^4.0.1",
