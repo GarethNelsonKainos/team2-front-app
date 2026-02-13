@@ -11,23 +11,20 @@ export class LoginController {
 			if (data && data.token) {
 				const decodedToken: any = jwt.decode(data.token);
 				res.render("home-page", {
-					showLoginModal: false,
 					token: data.token,
 					user: decodedToken,
 				});
 				console.log("Decoded token:", decodedToken);
 				console.log("Login successful, token received:", data.token);
 			} else {
-				res.status(401).render("home-page", {
-					showLoginModal: true,
+				res.status(401).render("login-page", {
 					token: null,
 					user: null,
 					error: "Invalid email or password.",
 				});
 			}
 		} catch (_error) {
-			res.status(500).render("home-page", {
-				showLoginModal: true,
+			res.status(500).render("login-page", {
 				token: null,
 				user: null,
 				error: "Server error during login.",

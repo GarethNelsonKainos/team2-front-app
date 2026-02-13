@@ -10,7 +10,7 @@ router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
 router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
 
 router.get("/login", (_req, res) => {
-	res.render("home-page", { showLoginModal: true, user: null, token: null });
+	res.render("login-page", { user: null, token: null });
 });
 
 router.post("/login", (req, res) => loginController.handleLogin(req, res));

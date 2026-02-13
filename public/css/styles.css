@@ -27,6 +27,11 @@
 	color: white;
 }
 
+.kainos-dark-blue {
+	background-color: #252d4f;
+	color: white;
+}
+
 .card-header.kainos-blue {
 	transition:
 		background-color 0.15s ease-in-out,
@@ -101,6 +106,16 @@ body.bg-img {
 	border-radius: 0.5rem;
 }
 
+.auth-pills .nav-link {
+	background-color: #252d4f;
+	color: white;
+}
+
+.auth-pills .nav-link.active {
+	background-color: #283583;
+	color: white;
+}
+
 .job-detail-card {
 	transition: border-color 0.15s ease-in-out;
 }
@@ -129,4 +144,29 @@ body.bg-img {
 
 .job-role-section:hover .job-role-main-text::after {
 	transform: scaleX(1);
+}
+
+.login-pills .nav-link {
+	background-color: white;
+	color: black;
+	min-width: 140px;
+	padding: 0.75rem 2rem;
+	font-size: 1.1rem;
+	font-weight: 500;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.login-pills .nav-link:hover:not(.active) {
+	background-color: #6c757d;
+	color: white;
+}
+
+.login-pills .nav-link.active {
+	background-color: #283583;
+	color: white;
+}
+
+.form-control:focus {
+	border-color: #61a83f;
+	box-shadow: 0 0 0 0.25rem rgba(97, 168, 63, 0.25);
 }

@@ -17,43 +17,7 @@
             <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
         </a>
         <% if (!token) { %>
-        <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
-            data-bs-target="#loginModal">Login</button>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="loginForm" action="/login" method="POST">
-                    <div class="modal-body">
-                        <% if (typeof error !== 'undefined' && error) { %>
-                            <div class="alert alert-danger" role="alert">
-                                <%= error %>
-                            </div>
-                        <% } %>
-                        <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="loginEmail" name="email" placeholder="Email"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="loginPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="loginPassword" name="password"
-                                placeholder="Password" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn kainos-blue" data-bs-dismiss="modal">Register</button>
-                        <button type="button" class="btn kainos-blue" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn kainos-blue">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <a href="/login" class="btn btn-lg kainos-blue ms-auto">Login</a>
     </div>
         <% } else { %>
             <div class="d-flex align-items-center gap-3 kainos-font">
@@ -114,14 +78,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <% if (typeof showLoginModal !=='undefined' && showLoginModal) { %>
-        <script>
-            window.addEventListener('DOMContentLoaded', function () {
-                var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                loginModal.show();
-            });
-        </script>
-        <% } %>
 </body>
 
 </html>
