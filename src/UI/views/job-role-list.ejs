@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -29,7 +29,7 @@
                             <th scope="col">Capability</th>
                             <th scope="col">Band</th>
                             <th scope="col">Closing Date</th>
-                            <th scope="col"></th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,7 +51,7 @@
                                     <%= new Date(role.closingDate).toLocaleDateString('en-GB') %>
                                 </td>
                                 <td>
-                                    <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-green btn-sm">View Details</a>
+                                    <a href="/job-roles/<%= role.jobRoleId %>" class="btn kainos-blue btn-sm">View Details</a>
                                 </td>
                             </tr>
                         <% }); %>

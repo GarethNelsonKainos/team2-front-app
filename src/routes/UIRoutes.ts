@@ -6,8 +6,8 @@ const router = Router();
 const controller = new JobRoleController();
 const loginController = new LoginController();
 
-router.get('/job-roles', (req, res) => controller.getJobRolesPage(req, res));
-router.get('/job-roles/:id', (req, res) => controller.getJobRoleById(req, res));
+router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
+router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
 
 router.get('/login', (req, res) => {
 res.render('home-page', { showLoginModal: true});

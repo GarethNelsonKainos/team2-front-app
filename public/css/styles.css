@@ -1,63 +1,132 @@
 .footer {
-    background: linear-gradient(180deg, #252d4f 0%, rgba(37, 45, 79, 0) 100%), linear-gradient(90deg, #004631 0.02%, #61a83f 27.47%, #61a83f 40.06%, #41679f 69.71%, #283583 100%);
-    padding: 80px 0 0;
+	background:
+		linear-gradient(180deg, #252d4f 0%, rgba(37, 45, 79, 0) 100%),
+		linear-gradient(
+			90deg,
+			#004631 0.02%,
+			#61a83f 27.47%,
+			#61a83f 40.06%,
+			#41679f 69.71%,
+			#283583 100%
+		);
+	padding: 80px 0 0;
 }
 
 .footer {
-    color: #fff;
-    font-weight: 300;
+	color: #fff;
+	font-weight: 300;
 }
 
 .kainos-green {
-    background-color: #61a83f;
-    color: white;
+	background-color: #61a83f;
+	color: white;
 }
 
 .kainos-blue {
-    background-color: #283583;
-    color: white;
+	background-color: #283583;
+	color: white;
+}
+
+.card-header.kainos-blue {
+	transition:
+		background-color 0.15s ease-in-out,
+		color 0.15s ease-in-out;
+}
+
+.card-header.kainos-blue * {
+	transition: color 0.15s ease-in-out;
+}
+
+.card:hover .card-header.kainos-blue {
+	background-color: #61a83f;
+	color: white;
+}
+
+.card:hover .card-header.kainos-blue * {
+	color: white;
 }
 
 .kainos-blue-text {
-    color: #283583;
+	color: #283583;
 }
 
 .kainos-green-text {
-    color: #61a83f;
+	color: #61a83f;
+}
+
+.back {
+	background-color: transparent;
+	transition:
+		background-color 0.15s ease-in-out,
+		color 0.15s ease-in-out !important;
 }
 
 .back:hover {
-    background-color: #4e8c2f;
-    color: white;
+	background-color: #004631;
+	color: white;
+}
+
+.card-header.kainos-blue:hover .back:hover {
+	background-color: #004631;
+	color: white;
 }
 
 body.bg-img {
-    background-image: url('/logos/flux.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
+	background-image: url("/logos/flux.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
 }
 
 @font-face {
-  font-family: kainosBold;
-  src: url('/fonts/GOTHICB.ttf') format('truetype');
+	font-family: kainosBold;
+	src: url("/fonts/GOTHICB.ttf") format("truetype");
 }
 
 @font-face {
-    font-family: kainosFont;
-    src: url('/fonts/GOTHIC.ttf') format('truetype');
+	font-family: kainosFont;
+	src: url("/fonts/GOTHIC.ttf") format("truetype");
 }
-
 
 .kainos-bold {
-  font-family: kainosBold;
+	font-family: kainosBold, sans-serif;
 }
 .kainos-font {
-    font-family: kainosFont;
+	font-family: kainosFont, sans-serif;
 }
 
 .kainos-blue-border {
-    border: 2px solid #283583 !important;
-    border-radius: 0.5rem;
+	border: 2px solid #283583 !important;
+	border-radius: 0.5rem;
+}
+
+.job-detail-card {
+	transition: border-color 0.15s ease-in-out;
+}
+
+.job-detail-card:hover {
+	border-color: #61a83f !important;
+}
+
+.job-role-main-text {
+	position: relative;
+	padding-bottom: 0.5rem;
+}
+
+.job-role-main-text::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 3px;
+	background-color: #61a83f;
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.15s ease;
+}
+
+.job-role-section:hover .job-role-main-text::after {
+	transform: scaleX(1);
 }
