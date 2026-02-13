@@ -23,7 +23,7 @@ app.use('/', UIRoutes);
 
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
-res.render('home-page', { title: 'Home' });
+res.render('home-page', { title: 'Home', token: null });
 });
 
 app.listen(port, () => {
