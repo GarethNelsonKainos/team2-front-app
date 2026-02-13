@@ -18,6 +18,11 @@ PORT=1234
 ## API (Backend)
 The backend is located in a separate [GitHub Repo](https://github.com/GarethNelsonKainos/team2-back-app). **The backend server must be running before the frontend application can function.** Please refer to that repository for instructions on how to set up and run the backend.
 
+If, for any reason, you are unable to run the backend server, you can use the provided mock backend for testing purposes. To enable the mock backend, use the command:
+```sh
+node .github/mock-backend.js
+```
+
 ## Using the UI (Frontend)
 Install dependencies:
 
