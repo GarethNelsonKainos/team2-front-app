@@ -16,6 +16,7 @@
         <a href="/" class="d-inline-block">
             <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
         </a>
+        <% if (!token) { %>
         <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
             data-bs-target="#loginModal">Login</button>
     </div>
@@ -45,8 +46,7 @@
                                 placeholder="Password" required>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn kainos-green" data-bs-dismiss="modal">Register</button>
+                    <div class="modal-footer"> 
                         <button type="button" class="btn kainos-green" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn kainos-green">Submit</button>
                     </div>
@@ -54,6 +54,30 @@
             </div>
         </div>
     </div>
+        <% } else { %>
+            <div class="d-flex align-items-center gap-3 kainos-font">
+            <h2>Welcome, <%= user.firstName|| "" %> <%= user.secondName|| "" %>!</h2>
+            <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
+            data-bs-target="#loginModal">Logout</button>
+            </div>
+        <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Are you sure you want to logout?</h5>
+                </div>
+                <div class="modal-body justify-content-center">
+                    <button type="button" class="btn kainos-green" data-bs-dismiss="modal">Close</button>
+                    <a href="/home" class="btn kainos-green">Logout</a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    </div>
+        <% } %>
+    
 
     <main class="container flex-grow-1 d-flex align-items-center justify-content-center kainos-font">
         <div class="row g-4 justify-content-center w-100">
