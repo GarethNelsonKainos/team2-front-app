@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { loginUser } from "../services/loginService";
-import { error } from "node:console";
 import jwt from "jsonwebtoken";
 
 export class LoginController {
@@ -19,22 +18,20 @@ export class LoginController {
 				console.log("Decoded token:", decodedToken);
 				console.log("Login successful, token received:", data.token);
 			} else {
-				res
-					.status(401)
-					.render("home-page", {
-						showLoginModal: true,
-						token: null,
-						error: "Invalid email or password.",
-					});
-			}
-		} catch (error) {
-			res
-				.status(500)
-				.render("home-page", {
+				res.status(401).render("home-page", {
 					showLoginModal: true,
 					token: null,
-					error: "Server error during login.",
+					user: null,
+					error: "Invalid email or password.",
 				});
+			}
+		} catch (_error) {
+			res.status(500).render("home-page", {
+				showLoginModal: true,
+				token: null,
+				user: null,
+				error: "Server error during login.",
+			});
 		}
 	}
 }

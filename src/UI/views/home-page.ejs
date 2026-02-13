@@ -57,20 +57,20 @@
     </div>
         <% } else { %>
             <div class="d-flex align-items-center gap-3 kainos-font">
-            <h2>Welcome, <%= user.firstName|| "" %> <%= user.secondName|| "" %>!</h2>
+            <h2>Welcome, <%= user.firstName || "" %> <%= user.secondName || "" %>!</h2>
             <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
-            data-bs-target="#loginModal">Logout</button>
+            data-bs-target="#logoutModal">Logout</button>
             </div>
         <!-- Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Are you sure you want to logout?</h5>
+                    <h5 class="modal-title" id="logoutModalLabel">Are you sure you want to logout?</h5>
                 </div>
-                <div class="modal-body justify-content-center">
-                    <button type="button" class="btn kainos-green" data-bs-dismiss="modal">Close</button>
-                    <a href="/home" class="btn kainos-green">Logout</a>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn kainos-blue" data-bs-dismiss="modal">Close</button>
+                    <a href="/" class="btn kainos-blue">Logout</a>
                 </div>
                 
             </div>
