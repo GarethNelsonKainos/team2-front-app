@@ -22,4 +22,24 @@ export class JobRoleService {
 			throw new Error("Failed to fetch job role");
 		}
 	}
+
+	async getBands() {
+		try {
+			const response = await axios.get(`${API_BASE_URL}/band`);
+			return response.data;
+		} catch (error) {
+			console.error("Error fetching bands:", error);
+			throw new Error("Failed to fetch bands");
+		}
+	}
+
+	async getCapabilities() {
+		try {
+			const response = await axios.get(`${API_BASE_URL}/capability`);
+			return response.data;
+		} catch (error) {
+			console.error("Error fetching capabilities:", error);
+			throw new Error("Failed to fetch capabilities");
+		}
+	}
 }

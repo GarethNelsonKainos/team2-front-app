@@ -66,11 +66,29 @@ export class JobRoleController {
 		}
 	}
 
-	getNewRolePage(req: AuthenticatedRequest, res: Response) {
+	async getNewRolePage(req: AuthenticatedRequest, res: Response) {
 		if (!req.user || req.user.role !== "admin") {
 			return res.status(401).render("new-role", { isUnauthorized: true });
 		}
 
-		res.render("new-role", { isUnauthorized: false, user: req.user });
+		try {
+			const bands = await this.jobRoleService.getBands();
+			const capabilities = await this.jobRoleService.getCapabilities();
+			res.render("new-role", {
+				isUnauthorized: false,
+				user: req.user,
+				bands,
+				capabilities,
+			});
+		} catch (error) {
+			console.error("Error loading bands and capabilities:", error);
+			res.render("new-role", {
+				isUnauthorized: false,
+				user: req.user,
+				bands: [],
+				capabilities: [],
+				error: "Failed to load dropdown options",
+			});
+		}
 	}
 }

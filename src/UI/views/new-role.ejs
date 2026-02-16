@@ -113,11 +113,25 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="band" class="form-label">Band</label>
-                                        <input type="text" class="form-control" id="band" name="band" placeholder="Enter band" required>
+                                        <select class="form-control" id="band" name="band" required>
+                                            <option value="">Select a band</option>
+                                            <% if (bands && bands.length > 0) { %>
+                                                <% bands.forEach(band => { %>
+                                                    <option value="<%= band.bandId %>"><%= band.bandName %></option>
+                                                <% }); %>
+                                            <% } %>
+                                        </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="capability" class="form-label">Capability</label>
-                                        <input type="text" class="form-control" id="capability" name="capability" placeholder="Enter capability" required>
+                                        <select class="form-control" id="capability" name="capability" required>
+                                            <option value="">Select a capability</option>
+                                            <% if (capabilities && capabilities.length > 0) { %>
+                                                <% capabilities.forEach(capability => { %>
+                                                    <option value="<%= capability.capabilityId %>"><%= capability.capabilityName %></option>
+                                                <% }); %>
+                                            <% } %>
+                                        </select>
                                     </div>
                                     <div class="col-12">
                                         <label for="sharepointUrl" class="form-label">Job Specification URL (SharePoint)</label>
