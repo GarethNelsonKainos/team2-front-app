@@ -6,27 +6,27 @@ export class LoginController {
 	async handleLogin(req: Request, res: Response) {
 		try {
 			const { email, password } = req.body;
-			console.log(email, password);
 			const data = await loginUser(email, password);
 			if (data && data.token) {
+				// store token in cookie
+				res.cookie("token", data.token, {
+					httpOnly: true,
+					secure: process.env.NODE_ENV === "production",
+					sameSite: "strict",
+				});
+				// decode token to get user info
 				const decodedToken: any = jwt.decode(data.token);
 				res.render("home-page", {
-					token: data.token,
 					user: decodedToken,
+					showAuth: true,
 				});
-				console.log("Decoded token:", decodedToken);
-				console.log("Login successful, token received:", data.token);
 			} else {
 				res.status(401).render("login-page", {
-					token: null,
-					user: null,
 					error: "Invalid email or password.",
 				});
 			}
 		} catch (_error) {
 			res.status(500).render("login-page", {
-				token: null,
-				user: null,
 				error: "Server error during login.",
 			});
 		}
