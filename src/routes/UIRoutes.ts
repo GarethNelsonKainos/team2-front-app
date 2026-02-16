@@ -20,7 +20,7 @@ router.get("/login", (req: AuthenticatedRequest, res) => {
 		user: null, token: null, activeTab: "login" });
 });
 
-router.get("/register", (_req, res) => {
+router.get("/register", (req: AuthenticatedRequest, res) => {
 	res.render("login-page", {
 		user: req.user || null,
 		token: req.cookies?.authToken || null, activeTab: "register",

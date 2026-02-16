@@ -12,12 +12,12 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-img kainos-font">
-    <div class="text-bg-light p-3 d-flex align-items-center justify-content-between kainos-font">
-        <a href="/" class="d-inline-block">
-            <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
-        </a>
-        <h1 class="ms-3 mb-0 flex-grow-1 text-end w-100">Add New Job Role</h1>
-    </div>
+    <%- include('partials/navbar', { 
+        showAuth: false,
+        showHomeButton: true,
+        pageTitle: 'Add New Job Role',
+        navClass: 'kainos-font'
+    }) %>
 
     <div class="container my-5 kainos-font">
         <% if (isUnauthorized) { %>
@@ -412,6 +412,7 @@
             }
         });
     </script>
+    <%- include('partials/footer') %>
 </body>
 
 </html>
