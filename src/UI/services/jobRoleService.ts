@@ -25,7 +25,7 @@ export class JobRoleService {
 
 	async getBands() {
 		try {
-			const response = await axios.get(`${API_BASE_URL}/band`);
+			const response = await axios.get(`${API_BASE_URL}/bands`);
 			return response.data;
 		} catch (error) {
 			console.error("Error fetching bands:", error);
@@ -35,7 +35,7 @@ export class JobRoleService {
 
 	async getCapabilities() {
 		try {
-			const response = await axios.get(`${API_BASE_URL}/capability`);
+			const response = await axios.get(`${API_BASE_URL}/capabilities`);
 			return response.data;
 		} catch (error) {
 			console.error("Error fetching capabilities:", error);
