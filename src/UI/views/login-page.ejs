@@ -47,13 +47,17 @@
                             </div>
                             <div class="mb-3">
                                 <label for="loginEmail" class="form-label">Email:</label>
+                                <span class="error-icon" id="loginEmailIcon"></span>
                                 <input type="email" class="form-control" id="loginEmail" name="email"
-                                    placeholder="Email" required>
+                                    placeholder="Email" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                <div class="invalid-feedback d-none" id="loginEmailError"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="loginPassword" class="form-label">Password:</label>
+                                <span class="error-icon" id="loginPasswordIcon"></span>
                                 <input type="password" class="form-control" id="loginPassword" name="password"
-                                    placeholder="Password" required>
+                                    placeholder="Password" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                <div class="invalid-feedback d-none" id="loginPasswordError"></div>
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn kainos-blue">Submit</button>
@@ -70,30 +74,40 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="registerFirstName" class="form-label">First Name:</label>
+                                    <span class="error-icon" id="registerFirstNameIcon"></span>
                                     <input type="text" class="form-control" id="registerFirstName" name="firstName"
-                                        placeholder="First Name" required>
+                                        placeholder="First Name" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                    <div class="invalid-feedback d-none" id="registerFirstNameError"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="registerSurname" class="form-label">Surname:</label>
+                                    <span class="error-icon" id="registerSurnameIcon"></span>
                                     <input type="text" class="form-control" id="registerSurname" name="surname"
-                                        placeholder="Surname" required>
+                                        placeholder="Surname" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                    <div class="invalid-feedback d-none" id="registerSurnameError"></div>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="registerEmail" class="form-label">Email:</label>
+                                <span class="error-icon" id="registerEmailIcon"></span>
                                 <input type="email" class="form-control" id="registerEmail" name="email"
-                                    placeholder="Email" required>
+                                    placeholder="Email" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                <div class="invalid-feedback d-none" id="registerEmailError"></div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="registerPassword" class="form-label">Password:</label>
+                                    <span class="error-icon" id="registerPasswordIcon"></span>
                                     <input type="password" class="form-control" id="registerPassword" name="password"
-                                        placeholder="Password" required>
+                                        placeholder="Password" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                    <div class="invalid-feedback d-none" id="registerPasswordError"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="registerConfirmPassword" class="form-label">Confirm Password:</label>
+                                    <span class="error-icon" id="registerConfirmPasswordIcon"></span>
                                     <input type="password" class="form-control" id="registerConfirmPassword"
-                                        name="confirmPassword" placeholder="Confirm Password" required>
+                                        name="confirmPassword" placeholder="Confirm Password" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                    <div class="invalid-feedback d-none" id="registerConfirmPasswordError"></div>
                                 </div>
                             </div>
                             <div class="d-flex gap-2">
@@ -110,6 +124,296 @@
     <%- include('partials/footer') %>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const patterns = {
+            nameOrSurname: /^[a-zA-ZÀ-ÿ\s'-]+$/,
+            email: /^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/,
+            nameMinLength: 2,
+            nameMaxLength: 50,
+            emailMaxLength: 254,
+            passwordMinLength: 8,
+            passwordMaxLength: 128,
+            nameOrSurnameMsg: 'Must be 2-50 characters, no numbers or symbols',
+            surnameMsg: 'Must be 2-50 characters, no numbers or symbols',
+            emailMsg: 'Must be a valid email address (max 254 characters)',
+            passwordMsg: 'Must be 8-128 characters with uppercase, lowercase, and symbol (!@#$%^&*)',
+        };
+
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginEmailError = document.getElementById('loginEmailError');
+        const loginPasswordError = document.getElementById('loginPasswordError');
+
+        const registerFirstName = document.getElementById('registerFirstName');
+        const registerSurname = document.getElementById('registerSurname');
+        const registerEmail = document.getElementById('registerEmail');
+        const registerPassword = document.getElementById('registerPassword');
+        const registerConfirmPassword = document.getElementById('registerConfirmPassword');
+        const registerFirstNameError = document.getElementById('registerFirstNameError');
+        const registerSurnameError = document.getElementById('registerSurnameError');
+        const registerEmailError = document.getElementById('registerEmailError');
+        const registerPasswordError = document.getElementById('registerPasswordError');
+        const registerConfirmPasswordError = document.getElementById('registerConfirmPasswordError');
+
+        const tooltips = {
+            loginEmail: new bootstrap.Tooltip(loginEmail),
+            loginPassword: new bootstrap.Tooltip(loginPassword),
+            registerFirstName: new bootstrap.Tooltip(registerFirstName),
+            registerSurname: new bootstrap.Tooltip(registerSurname),
+            registerEmail: new bootstrap.Tooltip(registerEmail),
+            registerPassword: new bootstrap.Tooltip(registerPassword),
+            registerConfirmPassword: new bootstrap.Tooltip(registerConfirmPassword),
+        };
+
+        function validateRequired(value) {
+            return value.trim().length > 0;
+        }
+
+        function validateEmail(email) {
+            if (email.length > patterns.emailMaxLength) {
+                return false;
+            }
+
+            return patterns.email.test(email);
+        }
+
+        function validateNameOrSurname(name) {
+            if (name.length < patterns.nameMinLength || name.length > patterns.nameMaxLength) {
+                return false;
+            }
+
+            if (!patterns.nameOrSurname.test(name)) {
+                return false;
+            }
+
+            if (/[-']{2,}/.test(name)) {
+                return false;
+            }
+
+            if (!/[a-zA-ZÀ-ÿ]/.test(name)) {
+                return false;
+            }
+            return true;
+        }
+
+        function validatePassword(password) {
+            if (password.length < patterns.passwordMinLength || password.length > patterns.passwordMaxLength) {
+                return false;
+            }
+
+            if (!/[A-Z]/.test(password)) {
+                return false;
+            }
+
+            if (!/[a-z]/.test(password)) {
+                return false;
+            }
+
+            if (!/[!@#$%^&*]/.test(password)) {
+                return false;
+            }
+            return true;
+        }
+
+        function setFieldError(input, errorElement, errorMessage) {
+            input.classList.add('is-invalid');
+            errorElement.textContent = errorMessage;
+            errorElement.classList.remove('d-none');
+            const formGroup = input.closest('.mb-3') || input.closest('.row');
+            if (formGroup) {
+                formGroup.classList.add('form-group-error');
+            }
+        }
+
+        function clearFieldError(input, errorElement) {
+            input.classList.remove('is-invalid');
+            errorElement.textContent = '';
+            errorElement.classList.add('d-none');
+            const formGroup = input.closest('.mb-3') || input.closest('.row');
+            if (formGroup) {
+                formGroup.classList.remove('form-group-error');
+            }
+        }
+
+        function validateLoginEmail() {
+            const value = loginEmail.value;
+            if (!validateRequired(value)) {
+                setFieldError(loginEmail, loginEmailError, 'Email is required');
+                return false;
+            }
+            if (!validateEmail(value)) {
+                setFieldError(loginEmail, loginEmailError, patterns.emailMsg);
+                return false;
+            }
+            clearFieldError(loginEmail, loginEmailError);
+            return true;
+        }
+
+        function validateLoginPassword() {
+            const value = loginPassword.value;
+            if (!validateRequired(value)) {
+                setFieldError(loginPassword, loginPasswordError, 'Password is required');
+                return false;
+            }
+            clearFieldError(loginPassword, loginPasswordError);
+            return true;
+        }
+
+        function validateRegisterFirstName() {
+            const value = registerFirstName.value;
+            if (!validateRequired(value)) {
+                setFieldError(registerFirstName, registerFirstNameError, 'First name is required');
+                return false;
+            }
+            if (!validateNameOrSurname(value)) {
+                setFieldError(registerFirstName, registerFirstNameError, patterns.nameOrSurnameMsg);
+                return false;
+            }
+            clearFieldError(registerFirstName, registerFirstNameError);
+            return true;
+        }
+
+        function validateRegisterSurname() {
+            const value = registerSurname.value;
+            if (!validateRequired(value)) {
+                setFieldError(registerSurname, registerSurnameError, 'Surname is required');
+                return false;
+            }
+            if (!validateNameOrSurname(value)) {
+                setFieldError(registerSurname, registerSurnameError, patterns.nameOrSurnameMsg);
+                return false;
+            }
+            clearFieldError(registerSurname, registerSurnameError);
+            return true;
+        }
+
+        function validateRegisterEmail() {
+            const value = registerEmail.value;
+            if (!validateRequired(value)) {
+                setFieldError(registerEmail, registerEmailError, 'Email is required');
+                return false;
+            }
+            if (!validateEmail(value)) {
+                setFieldError(registerEmail, registerEmailError, patterns.emailMsg);
+                return false;
+            }
+            clearFieldError(registerEmail, registerEmailError);
+            return true;
+        }
+
+        function validateRegisterPassword() {
+            const value = registerPassword.value;
+            if (!validateRequired(value)) {
+                setFieldError(registerPassword, registerPasswordError, 'Password is required');
+                return false;
+            }
+            if (!validatePassword(value)) {
+                setFieldError(registerPassword, registerPasswordError, patterns.passwordMsg);
+                return false;
+            }
+            clearFieldError(registerPassword, registerPasswordError);
+            return true;
+        }
+
+        function validateRegisterConfirmPassword() {
+            const value = registerConfirmPassword.value;
+            if (!validateRequired(value)) {
+                setFieldError(registerConfirmPassword, registerConfirmPasswordError, 'Confirm password is required');
+                return false;
+            }
+            if (value !== registerPassword.value) {
+                setFieldError(registerConfirmPassword, registerConfirmPasswordError, 'Passwords do not match');
+                return false;
+            }
+            clearFieldError(registerConfirmPassword, registerConfirmPasswordError);
+            return true;
+        }
+
+        loginEmail.addEventListener('blur', validateLoginEmail);
+        loginPassword.addEventListener('blur', validateLoginPassword);
+        registerFirstName.addEventListener('blur', validateRegisterFirstName);
+        registerSurname.addEventListener('blur', validateRegisterSurname);
+        registerEmail.addEventListener('blur', validateRegisterEmail);
+        registerPassword.addEventListener('blur', validateRegisterPassword);
+        registerConfirmPassword.addEventListener('blur', validateRegisterConfirmPassword);
+
+        loginEmail.addEventListener('input', () => {
+            if (loginEmail.classList.contains('is-invalid')) {
+                validateLoginEmail();
+            }
+        });
+        loginPassword.addEventListener('input', () => {
+            if (loginPassword.classList.contains('is-invalid')) {
+                validateLoginPassword();
+            }
+        });
+        registerFirstName.addEventListener('input', () => {
+            if (registerFirstName.classList.contains('is-invalid')) {
+                validateRegisterFirstName();
+            }
+        });
+        registerSurname.addEventListener('input', () => {
+            if (registerSurname.classList.contains('is-invalid')) {
+                validateRegisterSurname();
+            }
+        });
+        registerEmail.addEventListener('input', () => {
+            if (registerEmail.classList.contains('is-invalid')) {
+                validateRegisterEmail();
+            }
+        });
+        registerPassword.addEventListener('input', () => {
+            if (registerPassword.classList.contains('is-invalid')) {
+                validateRegisterPassword();
+            }
+        });
+        registerConfirmPassword.addEventListener('input', () => {
+            if (registerConfirmPassword.classList.contains('is-invalid')) {
+                validateRegisterConfirmPassword();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('form').forEach(form => form.reset());
+        });
+
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                if (form.action.includes('/login')) {
+                    const emailValid = validateLoginEmail();
+                    const passwordValid = validateLoginPassword();
+                    if (!emailValid || !passwordValid) {
+                        e.preventDefault();
+                    }
+                } else if (form.action.includes('/register')) {
+                    const firstNameValid = validateRegisterFirstName();
+                    const surnameValid = validateRegisterSurname();
+                    const emailValid = validateRegisterEmail();
+                    const passwordValid = validateRegisterPassword();
+                    const confirmPasswordValid = validateRegisterConfirmPassword();
+                    if (!firstNameValid || !surnameValid || !emailValid || !passwordValid || !confirmPasswordValid) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        });
+
+        const card = document.querySelector('.card');
+        const registerTab = document.getElementById('register-tab');
+        const loginTab = document.getElementById('login-tab');
+
+        const updateCardWidth = () => {
+            if (registerTab.classList.contains('active')) {
+                card.classList.add('register-active');
+            } else {
+                card.classList.remove('register-active');
+            }
+        };
+
+        registerTab.addEventListener('shown.bs.tab', updateCardWidth);
+        loginTab.addEventListener('shown.bs.tab', updateCardWidth);
+    </script>
 </body>
 
 </html>
