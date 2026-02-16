@@ -22,12 +22,16 @@ export class LoginController {
 				});
 			} else {
 				res.status(401).render("login-page", {
-					error: "Invalid email or password.",
+					token: null,
+					user: null,
+					error: "Login failed. Please try again.",
+					activeTab: "login",
 				});
 			}
 		} catch (_error) {
 			res.status(500).render("login-page", {
 				error: "Server error during login.",
+				activeTab: "login",
 			});
 		}
 	}
