@@ -1,0 +1,43 @@
+<nav class="text-bg-light p-3 d-flex align-items-center justify-content-between <%= navClass || 'kainos-font' %>">
+  <a href="/" class="d-inline-block">
+    <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
+  </a>
+  
+  <!-- If pageTitle is provided, display it in the navbar -->
+  <% if (pageTitle) { %>
+    <h1 class="ms-3 mb-0 mx-3 flex-grow-1 text-end w-100"><%= pageTitle %></h1>
+  <% } %>
+  
+  <!-- Show Home button if showHomeButton is true, otherwise show Login/Logout based on authentication status -->
+  <% if (showHomeButton) { %>
+    <a href="/" class="btn btn-lg kainos-blue ms-auto">Home</a>
+  <% } else if (showAuth) { %>
+    <% if (!token) { %>
+      <a href="/login" class="btn btn-lg kainos-blue ms-auto">Login</a>
+    <% } else { %>
+      <div class="d-flex align-items-center gap-3 kainos-font">
+        <h2>Welcome, <%= user.firstName || "" %> <%= user.secondName || "" %>!</h2>
+        <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
+          data-bs-target="#logoutModal">Logout</button>
+      </div>
+    <% } %>
+  <% } %>
+</nav>
+
+<!-- Logout Modal (only included if user is authenticated) -->
+<% if (showAuth && token) { %>
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Are you sure you want to logout?</h5>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn kainos-blue" data-bs-dismiss="modal">Close</button>
+          <a href="/" class="btn kainos-blue">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>

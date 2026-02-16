@@ -9,12 +9,55 @@
 			#41679f 69.71%,
 			#283583 100%
 		);
-	padding: 80px 0 0;
+	padding: 15px 0;
+	font-size: 0.9rem;
 }
 
 .footer {
 	color: #fff;
 	font-weight: 300;
+}
+
+.footer a {
+	color: #fff;
+	text-decoration: none;
+}
+
+.footer a:hover {
+	color: #61a83f;
+	text-decoration: underline;
+}
+
+.footer__links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 15px;
+}
+
+.footer__links a {
+	white-space: nowrap;
+}
+
+.footer__social-icon {
+	font-size: 1.2rem;
+}
+
+.footer__social-icon:hover {
+	text-decoration: none !important;
+}
+
+.footer__copyright {
+	font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+	.footer .row > div {
+		margin-bottom: 10px;
+	}
+	.footer .row > div:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .kainos-green {
@@ -24,6 +67,11 @@
 
 .kainos-blue {
 	background-color: #283583;
+	color: white;
+}
+
+.kainos-dark-blue {
+	background-color: #252d4f;
 	color: white;
 }
 
@@ -101,6 +149,16 @@ body.bg-img {
 	border-radius: 0.5rem;
 }
 
+.auth-pills .nav-link {
+	background-color: #252d4f;
+	color: white;
+}
+
+.auth-pills .nav-link.active {
+	background-color: #283583;
+	color: white;
+}
+
 .job-detail-card {
 	transition: border-color 0.15s ease-in-out;
 }
@@ -129,4 +187,48 @@ body.bg-img {
 
 .job-role-section:hover .job-role-main-text::after {
 	transform: scaleX(1);
+}
+
+.login-pills .nav-link {
+	background-color: white;
+	color: black;
+	min-width: 140px;
+	padding: 0.75rem 2rem;
+	font-size: 1.1rem;
+	font-weight: 500;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.login-pills .nav-link:hover:not(.active) {
+	background-color: #6c757d;
+	color: white;
+}
+
+.login-pills .nav-link.active {
+	background-color: #283583;
+	color: white;
+}
+
+.form-control:focus {
+	border-color: #61a83f;
+	box-shadow: 0 0 0 0.25rem rgba(97, 168, 63, 0.25);
+}
+.form-control.is-invalid {
+	border-color: #dc3545 !important;
+	box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+	display: block;
+	color: #dc3545;
+	font-size: 0.875rem;
+	margin-top: 0.25rem;
+}
+
+.mb-3.form-group-error {
+	margin-bottom: 0.5rem !important;
+}
+
+.card.register-active {
+	max-width: 700px !important;
 }
