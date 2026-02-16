@@ -10,6 +10,13 @@ export class LoginController {
 			const data = await loginUser(email, password);
 			if (data && data.token) {
 				const decodedToken: any = jwt.decode(data.token);
+
+				res.cookie("authToken", data.token, {
+					httpOnly: true,
+					secure: process.env.NODE_ENV === "production",
+					sameSite: "strict",
+					maxAge: 24 * 60 * 60 * 1000, // 24 hours
+				});
 				res.render("home-page", {
 					showLoginModal: false,
 					token: data.token,
@@ -33,5 +40,10 @@ export class LoginController {
 				error: "Server error during login.",
 			});
 		}
+	}
+
+	handleLogout(req: Request, res: Response) {
+		res.clearCookie("authToken");
+		res.redirect("/");
 	}
 }

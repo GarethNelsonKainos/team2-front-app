@@ -8,12 +8,14 @@ const loginController = new LoginController();
 
 router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
 router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
+router.get("/new-role", (req, res) => controller.getNewRolePage(req, res));
 
 router.get("/login", (_req, res) => {
 	res.render("home-page", { showLoginModal: true, user: null, token: null });
 });
 
 router.post("/login", (req, res) => loginController.handleLogin(req, res));
+router.post("/logout", (req, res) => loginController.handleLogout(req, res));
 
 // Temporary route for logged-in page to test login functionality
 router.get("/logged-in", (_req, res) => {
