@@ -1,11 +1,21 @@
 import axios from "axios";
+
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
-export async function loginUser(email: string, password: string) {
+export async function registerUser(
+	firstName: string,
+	secondName: string,
+	email: string,
+	password: string,
+	confirmedPassword: string,
+) {
 	try {
-		const response = await axios.post(`${API_BASE_URL}/login`, {
+		const response = await axios.post(`${API_BASE_URL}/register`, {
+			firstName,
+			secondName,
 			email,
 			password,
+			confirmedPassword,
 		});
 
 		return response.data;
@@ -13,17 +23,28 @@ export async function loginUser(email: string, password: string) {
 		if (axios.isAxiosError(error)) {
 			if (error.response) {
 				switch (error.response.status) {
-					case 401:
-						return { error: "Invalid email or password", status: 401 };
+					case 400:
+						return {
+							error: error.response.data.error || "Invalid registration data",
+							status: 400,
+						};
+					case 409:
+						return { error: "Email already registered", status: 409 };
 					case 404:
-						return { error: "Login endpoint not available", status: 404 };
+						return {
+							error: "Registration endpoint not available",
+							status: 404,
+						};
 					case 500:
 						return {
 							error: "Server error. Please try again later.",
 							status: 500,
 						};
 					default:
-						return { error: "Login failed. Please try again.", status: 400 };
+						return {
+							error: "Registration failed. Please try again.",
+							status: 400,
+						};
 				}
 			} else if (error.request) {
 				return {
