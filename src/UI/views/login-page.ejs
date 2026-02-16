@@ -276,7 +276,7 @@
         function validateRegisterSecondName() {
             const value = registerSecondName.value;
             if (!validateRequired(value)) {
-                setFieldError(registerSurname, registerSurnameError, 'Surname is required');
+                setFieldError(registerSecondName, registerSecondNameError, 'Second name is required');
                 return false;
             }
             if (!validateNameOrSecondName(value)) {
