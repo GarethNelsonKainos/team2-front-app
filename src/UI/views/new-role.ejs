@@ -327,10 +327,43 @@
 
             if (roleNameValid && locationValid && closingDateValid && numberOfOpenPositionsValid && 
                 bandValid && capabilityValid && descriptionValid && responsibilitiesValid && sharepointUrlValid) {
-                // All validation passed - submission not yet implemented
-                console.log('Form validation passed! (Submission not yet implemented)');
+                // All validation passed - submit form
+                submitJobRole();
             }
         });
+
+        // Submit job role to API
+        async function submitJobRole() {
+            const jobRoleData = {
+                roleName: roleName.value.trim(),
+                description: description.value.trim(),
+                sharepointUrl: sharepointUrl.value.trim(),
+                responsibilities: responsibilities.value.trim(),
+                numberOfOpenPositions: Number.parseInt(numberOfOpenPositions.value, 10),
+                location: locationInput.value.trim(),
+                closingDate: closingDate.value,
+                capabilityId: capability.value.trim(),
+                bandId: band.value.trim(),
+            };
+
+            try {
+                const response = await fetch('/job-roles', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(jobRoleData),
+                });
+
+                if (response.ok) {
+                    window.location.href = '/job-roles';
+                } else {
+                    console.error('Failed to create job role');
+                }
+            } catch (error) {
+                console.error('Error creating job role:', error);
+            }
+        }
 
         // Clear errors when user starts typing in a field
         roleName.addEventListener('input', () => {

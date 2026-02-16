@@ -91,4 +91,19 @@ export class JobRoleController {
 			});
 		}
 	}
+
+	async createJobRole(req: AuthenticatedRequest, res: Response) {
+		if (!req.user || req.user.role !== "admin") {
+			return res.status(401).json({ message: "Unauthorized" });
+		}
+
+		try {
+			const token = req.cookies?.authToken;
+			const createdRole = await this.jobRoleService.createJobRole(req.body, token);
+			return res.status(201).json(createdRole);
+		} catch (error) {
+			console.error("Error creating job role:", error);
+			return res.status(500).json({ message: "Failed to create job role" });
+		}
+	}
 }

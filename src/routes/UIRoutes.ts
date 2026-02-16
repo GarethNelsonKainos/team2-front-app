@@ -10,6 +10,7 @@ const loginController = new LoginController();
 router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
 router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
 router.get("/new-role", (req, res) => controller.getNewRolePage(req, res));
+router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
 
 router.get("/login", (req: AuthenticatedRequest, res) => {
 	res.set("Cache-Control", "no-store");
