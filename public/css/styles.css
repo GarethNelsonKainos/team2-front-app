@@ -9,12 +9,55 @@
 			#41679f 69.71%,
 			#283583 100%
 		);
-	padding: 80px 0 0;
+	padding: 15px 0;
+	font-size: 0.9rem;
 }
 
 .footer {
 	color: #fff;
 	font-weight: 300;
+}
+
+.footer a {
+	color: #fff;
+	text-decoration: none;
+}
+
+.footer a:hover {
+	color: #61a83f;
+	text-decoration: underline;
+}
+
+.footer__links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 15px;
+}
+
+.footer__links a {
+	white-space: nowrap;
+}
+
+.footer__social-icon {
+	font-size: 1.2rem;
+}
+
+.footer__social-icon:hover {
+	text-decoration: none !important;
+}
+
+.footer__copyright {
+	font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+	.footer .row > div {
+		margin-bottom: 10px;
+	}
+	.footer .row > div:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .kainos-green {

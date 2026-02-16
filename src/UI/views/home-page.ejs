@@ -8,40 +8,19 @@
     <title>Home Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 
-<body class="d-flex flex-column min-vh-100 bg-img">
-    <div class="text-bg-light p-3 d-flex align-items-center justify-content-between kainos-bold">
-        <a href="/" class="d-inline-block">
-            <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
-        </a>
-        <% if (!token) { %>
-        <a href="/login" class="btn btn-lg kainos-blue ms-auto">Login</a>
-    </div>
-        <% } else { %>
-            <div class="d-flex align-items-center gap-3 kainos-font">
-            <h2>Welcome, <%= user.firstName || "" %> <%= user.secondName || "" %>!</h2>
-            <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
-            data-bs-target="#logoutModal">Logout</button>
-            </div>
-        <!-- Modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="logoutModalLabel">Are you sure you want to logout?</h5>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn kainos-blue" data-bs-dismiss="modal">Close</button>
-                    <a href="/" class="btn kainos-blue">Logout</a>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-    </div>
-        <% } %>
+<body class="d-flex flex-column min-vh-100 bg-img kainos-font">
+    <%- include('partials/navbar', { 
+        showAuth: true, 
+        showHomeButton: false,
+        token: token, 
+        user: user, 
+        pageTitle: null,
+        navClass: 'kainos-bold'
+    }) %>
     
 
     <main class="container flex-grow-1 d-flex align-items-center justify-content-center kainos-font">
@@ -68,14 +47,7 @@
         </div>
     </main>
 
-    <footer class="text-center py-3 footer text-white mt-auto">
-        <div class="footer__logo flex justify-content-center">
-            <a href="/" class="d-inline-block">
-                <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="50px">
-            </a>
-        </div>
-        <p class="mb-0">&copy; Copyright © 2025 Kainos. Registered in NI NI019370</p>
-    </footer>
+    <%- include('partials/footer') %>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
