@@ -15,7 +15,7 @@ export type AuthenticatedRequest = Request & {
 export function authMiddleware(
 	req: AuthenticatedRequest,
 	_res: Response,
-	next: NextFunction
+	next: NextFunction,
 ) {
 	// Try to get user from JWT token in cookie
 	const token = req.cookies?.authToken;

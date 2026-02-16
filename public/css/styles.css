@@ -28,7 +28,9 @@
 }
 
 .btn.kainos-blue {
-	transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+	transition:
+		background-color 0.15s ease-in-out,
+		color 0.15s ease-in-out;
 }
 
 .btn.kainos-blue:hover {
