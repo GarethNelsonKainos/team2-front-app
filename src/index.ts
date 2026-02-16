@@ -3,7 +3,10 @@ import type { Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import UIRoutes from "./routes/UIRoutes.js";
-import { authMiddleware, type AuthenticatedRequest } from "./middleware/authMiddleware.js";
+import {
+	authMiddleware,
+	type AuthenticatedRequest,
+} from "./middleware/authMiddleware.js";
 dotenv.config();
 
 const app = express();
@@ -25,16 +28,18 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use(authMiddleware);
 app.use("/", UIRoutes);
 
-
-app.get("/", (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
-	res.set("Cache-Control", "no-store");
-	res.render("home-page", {
-		title: "Home",
-		token: req.cookies?.authToken || null,
-		user: req.user || null,
-		showLoginModal: false,
-	});
-});
+app.get(
+	"/",
+	(req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
+		res.set("Cache-Control", "no-store");
+		res.render("home-page", {
+			title: "Home",
+			token: req.cookies?.authToken || null,
+			user: req.user || null,
+			showLoginModal: false,
+		});
+	},
+);
 
 app.listen(port, () => {
 	console.log(`App listening on port ${port}`);

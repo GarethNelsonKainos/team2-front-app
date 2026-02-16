@@ -45,9 +45,13 @@ export class JobRoleService {
 
 	async createJobRole(jobRoleData: Record<string, unknown>, token?: string) {
 		try {
-			const response = await axios.post(`${API_BASE_URL}/job-roles`, jobRoleData, {
-				headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-			});
+			const response = await axios.post(
+				`${API_BASE_URL}/job-roles`,
+				jobRoleData,
+				{
+					headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+				},
+			);
 			return response.data;
 		} catch (error) {
 			console.error("Error creating job role:", error);

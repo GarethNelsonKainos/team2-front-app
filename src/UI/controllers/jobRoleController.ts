@@ -99,7 +99,10 @@ export class JobRoleController {
 
 		try {
 			const token = req.cookies?.authToken;
-			const createdRole = await this.jobRoleService.createJobRole(req.body, token);
+			const createdRole = await this.jobRoleService.createJobRole(
+				req.body,
+				token,
+			);
 			return res.status(201).json(createdRole);
 		} catch (error) {
 			console.error("Error creating job role:", error);

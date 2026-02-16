@@ -17,13 +17,17 @@ router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
 router.get("/login", (req: AuthenticatedRequest, res) => {
 	res.set("Cache-Control", "no-store");
 	res.render("login-page", {
-		user: null, token: null, activeTab: "login" });
+		user: null,
+		token: null,
+		activeTab: "login",
+	});
 });
 
 router.get("/register", (req: AuthenticatedRequest, res) => {
 	res.render("login-page", {
 		user: req.user || null,
-		token: req.cookies?.authToken || null, activeTab: "register",
+		token: req.cookies?.authToken || null,
+		activeTab: "register",
 	});
 });
 
