@@ -23,23 +23,23 @@
             <div class="card-body p-4">
                 <ul class="nav nav-pills mb-3 justify-content-center login-pills" id="authTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="login-tab" data-bs-toggle="pill"
+                        <button class="nav-link <%= (typeof activeTab === 'undefined' || activeTab === 'login') ? 'active' : '' %>" id="login-tab" data-bs-toggle="pill"
                             data-bs-target="#login-pane" type="button" role="tab" aria-controls="login-pane"
-                            aria-selected="true">Log In</button>
+                            aria-selected="<%= (typeof activeTab === 'undefined' || activeTab === 'login') ? 'true' : 'false' %>">Log In</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="register-tab" data-bs-toggle="pill"
+                        <button class="nav-link <%= activeTab === 'register' ? 'active' : '' %>" id="register-tab" data-bs-toggle="pill"
                             data-bs-target="#register-pane" type="button" role="tab" aria-controls="register-pane"
-                            aria-selected="false">Register</button>
+                            aria-selected="<%= activeTab === 'register' ? 'true' : 'false' %>">Register</button>
                     </li>
                 </ul>
                 <% if (typeof error !== 'undefined' && error) { %>
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger" role="alert" id="error-alert" data-error-tab="<%= typeof activeTab !== 'undefined' ? activeTab : 'login' %>">
                         <%= error %>
                     </div>
                 <% } %>
                 <div class="tab-content" id="authTabsContent">
-                    <div class="tab-pane fade show active" id="login-pane" role="tabpanel" aria-labelledby="login-tab"
+                    <div class="tab-pane fade <%= (typeof activeTab === 'undefined' || activeTab === 'login') ? 'show active' : '' %>" id="login-pane" role="tabpanel" aria-labelledby="login-tab"
                         tabindex="0">
                         <form action="/login" method="POST">
                             <div class="mb-4">
@@ -65,7 +65,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="tab-pane fade" id="register-pane" role="tabpanel" aria-labelledby="register-tab"
+                    <div class="tab-pane fade <%= activeTab === 'register' ? 'show active' : '' %>" id="register-pane" role="tabpanel" aria-labelledby="register-tab"
                         tabindex="0">
                         <form action="/register" method="POST">
                             <div class="mb-4">
@@ -80,11 +80,11 @@
                                     <div class="invalid-feedback d-none" id="registerFirstNameError"></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="registerSurname" class="form-label">Surname:</label>
-                                    <span class="error-icon" id="registerSurnameIcon"></span>
-                                    <input type="text" class="form-control" id="registerSurname" name="surname"
-                                        placeholder="Surname" required data-bs-toggle="tooltip" data-bs-placement="bottom">
-                                    <div class="invalid-feedback d-none" id="registerSurnameError"></div>
+                                    <label for="registerSecondName" class="form-label">Surname:</label>
+                                    <span class="error-icon" id="registerSecondNameIcon"></span>
+                                    <input type="text" class="form-control" id="registerSecondName" name="secondName"
+                                        placeholder="Second Name" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                    <div class="invalid-feedback d-none" id="registerSecondNameError"></div>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -106,7 +106,7 @@
                                     <label for="registerConfirmPassword" class="form-label">Confirm Password:</label>
                                     <span class="error-icon" id="registerConfirmPasswordIcon"></span>
                                     <input type="password" class="form-control" id="registerConfirmPassword"
-                                        name="confirmPassword" placeholder="Confirm Password" required data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                        name="confirmedPassword" placeholder="Confirm Password" required data-bs-toggle="tooltip" data-bs-placement="bottom">
                                     <div class="invalid-feedback d-none" id="registerConfirmPasswordError"></div>
                                 </div>
                             </div>
@@ -127,15 +127,14 @@
 
     <script>
         const patterns = {
-            nameOrSurname: /^[a-zA-ZÀ-ÿ\s'-]+$/,
+            nameOrSecondName: /^[a-zA-ZÀ-ÿ\s'-]+$/,
             email: /^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/,
             nameMinLength: 2,
             nameMaxLength: 50,
             emailMaxLength: 254,
             passwordMinLength: 8,
             passwordMaxLength: 128,
-            nameOrSurnameMsg: 'Must be 2-50 characters, no numbers or symbols',
-            surnameMsg: 'Must be 2-50 characters, no numbers or symbols',
+            nameOrSecondNameMsg: 'Must be 2-50 characters, no numbers or symbols',
             emailMsg: 'Must be a valid email address (max 254 characters)',
             passwordMsg: 'Must be 8-128 characters with uppercase, lowercase, and symbol (!@#$%^&*)',
         };
@@ -146,12 +145,12 @@
         const loginPasswordError = document.getElementById('loginPasswordError');
 
         const registerFirstName = document.getElementById('registerFirstName');
-        const registerSurname = document.getElementById('registerSurname');
+        const registerSecondName = document.getElementById('registerSecondName');
         const registerEmail = document.getElementById('registerEmail');
         const registerPassword = document.getElementById('registerPassword');
         const registerConfirmPassword = document.getElementById('registerConfirmPassword');
         const registerFirstNameError = document.getElementById('registerFirstNameError');
-        const registerSurnameError = document.getElementById('registerSurnameError');
+        const registerSecondNameError = document.getElementById('registerSecondNameError');
         const registerEmailError = document.getElementById('registerEmailError');
         const registerPasswordError = document.getElementById('registerPasswordError');
         const registerConfirmPasswordError = document.getElementById('registerConfirmPasswordError');
@@ -160,7 +159,7 @@
             loginEmail: new bootstrap.Tooltip(loginEmail),
             loginPassword: new bootstrap.Tooltip(loginPassword),
             registerFirstName: new bootstrap.Tooltip(registerFirstName),
-            registerSurname: new bootstrap.Tooltip(registerSurname),
+            registerSecondName: new bootstrap.Tooltip(registerSecondName),
             registerEmail: new bootstrap.Tooltip(registerEmail),
             registerPassword: new bootstrap.Tooltip(registerPassword),
             registerConfirmPassword: new bootstrap.Tooltip(registerConfirmPassword),
@@ -178,12 +177,12 @@
             return patterns.email.test(email);
         }
 
-        function validateNameOrSurname(name) {
+        function validateNameOrSecondName(name) {
             if (name.length < patterns.nameMinLength || name.length > patterns.nameMaxLength) {
                 return false;
             }
 
-            if (!patterns.nameOrSurname.test(name)) {
+            if (!patterns.nameOrSecondName.test(name)) {
                 return false;
             }
 
@@ -266,25 +265,25 @@
                 setFieldError(registerFirstName, registerFirstNameError, 'First name is required');
                 return false;
             }
-            if (!validateNameOrSurname(value)) {
-                setFieldError(registerFirstName, registerFirstNameError, patterns.nameOrSurnameMsg);
+            if (!validateNameOrSecondName(value)) {
+                setFieldError(registerFirstName, registerFirstNameError, patterns.nameOrSecondNameMsg);
                 return false;
             }
             clearFieldError(registerFirstName, registerFirstNameError);
             return true;
         }
 
-        function validateRegisterSurname() {
-            const value = registerSurname.value;
+        function validateRegisterSecondName() {
+            const value = registerSecondName.value;
             if (!validateRequired(value)) {
                 setFieldError(registerSurname, registerSurnameError, 'Surname is required');
                 return false;
             }
-            if (!validateNameOrSurname(value)) {
-                setFieldError(registerSurname, registerSurnameError, patterns.nameOrSurnameMsg);
+            if (!validateNameOrSecondName(value)) {
+                setFieldError(registerSecondName, registerSecondNameError, patterns.nameOrSecondNameMsg);
                 return false;
             }
-            clearFieldError(registerSurname, registerSurnameError);
+            clearFieldError(registerSecondName, registerSecondNameError);
             return true;
         }
 
@@ -333,7 +332,7 @@
         loginEmail.addEventListener('blur', validateLoginEmail);
         loginPassword.addEventListener('blur', validateLoginPassword);
         registerFirstName.addEventListener('blur', validateRegisterFirstName);
-        registerSurname.addEventListener('blur', validateRegisterSurname);
+        registerSecondName.addEventListener('blur', validateRegisterSecondName);
         registerEmail.addEventListener('blur', validateRegisterEmail);
         registerPassword.addEventListener('blur', validateRegisterPassword);
         registerConfirmPassword.addEventListener('blur', validateRegisterConfirmPassword);
@@ -353,9 +352,9 @@
                 validateRegisterFirstName();
             }
         });
-        registerSurname.addEventListener('input', () => {
-            if (registerSurname.classList.contains('is-invalid')) {
-                validateRegisterSurname();
+        registerSecondName.addEventListener('input', () => {
+            if (registerSecondName.classList.contains('is-invalid')) {
+                validateRegisterSecondName();
             }
         });
         registerEmail.addEventListener('input', () => {
@@ -388,11 +387,11 @@
                     }
                 } else if (form.action.includes('/register')) {
                     const firstNameValid = validateRegisterFirstName();
-                    const surnameValid = validateRegisterSurname();
+                    const secondNameValid = validateRegisterSecondName();
                     const emailValid = validateRegisterEmail();
                     const passwordValid = validateRegisterPassword();
-                    const confirmPasswordValid = validateRegisterConfirmPassword();
-                    if (!firstNameValid || !surnameValid || !emailValid || !passwordValid || !confirmPasswordValid) {
+                    const confirmedPasswordValid = validateRegisterConfirmPassword();
+                    if (!firstNameValid || !secondNameValid || !emailValid || !passwordValid || !confirmedPasswordValid) {
                         e.preventDefault();
                     }
                 }
@@ -402,6 +401,10 @@
         const card = document.querySelector('.card');
         const registerTab = document.getElementById('register-tab');
         const loginTab = document.getElementById('login-tab');
+        const loginPane = document.getElementById('login-pane');
+        const registerPane = document.getElementById('register-pane');
+        const errorAlert = document.getElementById('error-alert');
+        const navigationType = performance.getEntriesByType('navigation')[0]?.type;
 
         const updateCardWidth = () => {
             if (registerTab.classList.contains('active')) {
@@ -411,8 +414,80 @@
             }
         };
 
-        registerTab.addEventListener('shown.bs.tab', updateCardWidth);
-        loginTab.addEventListener('shown.bs.tab', updateCardWidth);
+        const updateErrorVisibility = () => {
+            if (errorAlert) {
+                const errorTab = errorAlert.getAttribute('data-error-tab');
+                const currentTab = registerTab.classList.contains('active') ? 'register' : 'login';
+                
+                if (errorTab === currentTab) {
+                    errorAlert.style.display = 'block';
+                } else {
+                    errorAlert.style.display = 'none';
+                }
+            }
+        };
+
+        const clearErrorAlert = () => {
+            if (errorAlert) {
+                errorAlert.style.display = 'none';
+                errorAlert.setAttribute('aria-hidden', 'true');
+            }
+        };
+
+        const updateURL = (path) => {
+            if (window.history && window.history.pushState) {
+                window.history.pushState(null, '', path);
+            }
+        };
+
+        const activateTab = (tab) => {
+            if (tab === 'register') {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerPane.classList.add('show', 'active');
+                loginPane.classList.remove('show', 'active');
+            } else {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginPane.classList.add('show', 'active');
+                registerPane.classList.remove('show', 'active');
+            }
+            updateCardWidth();
+            updateErrorVisibility();
+        };
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', () => {
+            const path = window.location.pathname;
+            if (path === '/register') {
+                activateTab('register');
+            } else if (path === '/login') {
+                activateTab('login');
+            }
+            clearErrorAlert();
+        });
+
+        registerTab.addEventListener('shown.bs.tab', () => {
+            updateCardWidth();
+            updateErrorVisibility();
+            updateURL('/register');
+            clearErrorAlert();
+        });
+        
+        loginTab.addEventListener('shown.bs.tab', () => {
+            updateCardWidth();
+            updateErrorVisibility();
+            updateURL('/login');
+            clearErrorAlert();
+        });
+
+        // Set initial card width and error visibility on page load
+        updateCardWidth();
+        updateErrorVisibility();
+
+        if (errorAlert && (navigationType === 'reload' || navigationType === 'back_forward')) {
+            clearErrorAlert();
+        }
     </script>
 </body>
 
