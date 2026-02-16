@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/styles.css">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
@@ -61,6 +60,7 @@
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Role Description</label>
                                     <textarea class="form-control" id="description" name="description" rows="5" placeholder="Enter job role description"></textarea>
+                                    <div class="invalid-feedback d-none" id="descriptionError"></div>
                                 </div>
                             </form>
                         </div>
@@ -76,6 +76,7 @@
                                 <div class="mb-3">
                                     <label for="responsibilities" class="form-label">Key Responsibilities</label>
                                     <textarea class="form-control" id="responsibilities" name="responsibilities" rows="5" placeholder="Enter key responsibilities"></textarea>
+                                    <div class="invalid-feedback d-none" id="responsibilitiesError"></div>
                                 </div>
                             </form>
                         </div>
@@ -94,40 +95,46 @@
                                     <div class="col-md-6">
                                         <label for="roleName" class="form-label">Role Name</label>
                                         <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Enter role name" required>
+                                        <div class="invalid-feedback d-none" id="roleNameError"></div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="location" class="form-label">Location</label>
                                         <input type="text" class="form-control" id="location" name="location" placeholder="Enter location" required>
+                                        <div class="invalid-feedback d-none" id="locationError"></div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="closingDate" class="form-label">Closing Date</label>
                                         <input type="date" class="form-control" id="closingDate" name="closingDate" required>
+                                        <div class="invalid-feedback d-none" id="closingDateError"></div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="numberOfOpenPositions" class="form-label">Number of Open Positions</label>
                                         <input type="number" class="form-control" id="numberOfOpenPositions" name="numberOfOpenPositions" placeholder="Enter number of positions" min="1" required>
+                                        <div class="invalid-feedback d-none" id="numberOfOpenPositionsError"></div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="band" class="form-label">Band</label>
                                         <select class="form-control" id="band" name="band" required>
-                                            <option value="">Select a band</option>
+                                            <option value="" disabled selected>Select a band</option>
                                             <% if (bands && bands.length > 0) { %>
                                                 <% bands.forEach(band => { %>
                                                     <option value="<%= band.bandId %>"><%= band.bandName %></option>
                                                 <% }); %>
                                             <% } %>
                                         </select>
+                                        <div class="invalid-feedback d-none" id="bandError"></div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="capability" class="form-label">Capability</label>
                                         <select class="form-control" id="capability" name="capability" required>
-                                            <option value="">Select a capability</option>
+                                            <option value="" disabled selected>Select a capability</option>
                                             <% if (capabilities && capabilities.length > 0) { %>
                                                 <% capabilities.forEach(capability => { %>
                                                     <option value="<%= capability.capabilityId %>"><%= capability.capabilityName %></option>
                                                 <% }); %>
                                             <% } %>
                                         </select>
+                                        <div class="invalid-feedback d-none" id="capabilityError"></div>
                                     </div>
                                     <div class="col-12">
                                         <label for="sharepointUrl" class="form-label">Job Specification URL (SharePoint)</label>
@@ -136,6 +143,16 @@
                                 </div>
                             </form>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-end gap-3">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="button" class="btn kainos-blue" id="confirmBtn">Confirm</button>
                     </div>
                 </div>
             </div>
@@ -153,6 +170,196 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
         crossorigin="anonymous"></script>
+    
+    <script>
+        // Clear form fields on page load/refresh
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('form').forEach(form => form.reset());
+        });
+
+        // Validation helper functions
+        function validateRequired(value) {
+            return value.trim().length > 0;
+        }
+
+        function setFieldError(input, errorElement, errorMessage) {
+            input.classList.add('is-invalid');
+            errorElement.textContent = errorMessage;
+            errorElement.classList.remove('d-none');
+        }
+
+        function clearFieldError(input, errorElement) {
+            input.classList.remove('is-invalid');
+            errorElement.textContent = '';
+            errorElement.classList.add('d-none');
+        }
+
+        // Get form elements
+        const roleName = document.getElementById('roleName');
+        const locationInput = document.getElementById('location');
+        const closingDate = document.getElementById('closingDate');
+        const numberOfOpenPositions = document.getElementById('numberOfOpenPositions');
+        const band = document.getElementById('band');
+        const capability = document.getElementById('capability');
+        const description = document.getElementById('description');
+        const responsibilities = document.getElementById('responsibilities');
+
+        // Get error elements
+        const roleNameError = document.getElementById('roleNameError');
+        const locationError = document.getElementById('locationError');
+        const closingDateError = document.getElementById('closingDateError');
+        const numberOfOpenPositionsError = document.getElementById('numberOfOpenPositionsError');
+        const bandError = document.getElementById('bandError');
+        const capabilityError = document.getElementById('capabilityError');
+        const descriptionError = document.getElementById('descriptionError');
+        const responsibilitiesError = document.getElementById('responsibilitiesError');
+
+        // Validation functions
+        function validateRoleName() {
+            const value = roleName.value;
+            if (!validateRequired(value)) {
+                setFieldError(roleName, roleNameError, 'Role name is required');
+                return false;
+            }
+            clearFieldError(roleName, roleNameError);
+            return true;
+        }
+
+        function validateLocation() {
+            const value = locationInput.value;
+            if (!validateRequired(value)) {
+                setFieldError(locationInput, locationError, 'Location is required');
+                return false;
+            }
+            clearFieldError(locationInput, locationError);
+            return true;
+        }
+
+        function validateClosingDate() {
+            const value = closingDate.value;
+            if (!value) {
+                setFieldError(closingDate, closingDateError, 'Closing date is required');
+                return false;
+            }
+            clearFieldError(closingDate, closingDateError);
+            return true;
+        }
+
+        function validateNumberOfOpenPositions() {
+            const value = numberOfOpenPositions.value;
+            if (!value || value < 1) {
+                setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, 'Please enter a valid number of positions');
+                return false;
+            }
+            clearFieldError(numberOfOpenPositions, numberOfOpenPositionsError);
+            return true;
+        }
+
+        function validateBand() {
+            const value = band.value;
+            if (!value) {
+                setFieldError(band, bandError, 'Please select a band');
+                return false;
+            }
+            clearFieldError(band, bandError);
+            return true;
+        }
+
+        function validateCapability() {
+            const value = capability.value;
+            if (!value) {
+                setFieldError(capability, capabilityError, 'Please select a capability');
+                return false;
+            }
+            clearFieldError(capability, capabilityError);
+            return true;
+        }
+
+        function validateDescription() {
+            const value = description.value;
+            if (!validateRequired(value)) {
+                setFieldError(description, descriptionError, 'Role description is required');
+                return false;
+            }
+            clearFieldError(description, descriptionError);
+            return true;
+        }
+
+        function validateResponsibilities() {
+            const value = responsibilities.value;
+            if (!validateRequired(value)) {
+                setFieldError(responsibilities, responsibilitiesError, 'Key responsibilities are required');
+                return false;
+            }
+            clearFieldError(responsibilities, responsibilitiesError);
+            return true;
+        }
+
+        // Cancel button - redirect to job roles page
+        document.getElementById('cancelBtn')?.addEventListener('click', function() {
+            window.location.href = '/job-roles';
+        });
+
+        // Confirm button - validate all fields
+        document.getElementById('confirmBtn')?.addEventListener('click', function() {
+            const roleNameValid = validateRoleName();
+            const locationValid = validateLocation();
+            const closingDateValid = validateClosingDate();
+            const numberOfOpenPositionsValid = validateNumberOfOpenPositions();
+            const bandValid = validateBand();
+            const capabilityValid = validateCapability();
+            const descriptionValid = validateDescription();
+            const responsibilitiesValid = validateResponsibilities();
+
+            if (roleNameValid && locationValid && closingDateValid && numberOfOpenPositionsValid && 
+                bandValid && capabilityValid && descriptionValid && responsibilitiesValid) {
+                // All validation passed - submission not yet implemented
+                console.log('Form validation passed! (Submission not yet implemented)');
+            }
+        });
+
+        // Clear errors when user starts typing in a field
+        roleName.addEventListener('input', () => {
+            if (roleName.classList.contains('is-invalid')) {
+                clearFieldError(roleName, roleNameError);
+            }
+        });
+        locationInput.addEventListener('input', () => {
+            if (locationInput.classList.contains('is-invalid')) {
+                clearFieldError(locationInput, locationError);
+            }
+        });
+        closingDate.addEventListener('change', () => {
+            if (closingDate.classList.contains('is-invalid')) {
+                clearFieldError(closingDate, closingDateError);
+            }
+        });
+        numberOfOpenPositions.addEventListener('input', () => {
+            if (numberOfOpenPositions.classList.contains('is-invalid')) {
+                clearFieldError(numberOfOpenPositions, numberOfOpenPositionsError);
+            }
+        });
+        band.addEventListener('change', () => {
+            if (band.classList.contains('is-invalid')) {
+                clearFieldError(band, bandError);
+            }
+        });
+        capability.addEventListener('change', () => {
+            if (capability.classList.contains('is-invalid')) {
+                clearFieldError(capability, capabilityError);
+            }
+        });
+        description.addEventListener('input', () => {
+            if (description.classList.contains('is-invalid')) {
+                clearFieldError(description, descriptionError);
+            }
+        });
+        responsibilities.addEventListener('input', () => {
+            if (responsibilities.classList.contains('is-invalid')) {
+                clearFieldError(responsibilities, responsibilitiesError);
+            }
+        });
+    </script>
 </body>
 
 </html>
