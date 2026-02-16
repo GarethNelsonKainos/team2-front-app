@@ -66,20 +66,34 @@
                             <div class="mb-4">
                                 <p class="text-center" style="font-weight: bolder;">Register a new account</p>
                             </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="registerFirstName" class="form-label">First Name:</label>
+                                    <input type="text" class="form-control" id="registerFirstName" name="firstName"
+                                        placeholder="First Name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="registerSurname" class="form-label">Surname:</label>
+                                    <input type="text" class="form-control" id="registerSurname" name="surname"
+                                        placeholder="Surname" required>
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="registerEmail" class="form-label">Email:</label>
                                 <input type="email" class="form-control" id="registerEmail" name="email"
                                     placeholder="Email" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="registerPassword" class="form-label">Password:</label>
-                                <input type="password" class="form-control" id="registerPassword" name="password"
-                                    placeholder="Password" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="registerConfirmPassword" class="form-label">Confirm Password:</label>
-                                <input type="password" class="form-control" id="registerConfirmPassword"
-                                    name="confirmPassword" placeholder="Confirm Password" required>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="registerPassword" class="form-label">Password:</label>
+                                    <input type="password" class="form-control" id="registerPassword" name="password"
+                                        placeholder="Password" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="registerConfirmPassword" class="form-label">Confirm Password:</label>
+                                    <input type="password" class="form-control" id="registerConfirmPassword"
+                                        name="confirmPassword" placeholder="Confirm Password" required>
+                                </div>
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn kainos-blue">Register</button>
