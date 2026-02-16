@@ -19,6 +19,13 @@
     </div>
 
     <div class="container my-5 kainos-font">
+        <% if (user && user.role === 'admin') { %>
+            <div class="mb-4">
+                <a href="/new-role" class="btn kainos-blue">
+                    <i class="bi bi-plus-lg"></i> Add New Role
+                </a>
+            </div>
+        <% } %>
         <% if (roles && roles.length > 0) { %>
             <div class="table-responsive rounded-4 shadow">
                 <table class="table table-hover table-striped align-middle mb-0">
