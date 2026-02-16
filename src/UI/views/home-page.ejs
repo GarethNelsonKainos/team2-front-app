@@ -16,7 +16,7 @@
         <a href="/" class="d-inline-block">
             <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
         </a>
-        <% if (!token) { %>
+        <% if (!user) { %>
         <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
             data-bs-target="#loginModal">Login</button>
     </div>
@@ -57,7 +57,8 @@
     </div>
         <% } else { %>
             <div class="d-flex align-items-center gap-3 kainos-font">
-            <h2>Welcome, <%= user.firstName || "" %> <%= user.secondName || "" %>!</h2>
+            <% const displayName = [user.firstName, user.secondName].filter(Boolean).join(" "); %>
+            <h2>Welcome<%= displayName ? ", " + displayName : "" %>!</h2>
             <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
             data-bs-target="#logoutModal">Logout</button>
             </div>

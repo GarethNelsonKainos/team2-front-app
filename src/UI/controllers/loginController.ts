@@ -17,14 +17,11 @@ export class LoginController {
 					sameSite: "strict",
 					maxAge: 24 * 60 * 60 * 1000, // 24 hours
 				});
-				res.render("home-page", {
-					showLoginModal: false,
-					token: data.token,
-					user: decodedToken,
-				});
+				res.redirect("/");
 				console.log("Decoded token:", decodedToken);
 				console.log("Login successful, token received:", data.token);
 			} else {
+				res.set("Cache-Control", "no-store");
 				res.status(401).render("home-page", {
 					showLoginModal: true,
 					token: null,
@@ -33,6 +30,7 @@ export class LoginController {
 				});
 			}
 		} catch (_error) {
+			res.set("Cache-Control", "no-store");
 			res.status(500).render("home-page", {
 				showLoginModal: true,
 				token: null,

@@ -1,9 +1,9 @@
 import express from "express";
-import type { Request, Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import UIRoutes from "./routes/UIRoutes.js";
-import { authMiddleware } from "./middleware/authMiddleware.js";
+import { authMiddleware, type AuthenticatedRequest } from "./middleware/authMiddleware.js";
 dotenv.config();
 
 const app = express();
@@ -25,11 +25,13 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use(authMiddleware);
 app.use("/", UIRoutes);
 
-app.get("/", (_req: Request, res: Response, _next: NextFunction) => {
+
+app.get("/", (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
+	res.set("Cache-Control", "no-store");
 	res.render("home-page", {
 		title: "Home",
-		token: null,
-		user: null,
+		token: req.cookies?.authToken || null,
+		user: req.user || null,
 		showLoginModal: false,
 	});
 });
