@@ -31,17 +31,21 @@ router.post("/login", (req, res) => loginController.handleLogin(req, res));
 
 router.get("/logout", (req, res) => logoutController.handleLogout(req, res));
 
-//protected routes
-router.get("/job-roles", authMiddleware, (req, res) =>
-	controller.getJobRolesPage(req, res),
-);
-router.get("/job-roles/:id", authMiddleware, (req, res) =>
-	controller.getJobRoleById(req, res),
-);
-
 router.post("/register", (req, res) =>
 	registerController.handleRegister(req, res),
 );
+
+//protected routes
+router.get("/job-roles", (req, res) =>
+	controller.getJobRolesPage(req, res),
+);
+router.get("/job-roles/:id", (req, res) =>
+	controller.getJobRoleById(req, res),
+);
+// can only see this page if logged in
+router.get("/job-roles/:id/apply", authMiddleware, (req, res) => {
+	controller.getApplicationForm(req, res);
+});
 
 // Temporary route for logged-in page to test login functionality
 router.get("/logged-in", (_req, res) => {
