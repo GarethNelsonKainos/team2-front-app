@@ -32,14 +32,20 @@ export async function registerUser(
 					case 409:
 						return { error: "Email already registered", status: 409 };
 					case 404:
-						return { error: "Registration endpoint not available", status: 404 };
+						return {
+							error: "Registration endpoint not available",
+							status: 404,
+						};
 					case 500:
 						return {
 							error: "Server error. Please try again later.",
 							status: 500,
 						};
 					default:
-						return { error: "Registration failed. Please try again.", status: 400 };
+						return {
+							error: "Registration failed. Please try again.",
+							status: 400,
+						};
 				}
 			} else if (error.request) {
 				return {
