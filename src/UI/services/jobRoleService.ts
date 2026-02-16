@@ -6,9 +6,9 @@ export class JobRoleService {
 	async getJobRoles(token: string) {
 		try {
 			const response = await axios.get(`${API_BASE_URL}/job-roles`, {
-				headers : {
-					'Authorization': `Bearer ${token}`,
-				}
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
 			});
 			return response.data;
 		} catch (error) {
@@ -21,8 +21,8 @@ export class JobRoleService {
 		try {
 			const response = await axios.get(`${API_BASE_URL}/job-roles/${id}`, {
 				headers: {
-					'Authorization': `Bearer ${token}`,
-				}
+					Authorization: `Bearer ${token}`,
+				},
 			});
 			return response.data;
 		} catch (error) {

@@ -32,8 +32,12 @@ router.post("/login", (req, res) => loginController.handleLogin(req, res));
 router.get("/logout", (req, res) => logoutController.handleLogout(req, res));
 
 //protected routes
-router.get("/job-roles", authMiddleware, (req, res) => controller.getJobRolesPage(req, res));
-router.get("/job-roles/:id", authMiddleware, (req, res) => controller.getJobRoleById(req, res));
+router.get("/job-roles", authMiddleware, (req, res) =>
+	controller.getJobRolesPage(req, res),
+);
+router.get("/job-roles/:id", authMiddleware, (req, res) =>
+	controller.getJobRoleById(req, res),
+);
 
 router.post("/register", (req, res) =>
 	registerController.handleRegister(req, res),
