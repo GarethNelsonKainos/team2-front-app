@@ -10,7 +10,6 @@ export async function registerUser(
 	confirmedPassword: string,
 ) {
 	try {
-		console.log("Attempting registration for:", email);
 		const response = await axios.post(`${API_BASE_URL}/register`, {
 			firstName,
 			secondName,

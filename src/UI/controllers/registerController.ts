@@ -7,7 +7,6 @@ export class RegisterController {
 		try {
 			const { firstName, secondName, email, password, confirmedPassword } =
 				req.body;
-			console.log("Registration attempt:", { firstName, secondName, email });
 
 			const data = await registerUser(
 				firstName,
@@ -33,7 +32,6 @@ export class RegisterController {
 					token: data.token,
 					user: decodedToken,
 				});
-				console.log("Registration successful, token received:", data.token);
 			} else {
 				res.status(400).render("login-page", {
 					token: null,

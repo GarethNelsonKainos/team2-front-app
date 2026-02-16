@@ -6,7 +6,6 @@ export class LoginController {
 	async handleLogin(req: Request, res: Response) {
 		try {
 			const { email, password } = req.body;
-			console.log(email, password);
 			const data = await loginUser(email, password);
 
 			if (data?.error) {
@@ -25,8 +24,6 @@ export class LoginController {
 					token: data.token,
 					user: decodedToken,
 				});
-				console.log("Decoded token:", decodedToken);
-				console.log("Login successful, token received:", data.token);
 			} else {
 				res.status(401).render("login-page", {
 					token: null,
