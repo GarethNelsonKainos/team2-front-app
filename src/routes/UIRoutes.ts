@@ -7,7 +7,6 @@ import { LogoutController } from "../UI/controllers/logoutController.js";
 import jwt from "jsonwebtoken";
 import { RegisterController } from "../UI/controllers/registerController.js";
 import { ApplicationController } from "../UI/controllers/applicationController.js";
-import { RegisterController } from "../UI/controllers/registerController.js";
 
 const router = Router();
 
@@ -34,7 +33,6 @@ const loginController = new LoginController();
 const logoutController = new LogoutController();
 const registerController = new RegisterController();
 const applicationController = new ApplicationController();
-const registerController = new RegisterController();
 
 //public routes
 router.get("/", (_req, res) => {
@@ -60,8 +58,11 @@ router.post("/register", (req, res) =>
 );
 
 // File upload route (application form submit)
-router.post("/createApplication", upload.single("CV"), (req, res) =>
-	applicationController.handleApplicationSubmit(req, res),
+router.post(
+	"/createApplication",
+	authMiddleware,
+	upload.single("CV"),
+	(req, res) => applicationController.handleApplicationSubmit(req, res),
 );
 
 //protected routes

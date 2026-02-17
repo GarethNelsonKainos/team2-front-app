@@ -1,0 +1,50 @@
+<div class="table-responsive">
+    <table class="table table-hover table-striped card card-shadow my-3 kainos-font align-middle">
+        <thead class="kainos-bold table-primary">
+            <tr>
+                <th>Role</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th class="text-end"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (applications && applications.length > 0) { %>
+                <% applications.slice(0, 5).forEach(application => { %>
+                    <tr>
+                        <td>
+                            <% if (application.jobRoleId) { %>
+                                <a href="/job-roles/<%= application.jobRoleId %>" class="text-decoration-underline kainos-blue-text">
+                                    <%= application.jobRole || '—' %>
+                                </a>
+                            <% } else { %>
+                                <%= application.jobRole || '—' %>
+                            <% } %>
+                        </td>
+                        <td><%= application.location || '—' %></td>
+                        <td>
+                            <span class="badge <%= application.status === 'Submitted' ? 'bg-success' : application.status === 'In Review' ? 'bg-warning text-dark' : 'bg-secondary' %>">
+                                <%= application.status || '—' %>
+                            </span>
+                        </td>
+                        <td>
+                            <%= application.submittedAt ? new Date(application.submittedAt).toLocaleDateString('en-GB', { dateStyle: 'medium' }) : '—' %>
+                        </td>
+                        <td class="text-end">
+                            <% if (application.jobRoleId) { %>
+                                <a href="/job-roles/<%= application.jobRoleId %>" class="btn btn-sm kainos-blue">Details</a>
+                            <% } else { %>
+                                <span class="text-muted">—</span>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">No applications found.</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
