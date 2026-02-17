@@ -36,12 +36,8 @@ router.post("/register", (req, res) =>
 );
 
 //protected routes
-router.get("/job-roles", (req, res) =>
-	controller.getJobRolesPage(req, res),
-);
-router.get("/job-roles/:id", (req, res) =>
-	controller.getJobRoleById(req, res),
-);
+router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
+router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
 // can only see this page if logged in
 router.get("/job-roles/:id/apply", authMiddleware, (req, res) => {
 	controller.getApplicationForm(req, res);

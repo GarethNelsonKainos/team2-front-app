@@ -73,7 +73,7 @@ export class JobRoleController {
 		if (!id || typeof id !== "string" || id.trim() === "") {
 			return res.status(400).send("Invalid or missing job role ID.");
 		}
-		try {			
+		try {
 			const token = req.cookies.token;
 			const role = await this.jobRoleService.getJobRoleById(id, token);
 			if (!role) {
