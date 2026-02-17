@@ -20,7 +20,7 @@
     }) %>
 
     <div class="container my-5 kainos-font">
-        <% if (user && user.role === 'admin') { %>
+        <% if (isAdmin) { %>
             <div class="mb-4">
                 <a href="/new-role" class="btn kainos-blue">
                     <i class="bi bi-plus-lg"></i> Add New Role

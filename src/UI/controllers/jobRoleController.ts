@@ -32,6 +32,7 @@ export class JobRoleController {
 			}
 			res.render("job-role-list", {
 				roles: filteredRoles,
+				isAdmin: req.user?.role === 'admin',
 				user: req.user || null,
 			});
 		} catch (_error) {
