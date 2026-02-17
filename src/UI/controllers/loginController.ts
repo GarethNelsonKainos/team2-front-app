@@ -28,8 +28,6 @@ export class LoginController {
 					maxAge: 24 * 60 * 60 * 1000, // 24 hours
 				});
 				res.redirect("/");
-				console.log("Decoded token:", decodedToken);
-				console.log("Login successful, token received:", data.token);
 			} else {
 				res.set("Cache-Control", "no-store");
 				res.status(401).render("login-page", {
