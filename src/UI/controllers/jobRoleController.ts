@@ -18,69 +18,68 @@ export class JobRoleController {
 
 	async getJobRolesPage(req: Request, res: Response) {
 		try {
-			//get token
-			const token = req.cookies.token;
+			const roles = (await this.jobRoleService.getJobRoles(
+				req.token,
+			)) as JobRole[];
 
-			const roles = (await this.jobRoleService.getJobRoles(token)) as JobRole[];
-			const { statusName } = req.query;
+			const { status_name } = req.query;
 			let filteredRoles = roles;
-			if (statusName && typeof statusName === "string") {
-				filteredRoles = roles.filter((role) => {
-					// Case-insensitive match for status
-					return (
-						role.status?.statusName &&
-						role.status.statusName.toLowerCase() === statusName.toLowerCase()
-					);
-				});
+
+			if (status_name !== undefined && status_name !== null) {
+				const statusName = String(status_name).trim();
+				if (statusName !== "") {
+					filteredRoles = roles.filter((role) => {
+						// Case-insensitive match for status
+						return (
+							role.status?.statusName &&
+							role.status.statusName.toLowerCase() === statusName.toLowerCase()
+						);
+					});
+				}
 			}
-			res.render("job-role-list", { roles: filteredRoles });
+			res.render("job-role-list", { roles: filteredRoles, user: req.user });
 		} catch (_error) {
+			console.error("Error in getJobRolesPage:", _error);
 			res.render("job-role-no-data");
 		}
 	}
 
-	async getOpenJobRoles(_req: Request, res: Response) {
+	async getOpenJobRoles(req: Request, res: Response) {
 		try {
-			const token = _req.cookies.token;
-
-			const roles = await this.jobRoleService.getJobRoles(token);
-			res.render("job-role-list", { roles });
+			const roles = await this.jobRoleService.getJobRoles(req.token);
+			res.render("job-role-list", { roles, user: req.user });
 		} catch (_error) {
 			res.render("job-role-no-data");
 		}
 	}
 
 	async getJobRoleById(req: Request, res: Response) {
-		const { id } = req.params;
-		if (!id || typeof id !== "string" || id.trim() === "") {
+		const id = String(req.params.id);
+		if (!id || id.trim() === "") {
 			return res.status(400).send("Invalid or missing job role ID.");
 		}
 		try {
-			const token = req.cookies.token;
-			const role = await this.jobRoleService.getJobRoleById(id, token);
+			const role = await this.jobRoleService.getJobRoleById(id, req.token);
 			if (!role) {
 				return res.status(404).send("Job role not found.");
 			}
-			const user = token ? jwt.decode(token) : null;
-			res.render("job-role-information", { role, user });
+			res.render("job-role-information", { role, user: req.user });
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
 			return res.status(500).render("job-role-no-data");
 		}
 	}
 	async getApplicationForm(req: Request, res: Response) {
-		const { id } = req.params;
-		if (!id || typeof id !== "string" || id.trim() === "") {
+		const id = String(req.params.id);
+		if (!id || id.trim() === "") {
 			return res.status(400).send("Invalid or missing job role ID.");
 		}
 		try {
-			const token = req.cookies.token;
-			const role = await this.jobRoleService.getJobRoleById(id, token);
+			const role = await this.jobRoleService.getJobRoleById(id, req.token);
 			if (!role) {
 				return res.status(404).send("Job role not found.");
 			}
-			const user = token ? jwt.decode(token) : null;
-			res.render("application-form", { jobRoleId: id, user });
+			res.render("application-form", { jobRoleId: id, user: req.user, role });
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
 			return res.status(500).render("job-role-no-data");
