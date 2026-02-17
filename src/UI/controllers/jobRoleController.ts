@@ -108,7 +108,9 @@ export class JobRoleController {
 				"errors" in error &&
 				Array.isArray((error as ErrorWithErrors).errors)
 			) {
-				return res.status(400).json({ errors: (error as ErrorWithErrors).errors });
+				return res
+					.status(400)
+					.json({ errors: (error as ErrorWithErrors).errors });
 			}
 			console.error("Error creating job role:", error);
 			return res.status(500).json({ message: "Failed to create job role" });
