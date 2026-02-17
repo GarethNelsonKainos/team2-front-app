@@ -17,21 +17,20 @@ export function authMiddleware(
 	_res: Response,
 	next: NextFunction,
 ) {
-	// Try to get user from JWT token in cookie
 	const token = req.cookies?.authToken;
-	if (token) {
-		try {
-			const decodedToken: any = jwt.decode(token);
-			if (decodedToken) {
-				req.user = decodedToken;
-				return next();
-			}
-		} catch {
-			// Token decoding failed, continue without user
+	if (!token) {
+		return _res.redirect('/unauthorised');
+	}
+	try {
+		const decodedToken: any = jwt.decode(token);
+		if (decodedToken) {
+			req.user = decodedToken;
+			return next();
 		}
+	} catch {
+		return _res.redirect('/unauthorised');
 	}
 
-	// Fallback: Extract user from request body (from form submissions)
 	if (req.body && req.body.user) {
 		try {
 			req.user =
@@ -40,11 +39,10 @@ export function authMiddleware(
 					: req.body.user;
 			return next();
 		} catch {
-			// User extraction failed, continue
+
 		}
 	}
 
-	// Fallback: Extract user from query parameters
 	if (req.query && req.query.user) {
 		try {
 			req.user =
@@ -53,7 +51,7 @@ export function authMiddleware(
 					: req.query.user;
 			return next();
 		} catch {
-			// User extraction failed, continue
+
 		}
 	}
 
