@@ -3,12 +3,16 @@ import axios from "axios";
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
 export class JobRoleService {
-	async getJobRoles(token: string) {
+	async getJobRoles(token: string | null) {
 		try {
+			const headers: any = {};
+
+			if (token) {
+				headers.Authorization = `Bearer ${token}`;
+			}
+
 			const response = await axios.get(`${API_BASE_URL}/job-roles`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
+				headers,
 			});
 			return response.data;
 		} catch (error) {
@@ -17,8 +21,14 @@ export class JobRoleService {
 		}
 	}
 
-	async getJobRoleById(id: string, token: string) {
+	async getJobRoleById(id: string, token: string | null) {
 		try {
+			const headers: any = {};
+
+			if (token) {
+				headers.Authorization = `Bearer ${token}`;
+			}
+
 			const response = await axios.get(`${API_BASE_URL}/job-roles/${id}`, {
 				headers: {
 					Authorization: `Bearer ${token}`,

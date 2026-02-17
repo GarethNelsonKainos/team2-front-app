@@ -1,5 +1,4 @@
 import axios from "axios";
-import fs from "fs";
 import FormData from "form-data";
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
@@ -13,10 +12,6 @@ export class ApplicationService {
 		userId: string;
 		file: Express.Multer.File;
 	}) {
-		console.log("[processApplication] Start");
-		console.log("[processApplication] jobRoleId:", jobRoleId);
-		console.log("[processApplication] userId:", userId);
-		console.log("[processApplication] file:", file);
 		const form = new FormData();
 		form.append("jobRoleId", jobRoleId);
 		form.append("userId", userId);
@@ -25,7 +20,6 @@ export class ApplicationService {
 			contentType: file.mimetype,
 		});
 		try {
-			console.log("[processApplication] Sending POST to backend API");
 			const response = await axios.post(
 				`${API_BASE_URL}/createApplication`,
 				form,
@@ -33,11 +27,10 @@ export class ApplicationService {
 					headers: {
 						...form.getHeaders(),
 					},
-					maxContentLength: Infinity,
-					maxBodyLength: Infinity,
+					maxContentLength: 10 * 1024 * 1024,
+					maxBodyLength: 10 * 1024 * 1024,
 				},
 			);
-			console.log("[processApplication] Backend API response:", response.data);
 			return response.data;
 		} catch (err) {
 			console.error("[processApplication] Error posting to backend API:", err);

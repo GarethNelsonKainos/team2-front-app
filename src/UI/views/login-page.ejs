@@ -276,6 +276,10 @@
 
         function validateRegisterSecondName() {
             const value = registerSecondName.value;
+            if (!validateRequired(value)) {
+                setFieldError(registerSecondName, registerSecondNameError, 'Second name is required');
+                return false;
+            }
             if (!validateNameOrSecondName(value)) {
                 setFieldError(registerSecondName, registerSecondNameError, patterns.nameOrSecondNameMsg);
                 return false;
