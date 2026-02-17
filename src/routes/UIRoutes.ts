@@ -31,6 +31,9 @@ router.get("/unauthorised", (req: AuthenticatedRequest, res) => {
 router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
 
 router.get("/login", (req: AuthenticatedRequest, res) => {
+	if (req.user) {
+		return res.redirect("/");
+	}
 	res.set("Cache-Control", "no-store");
 	res.render("login-page", {
 		user: null,
