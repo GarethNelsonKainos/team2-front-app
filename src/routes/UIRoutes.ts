@@ -7,6 +7,7 @@ import { LogoutController } from "../UI/controllers/logoutController.js";
 import jwt from "jsonwebtoken";
 import { RegisterController } from "../UI/controllers/registerController.js";
 import { ApplicationController } from "../UI/controllers/applicationController.js";
+import { RegisterController } from "../UI/controllers/registerController.js";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ const loginController = new LoginController();
 const logoutController = new LogoutController();
 const registerController = new RegisterController();
 const applicationController = new ApplicationController();
+const registerController = new RegisterController();
 
 //public routes
 router.get("/", (_req, res) => {
