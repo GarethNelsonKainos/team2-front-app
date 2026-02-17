@@ -11,7 +11,23 @@ const registerController = new RegisterController();
 
 router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
 router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
-router.get("/new-role", (req, res) => controller.getNewRolePage(req, res));
+router.get("/new-role", (req: AuthenticatedRequest, res) => {
+	if (!req.user || req.user.role !== "admin") {
+		return res.redirect("/unauthorised");
+	}
+	return controller.getNewRolePage(req, res);
+});
+
+router.get("/unauthorised", (req: AuthenticatedRequest, res) => {
+	res.status(403).render("unauthorised", {
+		user: req.user || null,
+		navClass: "kainos-font",
+		pageTitle: "Unauthorised",
+		showHomeButton: true,
+		showAuth: true,
+		token: req.cookies?.authToken || null,
+	});
+});
 router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
 
 router.get("/login", (req: AuthenticatedRequest, res) => {

@@ -67,15 +67,10 @@ export class JobRoleController {
 	}
 
 	async getNewRolePage(req: AuthenticatedRequest, res: Response) {
-		if (!req.user || req.user.role !== "admin") {
-			return res.status(401).render("new-role", { isUnauthorised: true });
-		}
-
 		try {
 			const bands = await this.jobRoleService.getBands();
 			const capabilities = await this.jobRoleService.getCapabilities();
 			res.render("new-role", {
-				isUnauthorised: false,
 				user: req.user,
 				bands,
 				capabilities,
@@ -83,7 +78,6 @@ export class JobRoleController {
 		} catch (error) {
 			console.error("Error loading bands and capabilities:", error);
 			res.render("new-role", {
-				isUnauthorised: false,
 				user: req.user,
 				bands: [],
 				capabilities: [],

@@ -18,16 +18,14 @@ export function authMiddleware(
 	next: NextFunction,
 ) {
 	const token = req.cookies?.authToken;
-	if (!token) {
-		return _res.redirect('/unauthorised');
-	}
-	try {
-		const decodedToken: any = jwt.decode(token);
-		if (decodedToken) {
-			req.user = decodedToken;
-			return next();
+	if (token) {
+		try {
+			const decodedToken = jwt.decode(token);
+			if (decodedToken) {
+				req.user = decodedToken;
+			}
+		} catch {
 		}
-	} catch {
-		return _res.redirect('/unauthorised');
 	}
+	return next();
 }
