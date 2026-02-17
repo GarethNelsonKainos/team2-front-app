@@ -149,6 +149,7 @@
         crossorigin="anonymous"></script>
     
     <script>
+
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('form').forEach(form => form.reset());
         });
@@ -163,6 +164,23 @@
             input.classList.remove('is-invalid');
             errorElement.textContent = '';
             errorElement.classList.add('d-none');
+        }
+
+        function stripHTML(input) {
+            return input.replace(/<[^>]*>?/gm, '');
+        }
+
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        function isPositiveInteger(value) {
+            return /^\d+$/.test(value) && Number(value) > 0;
         }
 
         const roleName = document.getElementById('roleName');
@@ -194,28 +212,14 @@
         });
 
         async function submitJobRole() {
-            // Clear all previous errors
-            [
-                [roleName, roleNameError],
-                [locationInput, locationError],
-                [closingDate, closingDateError],
-                [numberOfOpenPositions, numberOfOpenPositionsError],
-                [band, bandError],
-                [capability, capabilityError],
-                [description, descriptionError],
-                [responsibilities, responsibilitiesError],
-                [sharepointUrl, sharepointUrlError],
-            ].forEach(([input, errorEl]) => clearFieldError(input, errorEl));
-
-            // Normalize fields: if empty, set to "" (empty string)
             const normalize = v => (v === undefined || v === null || v.trim?.() === "") ? "" : v.trim?.() ?? v;
             const jobRoleData = {
-                roleName: normalize(roleName.value),
-                description: normalize(description.value),
+                roleName: stripHTML(normalize(roleName.value)),
+                description: stripHTML(normalize(description.value)),
                 sharepointUrl: normalize(sharepointUrl.value),
-                responsibilities: normalize(responsibilities.value),
-                numberOfOpenPositions: numberOfOpenPositions.value === "" || numberOfOpenPositions.value === null || isNaN(Number(numberOfOpenPositions.value)) ? "" : numberOfOpenPositions.value,
-                location: normalize(locationInput.value),
+                responsibilities: stripHTML(normalize(responsibilities.value)),
+                numberOfOpenPositions: isPositiveInteger(numberOfOpenPositions.value) ? numberOfOpenPositions.value : "",
+                location: stripHTML(normalize(locationInput.value)),
                 closingDate: closingDate.value === undefined || closingDate.value === null || closingDate.value === "" ? "" : closingDate.value,
                 capabilityId: normalize(capability.value),
                 bandId: normalize(band.value),
@@ -234,7 +238,6 @@
                     window.location.href = '/job-roles';
                 } else {
                     const errorData = await response.json().catch(() => ({ errors: ['Failed to create job role'] }));
-                    // Handle array of errors from backend
                     if (errorData && Array.isArray(errorData.errors)) {
                         let handledAny = false;
                         errorData.errors.forEach(msg => {
@@ -272,7 +275,6 @@
                             alert('Error: ' + errorData.errors.join('\n'));
                         }
                     } else if (errorData && errorData.error) {
-                        // fallback for old error format
                         alert('Error: ' + errorData.error);
                     } else {
                         alert('Failed to create job role');
@@ -284,7 +286,6 @@
             }
         }
 
-        // Clear error styling on input/change as before
         roleName.addEventListener('input', () => {
             if (roleName.classList.contains('is-invalid')) {
                 clearFieldError(roleName, roleNameError);
