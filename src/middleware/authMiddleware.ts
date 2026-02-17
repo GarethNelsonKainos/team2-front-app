@@ -30,30 +30,4 @@ export function authMiddleware(
 	} catch {
 		return _res.redirect('/unauthorised');
 	}
-
-	if (req.body && req.body.user) {
-		try {
-			req.user =
-				typeof req.body.user === "string"
-					? JSON.parse(req.body.user)
-					: req.body.user;
-			return next();
-		} catch {
-
-		}
-	}
-
-	if (req.query && req.query.user) {
-		try {
-			req.user =
-				typeof req.query.user === "string"
-					? JSON.parse(req.query.user)
-					: req.query.user;
-			return next();
-		} catch {
-
-		}
-	}
-
-	next();
 }
