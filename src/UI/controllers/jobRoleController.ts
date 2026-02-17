@@ -62,20 +62,19 @@ export class JobRoleController {
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
 			res.status(500).send("Failed to load job role.");
-			res.render("job-role-no-data", { user: req.user || null });
 		}
 	}
 
 	async getNewRolePage(req: AuthenticatedRequest, res: Response) {
 		if (!req.user || req.user.role !== "admin") {
-			return res.status(401).render("new-role", { isUnauthorized: true });
+			return res.status(401).render("new-role", { isUnauthorised: true });
 		}
 
 		try {
 			const bands = await this.jobRoleService.getBands();
 			const capabilities = await this.jobRoleService.getCapabilities();
 			res.render("new-role", {
-				isUnauthorized: false,
+				isUnauthorised: false,
 				user: req.user,
 				bands,
 				capabilities,
@@ -83,7 +82,7 @@ export class JobRoleController {
 		} catch (error) {
 			console.error("Error loading bands and capabilities:", error);
 			res.render("new-role", {
-				isUnauthorized: false,
+				isUnauthorised: false,
 				user: req.user,
 				bands: [],
 				capabilities: [],
@@ -94,7 +93,7 @@ export class JobRoleController {
 
 	async createJobRole(req: AuthenticatedRequest, res: Response) {
 		if (!req.user || req.user.role !== "admin") {
-			return res.status(401).json({ message: "Unauthorized" });
+			return res.status(401).json({ message: "Unauthorised" });
 		}
 
 		try {

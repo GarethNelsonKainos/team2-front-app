@@ -20,7 +20,7 @@
     }) %>
 
     <div class="container my-5 kainos-font">
-        <% if (isUnauthorized) { %>
+        <% if (isUnauthorised) { %>
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="card shadow rounded-4 border-danger">
@@ -29,7 +29,7 @@
                                 <i class="bi bi-lock-fill text-danger"></i>
                             </div>
                             <h2 class="mb-3 text-danger">
-                                <strong>401 Unauthorized</strong>
+                                <strong>401 Unauthorised</strong>
                             </h2>
                             <p class="card-text mb-4 text-muted">
                                 You do not have permission to access this page. Only administrators can create new job roles.
@@ -148,7 +148,6 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="d-flex justify-content-end gap-3">
@@ -173,12 +172,10 @@
         crossorigin="anonymous"></script>
     
     <script>
-        // Clear form fields on page load/refresh
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('form').forEach(form => form.reset());
         });
 
-        // Validation helper functions
         function validateRequired(value) {
             return value.trim().length > 0;
         }
@@ -195,7 +192,6 @@
             errorElement.classList.add('d-none');
         }
 
-        // Get form elements
         const roleName = document.getElementById('roleName');
         const locationInput = document.getElementById('location');
         const closingDate = document.getElementById('closingDate');
@@ -206,7 +202,6 @@
         const responsibilities = document.getElementById('responsibilities');
         const sharepointUrl = document.getElementById('sharepointUrl');
 
-        // Get error elements
         const roleNameError = document.getElementById('roleNameError');
         const locationError = document.getElementById('locationError');
         const closingDateError = document.getElementById('closingDateError');
@@ -217,7 +212,6 @@
         const responsibilitiesError = document.getElementById('responsibilitiesError');
         const sharepointUrlError = document.getElementById('sharepointUrlError');
 
-        // Validation functions
         function validateRoleName() {
             const value = roleName.value;
             if (!validateRequired(value)) {
@@ -308,12 +302,10 @@
             return true;
         }
 
-        // Cancel button - redirect to job roles page
         document.getElementById('cancelBtn')?.addEventListener('click', function() {
             window.location.href = '/job-roles';
         });
 
-        // Confirm button - validate all fields
         document.getElementById('confirmBtn')?.addEventListener('click', function() {
             const roleNameValid = validateRoleName();
             const locationValid = validateLocation();
@@ -327,12 +319,10 @@
 
             if (roleNameValid && locationValid && closingDateValid && numberOfOpenPositionsValid && 
                 bandValid && capabilityValid && descriptionValid && responsibilitiesValid && sharepointUrlValid) {
-                // All validation passed - submit form
                 submitJobRole();
             }
         });
 
-        // Submit job role to API
         async function submitJobRole() {
             const jobRoleData = {
                 roleName: roleName.value.trim(),
@@ -365,7 +355,6 @@
             }
         }
 
-        // Clear errors when user starts typing in a field
         roleName.addEventListener('input', () => {
             if (roleName.classList.contains('is-invalid')) {
                 clearFieldError(roleName, roleNameError);
