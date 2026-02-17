@@ -99,9 +99,16 @@ export class JobRoleController {
 			);
 			return res.status(201).json(createdRole);
 		} catch (error) {
-			// Forward backend validation errors if present
-			if (error && error.errors && Array.isArray(error.errors)) {
-				return res.status(400).json({ errors: error.errors });
+			interface ErrorWithErrors {
+				errors: unknown;
+			}
+			if (
+				error &&
+				typeof error === "object" &&
+				"errors" in error &&
+				Array.isArray((error as ErrorWithErrors).errors)
+			) {
+				return res.status(400).json({ errors: (error as ErrorWithErrors).errors });
 			}
 			console.error("Error creating job role:", error);
 			return res.status(500).json({ message: "Failed to create job role" });

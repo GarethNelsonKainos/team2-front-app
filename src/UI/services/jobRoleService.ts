@@ -55,9 +55,15 @@ export class JobRoleService {
 			return response.data;
 		} catch (error) {
 			console.error("Error creating job role:", error);
-			// If error is an AxiosError with a response, re-throw the backend's error data
-			if (error.response && error.response.data) {
-				throw error.response.data;
+			if (
+				error &&
+				typeof error === "object" &&
+				"response" in error &&
+				error.response &&
+				typeof error.response === "object" &&
+				"data" in error.response
+			) {
+				throw (error.response as { data: unknown }).data;
 			}
 			throw new Error("Failed to create job role");
 		}
