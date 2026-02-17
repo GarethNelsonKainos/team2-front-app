@@ -244,6 +244,19 @@
                 setFieldError(closingDate, closingDateError, 'Closing date is required');
                 return false;
             }
+
+            const selectedDate = new Date(value);
+            if (isNaN(selectedDate.getTime())) {
+                setFieldError(closingDate, closingDateError, 'Please enter a valid closing date');
+                return false;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate <= today) {
+                setFieldError(closingDate, closingDateError, 'Closing date must be in the future');
+                return false;
+            }
             clearFieldError(closingDate, closingDateError);
             return true;
         }
