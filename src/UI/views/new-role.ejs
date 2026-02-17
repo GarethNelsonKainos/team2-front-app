@@ -153,10 +153,6 @@
             document.querySelectorAll('form').forEach(form => form.reset());
         });
 
-        function validateRequired(value) {
-            return value.trim().length > 0;
-        }
-
         function setFieldError(input, errorElement, errorMessage) {
             input.classList.add('is-invalid');
             errorElement.textContent = errorMessage;
@@ -189,252 +185,41 @@
         const responsibilitiesError = document.getElementById('responsibilitiesError');
         const sharepointUrlError = document.getElementById('sharepointUrlError');
 
-        function validateRoleName() {
-            const value = roleName.value.trim();
-            
-            if (!validateRequired(value)) {
-                setFieldError(roleName, roleNameError, 'Role name is required');
-                return false;
-            }
-
-            if (value.length < 3) {
-                setFieldError(roleName, roleNameError, 'Role name must be at least 3 characters');
-                return false;
-            }
-
-            if (value.length > 100) {
-                setFieldError(roleName, roleNameError, 'Role name must not exceed 100 characters');
-                return false;
-            }
-
-            clearFieldError(roleName, roleNameError);
-            return true;
-        }
-
-        function validateLocation() {
-            const value = locationInput.value.trim();
-            
-            if (!validateRequired(value)) {
-                setFieldError(locationInput, locationError, 'Location is required');
-                return false;
-            }
-
-            if (value.length < 2) {
-                setFieldError(locationInput, locationError, 'Location must be at least 2 characters');
-                return false;
-            }
-
-            if (value.length > 100) {
-                setFieldError(locationInput, locationError, 'Location must not exceed 100 characters');
-                return false;
-            }
-
-            clearFieldError(locationInput, locationError);
-            return true;
-        }
-
-        function validateClosingDate() {
-            const value = closingDate.value;
-            
-            if (!value) {
-                setFieldError(closingDate, closingDateError, 'Closing date is required');
-                return false;
-            }
-
-            const selectedDate = new Date(value);
-            if (isNaN(selectedDate.getTime())) {
-                setFieldError(closingDate, closingDateError, 'Please enter a valid closing date');
-                return false;
-            }
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            if (selectedDate <= today) {
-                setFieldError(closingDate, closingDateError, 'Closing date must be in the future');
-                return false;
-            }
-
-            const maxDate = new Date();
-            maxDate.setFullYear(maxDate.getFullYear() + 2);
-            
-            if (selectedDate > maxDate) {
-                setFieldError(closingDate, closingDateError, 'Closing date cannot be more than 2 years in the future');
-                return false;
-            }
-
-            clearFieldError(closingDate, closingDateError);
-            return true;
-        }
-
-        function validateNumberOfOpenPositions() {
-            const value = numberOfOpenPositions.value;
-            
-            if (!value) {
-                if (numberOfOpenPositions.validity.badInput) {
-                    setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, 'Number of positions must be a valid whole number');
-                    return false;
-                }
-                setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, 'Number of open positions is required');
-                return false;
-            }
-
-            const numValue = Number(value);
-            if (isNaN(numValue) || !Number.isInteger(numValue)) {
-                setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, 'Number of positions must be a valid whole number');
-                return false;
-            }
-
-            if (numValue < 1) {
-                setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, 'Number of positions must be at least 1');
-                return false;
-            }
-
-            if (numValue > 999) {
-                setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, 'Number of positions cannot exceed 999');
-                return false;
-            }
-
-            clearFieldError(numberOfOpenPositions, numberOfOpenPositionsError);
-            return true;
-        }
-
-        function validateBand() {
-            const value = band.value;
-            if (!value) {
-                setFieldError(band, bandError, 'Please select a band');
-                return false;
-            }
-            clearFieldError(band, bandError);
-            return true;
-        }
-
-        function validateCapability() {
-            const value = capability.value;
-            if (!value) {
-                setFieldError(capability, capabilityError, 'Please select a capability');
-                return false;
-            }
-            clearFieldError(capability, capabilityError);
-            return true;
-        }
-
-        function validateDescription() {
-            const value = description.value.trim();
-            
-            if (!validateRequired(value)) {
-                setFieldError(description, descriptionError, 'Role description is required');
-                return false;
-            }
-
-            if (value.length < 10) {
-                setFieldError(description, descriptionError, 'Role description must be at least 10 characters');
-                return false;
-            }
-
-            if (value.length > 2000) {
-                setFieldError(description, descriptionError, 'Role description must not exceed 2000 characters');
-                return false;
-            }
-
-            clearFieldError(description, descriptionError);
-            return true;
-        }
-
-        function validateResponsibilities() {
-            const value = responsibilities.value.trim();
-            
-            if (!validateRequired(value)) {
-                setFieldError(responsibilities, responsibilitiesError, 'Key responsibilities are required');
-                return false;
-            }
-
-            if (value.length < 10) {
-                setFieldError(responsibilities, responsibilitiesError, 'Key responsibilities must be at least 10 characters');
-                return false;
-            }
-
-            if (value.length > 2000) {
-                setFieldError(responsibilities, responsibilitiesError, 'Key responsibilities must not exceed 2000 characters');
-                return false;
-            }
-
-            clearFieldError(responsibilities, responsibilitiesError);
-            return true;
-        }
-
-        function validateSharepointUrl() {
-            const value = sharepointUrl.value.trim();
-            
-            if (!value) {
-                setFieldError(sharepointUrl, sharepointUrlError, 'SharePoint URL is required');
-                return false;
-            }
-
-            let url;
-            try {
-                url = new URL(value);
-            } catch {
-                setFieldError(sharepointUrl, sharepointUrlError, 'Please enter a full, valid URL (e.g., https://example.sharepoint.com/...)');
-                return false;
-            }
-
-            if (url.protocol !== 'https:') {
-                setFieldError(sharepointUrl, sharepointUrlError, 'SharePoint URL must use HTTPS');
-                return false;
-            }
-
-            const isSharePointUrl = url.hostname.includes('sharepoint.com') || 
-                                    url.hostname.includes('.sharepoint.') || 
-                                    url.hostname.includes("kainossoftwareltd.sharepoint");
-            if (!isSharePointUrl) {
-                setFieldError(sharepointUrl, sharepointUrlError, 'Please enter a valid SharePoint or Teams URL');
-                return false;
-            }
-
-            clearFieldError(sharepointUrl, sharepointUrlError);
-            return true;
-        }
-
         document.getElementById('cancelBtn')?.addEventListener('click', function() {
             window.location.href = '/job-roles';
         });
 
         document.getElementById('confirmBtn')?.addEventListener('click', function() {
-            const roleNameValid = validateRoleName();
-            const locationValid = validateLocation();
-            const closingDateValid = validateClosingDate();
-            const numberOfOpenPositionsValid = validateNumberOfOpenPositions();
-            const bandValid = validateBand();
-            const capabilityValid = validateCapability();
-            const descriptionValid = validateDescription();
-            const responsibilitiesValid = validateResponsibilities();
-            const sharepointUrlValid = validateSharepointUrl();
-
-            if (roleNameValid && locationValid && closingDateValid && numberOfOpenPositionsValid && 
-                bandValid && capabilityValid && descriptionValid && responsibilitiesValid && sharepointUrlValid) {
-                submitJobRole();
-            }
+            submitJobRole();
         });
 
         async function submitJobRole() {
-            const jobRoleData = {
-                roleName: roleName.value.trim(),
-                description: description.value.trim(),
-                sharepointUrl: sharepointUrl.value.trim(),
-                responsibilities: responsibilities.value.trim(),
-                numberOfOpenPositions: Number.parseInt(numberOfOpenPositions.value, 10),
-                location: locationInput.value.trim(),
-                closingDate: closingDate.value,
-                capabilityId: capability.value.trim(),
-                bandId: band.value.trim(),
-            };
+            // Clear all previous errors
+            [
+                [roleName, roleNameError],
+                [locationInput, locationError],
+                [closingDate, closingDateError],
+                [numberOfOpenPositions, numberOfOpenPositionsError],
+                [band, bandError],
+                [capability, capabilityError],
+                [description, descriptionError],
+                [responsibilities, responsibilitiesError],
+                [sharepointUrl, sharepointUrlError],
+            ].forEach(([input, errorEl]) => clearFieldError(input, errorEl));
 
-            if (!Number.isInteger(jobRoleData.numberOfOpenPositions)) {
-                console.error('Invalid number of positions provided');
-                setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, 'Number of positions must be a valid whole number');
-                return;
-            }
+            // Normalize fields: if empty, set to "" (empty string)
+            const normalize = v => (v === undefined || v === null || v.trim?.() === "") ? "" : v.trim?.() ?? v;
+            const jobRoleData = {
+                roleName: normalize(roleName.value),
+                description: normalize(description.value),
+                sharepointUrl: normalize(sharepointUrl.value),
+                responsibilities: normalize(responsibilities.value),
+                numberOfOpenPositions: numberOfOpenPositions.value === "" || numberOfOpenPositions.value === null || isNaN(Number(numberOfOpenPositions.value)) ? "" : numberOfOpenPositions.value,
+                location: normalize(locationInput.value),
+                closingDate: closingDate.value === undefined || closingDate.value === null || closingDate.value === "" ? "" : closingDate.value,
+                capabilityId: normalize(capability.value),
+                bandId: normalize(band.value),
+            };
 
             try {
                 const response = await fetch('/job-roles', {
@@ -448,9 +233,50 @@
                 if (response.ok) {
                     window.location.href = '/job-roles';
                 } else {
-                    const errorData = await response.json().catch(() => ({ message: 'Failed to create job role' }));
-                    console.error('Failed to create job role:', errorData.message);
-                    alert('Error: ' + (errorData.message || 'Failed to create job role'));
+                    const errorData = await response.json().catch(() => ({ errors: ['Failed to create job role'] }));
+                    // Handle array of errors from backend
+                    if (errorData && Array.isArray(errorData.errors)) {
+                        let handledAny = false;
+                        errorData.errors.forEach(msg => {
+                            const lowerMsg = msg.toLowerCase();
+                            if (lowerMsg.includes('role name')) {
+                                setFieldError(roleName, roleNameError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('description') || lowerMsg.includes('job spec summary')) {
+                                setFieldError(description, descriptionError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('sharepoint')) {
+                                setFieldError(sharepointUrl, sharepointUrlError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('responsibilit')) {
+                                setFieldError(responsibilities, responsibilitiesError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('number of open positions')) {
+                                setFieldError(numberOfOpenPositions, numberOfOpenPositionsError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('location')) {
+                                setFieldError(locationInput, locationError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('closing date')) {
+                                setFieldError(closingDate, closingDateError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('capability')) {
+                                setFieldError(capability, capabilityError, msg);
+                                handledAny = true;
+                            } else if (lowerMsg.includes('band')) {
+                                setFieldError(band, bandError, msg);
+                                handledAny = true;
+                            }
+                        });
+                        if (!handledAny) {
+                            alert('Error: ' + errorData.errors.join('\n'));
+                        }
+                    } else if (errorData && errorData.error) {
+                        // fallback for old error format
+                        alert('Error: ' + errorData.error);
+                    } else {
+                        alert('Failed to create job role');
+                    }
                 }
             } catch (error) {
                 console.error('Error creating job role:', error);
@@ -458,6 +284,7 @@
             }
         }
 
+        // Clear error styling on input/change as before
         roleName.addEventListener('input', () => {
             if (roleName.classList.contains('is-invalid')) {
                 clearFieldError(roleName, roleNameError);
