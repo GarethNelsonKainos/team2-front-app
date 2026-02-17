@@ -56,8 +56,15 @@ export class ApplicationController {
 					role,
 				});
 			}
-			const result = await this.applicationService.processApplication({ jobRoleId, userId, file });
-			console.log("[handleApplicationSubmit] processApplication result:", result);
+			const result = await this.applicationService.processApplication({
+				jobRoleId,
+				userId,
+				file,
+			});
+			console.log(
+				"[handleApplicationSubmit] processApplication result:",
+				result,
+			);
 			// Fetch job role details again for the view
 			const role = await this.jobRoleService.getJobRoleById(jobRoleId, token);
 			return res.status(200).render("application-form", {
@@ -73,7 +80,7 @@ export class ApplicationController {
 			return res.status(500).render("application-form", {
 				jobRoleId: req.body.jobRoleId,
 				user: user,
-				error: "Failed to submit application."
+				error: "Failed to submit application.",
 			});
 		}
 	}
