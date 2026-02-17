@@ -53,13 +53,13 @@ export class JobRoleService {
 				},
 			);
 			return response.data;
-		   } catch (error) {
-			   console.error("Error creating job role:", error);
-			   // If error is an AxiosError with a response, re-throw the backend's error data
-			   if (error.response && error.response.data) {
-				   throw error.response.data;
-			   }
-			   throw new Error("Failed to create job role");
-		   }
+		} catch (error) {
+			console.error("Error creating job role:", error);
+			// If error is an AxiosError with a response, re-throw the backend's error data
+			if (error.response && error.response.data) {
+				throw error.response.data;
+			}
+			throw new Error("Failed to create job role");
+		}
 	}
 }

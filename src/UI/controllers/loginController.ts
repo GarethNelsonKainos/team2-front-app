@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { loginUser } from "../services/loginService.js";
 import jwt from "jsonwebtoken";
 
@@ -19,15 +19,32 @@ export class LoginController {
 			}
 
 			if (data?.token) {
-				const decodedToken: any = jwt.decode(data.token);
-
-				res.cookie("authToken", data.token, {
-					httpOnly: true,
-					secure: process.env.NODE_ENV === "production",
-					sameSite: "strict",
-					maxAge: 24 * 60 * 60 * 1000, // 24 hours
-				});
-				res.redirect("/");
+				const jwtSecret = process.env.JWT_SECRET;
+				if (!jwtSecret) {
+					return res.status(500).render("login-page", {
+						token: null,
+						user: null,
+						error: "Server misconfiguration: JWT secret missing.",
+						activeTab: "login",
+					});
+				}
+				try {
+					jwt.verify(data.token, jwtSecret);
+					res.cookie("authToken", data.token, {
+						httpOnly: true,
+						secure: process.env.NODE_ENV === "production",
+						sameSite: "strict",
+						maxAge: 24 * 60 * 60 * 1000, // 24 hours
+					});
+					res.redirect("/");
+				} catch {
+					res.status(401).render("login-page", {
+						token: null,
+						user: null,
+						error: "Invalid or expired token.",
+						activeTab: "login",
+					});
+				}
 			} else {
 				res.set("Cache-Control", "no-store");
 				res.status(401).render("login-page", {

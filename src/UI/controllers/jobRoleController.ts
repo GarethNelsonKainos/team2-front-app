@@ -32,7 +32,7 @@ export class JobRoleController {
 			}
 			res.render("job-role-list", {
 				roles: filteredRoles,
-				isAdmin: req.user?.role === 'admin',
+				isAdmin: req.user?.role === "admin",
 				user: req.user || null,
 			});
 		} catch (_error) {
@@ -98,13 +98,13 @@ export class JobRoleController {
 				token,
 			);
 			return res.status(201).json(createdRole);
-		   } catch (error) {
-			   // Forward backend validation errors if present
-			   if (error && error.errors && Array.isArray(error.errors)) {
-				   return res.status(400).json({ errors: error.errors });
-			   }
-			   console.error("Error creating job role:", error);
-			   return res.status(500).json({ message: "Failed to create job role" });
-		   }
+		} catch (error) {
+			// Forward backend validation errors if present
+			if (error && error.errors && Array.isArray(error.errors)) {
+				return res.status(400).json({ errors: error.errors });
+			}
+			console.error("Error creating job role:", error);
+			return res.status(500).json({ message: "Failed to create job role" });
+		}
 	}
 }

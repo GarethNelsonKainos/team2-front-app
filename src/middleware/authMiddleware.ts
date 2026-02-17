@@ -19,12 +19,17 @@ export function authMiddleware(
 ) {
 	const token = req.cookies?.authToken;
 	if (token) {
+		const jwtSecret = process.env.JWT_SECRET;
+		if (!jwtSecret) {
+			return next();
+		}
 		try {
-			const decodedToken = jwt.decode(token);
-			if (decodedToken) {
-				req.user = decodedToken;
+			const decodedToken = jwt.verify(token, jwtSecret);
+			if (decodedToken && typeof decodedToken === "object") {
+				req.user = decodedToken as { role: string; [key: string]: unknown };
 			}
 		} catch {
+			// Invalid token, do not set req.user
 		}
 	}
 	return next();
