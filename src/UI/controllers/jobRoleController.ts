@@ -68,22 +68,4 @@ export class JobRoleController {
 			return res.status(500).render("job-role-no-data");
 		}
 	}
-	async getApplicationForm(req: Request, res: Response) {
-		const { id } = req.params;
-		if (!id || typeof id !== "string" || id.trim() === "") {
-			return res.status(400).send("Invalid or missing job role ID.");
-		}
-		try {			
-			const token = req.cookies.token;
-			const role = await this.jobRoleService.getJobRoleById(id, token);
-			if (!role) {
-				return res.status(404).send("Job role not found.");
-			}
-			const user = token ? jwt.decode(token) : null;
-			res.render("application-form", { jobRoleId: id, user });
-		} catch (error) {
-			console.error(`Error fetching job role with id ${id}:`, error);
-			return res.status(500).render("job-role-no-data");
-		}
-	}
 }
