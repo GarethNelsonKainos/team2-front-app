@@ -6,7 +6,7 @@ export const authMiddleware = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	if (!req.token) {
+	if (!req.cookies?.token) {
 		return res.redirect("/login");
 	}
 
@@ -18,24 +18,23 @@ export function decodeTokenMiddleware(
 	res: Response,
 	next: NextFunction,
 ) {
-	if (req.token) {
-		try {
-			const decoded = jwt.decode(req.token);
-			req.user = decoded;
-		} catch (err) {
-			req.user = null;
-		}
-	} else {
-		req.user = null;
-	}
-	next();
-}
+	const token = req.cookies?.token;
 
-export function attachTokenMiddleware(
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) {
-	req.token = req.cookies?.token || null;
-	next();
+	if (!token) {
+		res.locals.user = null;
+		res.locals.token = null;
+		return next();
+	}
+
+	try {
+		const decoded = jwt.decode(token);
+		res.locals.user = decoded;
+		res.locals.token = token;
+		next();
+	} catch (error) {
+		console.error("Error decoding token: ", error);
+		res.locals.user = null;
+		res.locals.token = null;
+		next();
+	}
 }

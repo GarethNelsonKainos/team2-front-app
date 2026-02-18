@@ -1,26 +1,23 @@
-import { Request, Response } from "express";
-import { AuthService } from "../services/authService.js";
-import jwt from "jsonwebtoken";
+import type { Request, Response } from "express";
+import type { AuthService } from "../services/authService.js";
 
 export class AuthController {
 	private authService: AuthService;
-
 	constructor(authService: AuthService) {
 		this.authService = authService;
 	}
 
-	async getLoginPage(req: Request, res: Response) {
-		res.render("login-page", { user: null, token: null, activeTab: "login" });
+	async getLoginPage(_req: Request, res: Response) {
+		res.render("login-page", { token: null, activeTab: "login" });
 	}
 
-	async logout(req: Request, res: Response) {
+	async logout(_req: Request, res: Response) {
 		res.clearCookie("token");
 		res.redirect("/login");
 	}
 
-	async getRegisterPage(req: Request, res: Response) {
+	async getRegisterPage(_req: Request, res: Response) {
 		res.render("login-page", {
-			user: null,
 			token: null,
 			activeTab: "register",
 		});
@@ -30,21 +27,17 @@ export class AuthController {
 		try {
 			const { email, password } = req.body;
 			const data = await this.authService.login(email, password);
-			if (data && data.token) {
+			if (data?.token) {
 				// store token in cookie
 				res.cookie("token", data.token, {
 					httpOnly: true,
 					secure: process.env.NODE_ENV === "production",
 					sameSite: "strict",
 				});
-				res.render("home-page", {
-					user: req.user,
-					showAuth: true,
-				});
+				return res.redirect("/");
 			} else {
 				res.status(401).render("login-page", {
 					token: null,
-					user: null,
 					error: "Login failed. Please try again.",
 					activeTab: "login",
 				});
@@ -59,21 +52,13 @@ export class AuthController {
 
 	async postRegister(req: Request, res: Response) {
 		try {
-			const { firstName, secondName, email, password, confirmedPassword } =
-				req.body;
+			const RegistrationRequest = req.body;
 
-			const data = await this.authService.register(
-				firstName,
-				secondName,
-				email,
-				password,
-				confirmedPassword,
-			);
+			const data = await this.authService.register(RegistrationRequest);
 
 			if (data?.error) {
 				res.status(data.status ?? 400).render("login-page", {
 					token: null,
-					user: null,
 					error: data.error,
 					activeTab: "register",
 				});
@@ -81,14 +66,19 @@ export class AuthController {
 			}
 
 			if (data?.token) {
-				res.render("home-page", {
-					token: data.token,
-					user: req.user,
+				res.cookie("token", data.token, {
+					httpOnly: true,
+					secure: process.env.NODE_ENV === "production",
+					sameSite: "strict",
 				});
+				res.render("home-page", {
+					showAuth: true,
+					user: res.locals.user,
+				});
+				return;
 			} else {
 				res.status(400).render("login-page", {
 					token: null,
-					user: null,
 					error: "Registration failed. Please try again.",
 					activeTab: "register",
 				});
@@ -96,7 +86,6 @@ export class AuthController {
 		} catch (_error) {
 			res.status(500).render("login-page", {
 				token: null,
-				user: null,
 				error: "Server error during registration.",
 				activeTab: "register",
 			});

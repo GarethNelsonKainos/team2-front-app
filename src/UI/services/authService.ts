@@ -1,37 +1,34 @@
 import axios from "axios";
+import * as yup from "yup";
+import {
+	loginSchema,
+	registrationSchema,
+} from "../../validationSchema/authValidation.js";
+import RegistrationRequest from "../../types/RegistrationRequest.js";
+
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
 export class AuthService {
 	async login(email: string, password: string) {
 		try {
+			// Validate input
+			await loginSchema.validate({ email, password });
+
 			const response = await axios.post(`${API_BASE_URL}/login`, {
 				email,
 				password,
 			});
-
+			console.log("Login response data:", response.data);
 			return response.data;
 		} catch (error) {
+			if (error instanceof yup.ValidationError) {
+				return { error: error.message, status: 400, fieldErrors: error.inner };
+			}
 			if (axios.isAxiosError(error)) {
-				if (error.response) {
-					switch (error.response.status) {
-						case 401:
-							return { error: "Invalid email or password", status: 401 };
-						case 404:
-							return { error: "Login endpoint not available", status: 404 };
-						case 500:
-							return {
-								error: "Server error. Please try again later.",
-								status: 500,
-							};
-						default:
-							return { error: "Login failed. Please try again.", status: 400 };
-					}
-				} else if (error.request) {
-					return {
-						error: "Cannot connect to server. Please check your connection.",
-						status: 503,
-					};
-				}
+				return {
+					status: 500,
+					error: "An error occurred during login. Please try again.",
+				};
 			}
 			return {
 				error: "An unexpected error occurred. Please try again.",
@@ -40,56 +37,29 @@ export class AuthService {
 		}
 	}
 
-	async register(
-		firstName: string,
-		secondName: string,
-		email: string,
-		password: string,
-		confirmedPassword: string,
-	) {
+	async register(registrationRequest: RegistrationRequest) {
 		try {
+			// Validate input
+			await registrationSchema.validate(registrationRequest);
+
 			const response = await axios.post(`${API_BASE_URL}/register`, {
-				firstName,
-				secondName,
-				email,
-				password,
-				confirmedPassword,
+				firstName: registrationRequest.firstName,
+				secondName: registrationRequest.secondName,
+				email: registrationRequest.email,
+				password: registrationRequest.password,
+				confirmedPassword: registrationRequest.confirmedPassword,
 			});
 
 			return response.data;
 		} catch (error) {
+			if (error instanceof yup.ValidationError) {
+				return { error: error.message, status: 400, fieldErrors: error.inner };
+			}
 			if (axios.isAxiosError(error)) {
-				if (error.response) {
-					switch (error.response.status) {
-						case 400:
-							return {
-								error: error.response.data.error || "Invalid registration data",
-								status: 400,
-							};
-						case 409:
-							return { error: "Email already registered", status: 409 };
-						case 404:
-							return {
-								error: "Registration endpoint not available",
-								status: 404,
-							};
-						case 500:
-							return {
-								error: "Server error. Please try again later.",
-								status: 500,
-							};
-						default:
-							return {
-								error: "Registration failed. Please try again.",
-								status: 400,
-							};
-					}
-				} else if (error.request) {
-					return {
-						error: "Cannot connect to server. Please check your connection.",
-						status: 503,
-					};
-				}
+				return {
+					status: 500,
+					error: "An error occurred during registration. Please try again.",
+				};
 			}
 			return {
 				error: "An unexpected error occurred. Please try again.",

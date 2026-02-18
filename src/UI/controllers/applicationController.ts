@@ -1,36 +1,39 @@
 import type { Request, Response } from "express";
 import { ApplicationService } from "../services/applicationService.js";
 import { JobRoleService } from "../services/jobRoleService.js";
-import jwt from "jsonwebtoken";
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
 export class ApplicationController {
 	private applicationService: ApplicationService;
 	private jobRoleService: JobRoleService;
-	constructor() {
-		this.applicationService = new ApplicationService();
-		this.jobRoleService = new JobRoleService();
+	constructor(
+		applicationService: ApplicationService,
+		jobRoleService: JobRoleService,
+	) {
+		this.applicationService = applicationService;
+		this.jobRoleService = jobRoleService;
 	}
 
 	async getApplicationForm(req: Request, res: Response) {
 		const { id } = req.params;
-		const ID = String(id);
+		const ID = String(id ?? "");
 		if (!ID || ID.trim() === "") {
 			return res.status(400).send("Invalid or missing job role ID.");
 		}
 		try {
-			if (!req.token) {
+			if (!res.locals.user) {
 				return res
 					.status(401)
 					.send("Unauthorized: Missing authentication token.");
 			}
-			const role = await this.jobRoleService.getJobRoleById(ID, req.token);
+			const role = await this.jobRoleService.getJobRoleById(
+				ID,
+				res.locals.token,
+			);
 			if (!role) {
 				return res.status(404).send("Job role not found.");
 			}
 			res.render("application-form", {
 				jobRoleId: ID,
-				user: req.user,
 				role,
 			});
 		} catch (error) {
@@ -41,7 +44,7 @@ export class ApplicationController {
 	// Handle application form submission with file upload
 	async handleApplicationSubmit(req: Request, res: Response) {
 		try {
-			if (!req.token) {
+			if (!res.locals.user) {
 				return res
 					.status(401)
 					.send("Unauthorized: Missing authentication token.");
@@ -51,11 +54,10 @@ export class ApplicationController {
 			if (!file) {
 				const role = await this.jobRoleService.getJobRoleById(
 					jobRoleId,
-					req.token,
+					res.locals.token,
 				);
 				return res.status(400).render("application-form", {
 					jobRoleId,
-					user: req.user,
 					error: "No file uploaded.",
 					role,
 				});
@@ -68,11 +70,11 @@ export class ApplicationController {
 			// Fetch job role details again for the view
 			const role = await this.jobRoleService.getJobRoleById(
 				jobRoleId,
-				req.token!,
+				res.locals.token,
 			);
 			return res.status(200).render("application-form", {
 				jobRoleId,
-				user: req.user,
+				user: res.locals.user,
 				success: "Application submitted successfully!",
 				role,
 			});
@@ -80,7 +82,6 @@ export class ApplicationController {
 			console.error("[handleApplicationSubmit] Error:", error);
 			return res.status(500).render("application-form", {
 				jobRoleId: req.body.jobRoleId,
-				user: req.user,
 				error: "Failed to submit application.",
 			});
 		}
