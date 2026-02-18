@@ -7,10 +7,12 @@ export class ApplicationService {
 		jobRoleId,
 		userId,
 		file,
+		token,
 	}: {
 		jobRoleId: string;
 		userId: string;
 		file: Express.Multer.File;
+		token: string;
 	}) {
 		const form = new FormData();
 		form.append("jobRoleId", jobRoleId);
@@ -20,17 +22,14 @@ export class ApplicationService {
 			contentType: file.mimetype,
 		});
 		try {
-			const response = await axios.post(
-				`${API_BASE_URL}/createApplication`,
-				form,
-				{
-					headers: {
-						...form.getHeaders(),
-					},
-					maxContentLength: 10 * 1024 * 1024,
-					maxBodyLength: 10 * 1024 * 1024,
+			const response = await axios.post(`${API_BASE_URL}/application`, form, {
+				headers: {
+					...form.getHeaders(),
+					Authorization: `Bearer ${token}`,
 				},
-			);
+				maxContentLength: 10 * 1024 * 1024,
+				maxBodyLength: 10 * 1024 * 1024,
+			});
 			return response.data;
 		} catch (err) {
 			console.error("[processApplication] Error posting to backend API:", err);

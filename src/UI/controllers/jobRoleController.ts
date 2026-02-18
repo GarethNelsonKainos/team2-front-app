@@ -60,10 +60,11 @@ export class JobRoleController {
 		}
 		try {
 			const role = await this.jobRoleService.getJobRoleById(id, req.token);
-			if (!role) {
-				return res.status(404).send("Job role not found.");
-			}
-			res.render("job-role-information", { role, user: req.user });
+			const success =
+				req.query.applicationSuccess === "true"
+					? "Application submitted successfully!"
+					: null;
+			res.render("job-role-information", { role, user: req.user, success });
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
 			return res.status(500).render("job-role-no-data");

@@ -116,7 +116,7 @@
                 </div>
             </div>
             <% } %>
-            <form id="appForm" method="post" action="/createApplication" enctype="multipart/form-data" class="mt-4">
+            <form id="appForm" method="post" action="/application" enctype="multipart/form-data" class="mt-4">
                 <input type="hidden" name="jobRoleId" value="<%= jobRoleId %>">
                 <input type="hidden" name="userId" value="<%= user && user.userId ? user.userId : '' %>">
                 <div class="mb-3">
@@ -127,25 +127,6 @@
                     <button type="submit" id="submitBtn" class="btn btn-lg kainos-blue">Submit</button>
                 </div>
             </form>
-            <script>
-            // UX: Clear form and optionally hide after success
-            (function() {
-                const success = <%- JSON.stringify(typeof success !== 'undefined' && success) %>;
-                if (success) {
-                    document.getElementById('appForm').reset();
-                    // Optionally hide the form after success:
-                    // document.getElementById('appForm').style.display = 'none';
-                }
-                // Disable submit button after click
-                const form = document.getElementById('appForm');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        const btn = document.getElementById('submitBtn');
-                        if (btn) btn.disabled = true;
-                    });
-                }
-            })();
-            </script>
         </main>
         <%- include('partials/footer') %>
     </body>
