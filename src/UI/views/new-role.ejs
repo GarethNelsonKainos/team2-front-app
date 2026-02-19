@@ -276,7 +276,7 @@
             responsibilities: yup
                 .string()
                 .trim()
-                .required("Responsibilities are required"),
+                .required("Responsibilities is required"),
             sharepointUrl: yup
                 .string()
                 .trim()
@@ -295,15 +295,15 @@
             numberOfOpenPositions: yup
                 .string()
                 .trim()
-                .required("Positions is required")
+                .required("Number of open positions is required")
                 .test(
                     "is-integer",
-                    "Positions must be an integer",
+                    "Number of open positions must be at least 1",
                     (value) => /^\d+$/.test(value || ""),
                 )
                 .test(
                     "min-one",
-                    "Positions must be at least 1",
+                    "Number of open positions must be at least 1",
                     (value) => {
                         if (!value || !/^\d+$/.test(value)) {
                             return true;
@@ -383,7 +383,7 @@
                 fieldName === "numberOfOpenPositions"
                 && fields.numberOfOpenPositions.validity.badInput
             ) {
-                showError(fieldName, "Positions must be an integer");
+                showError(fieldName, "Number of open positions must be at least 1");
                 return false;
             }
 
@@ -404,7 +404,7 @@
             const firstErrorByField = {};
 
             if (fields.numberOfOpenPositions.validity.badInput) {
-                firstErrorByField.numberOfOpenPositions = "Positions must be an integer";
+                firstErrorByField.numberOfOpenPositions = "Number of open positions must be at least 1";
             }
 
             try {

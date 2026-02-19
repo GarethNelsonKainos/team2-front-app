@@ -75,11 +75,13 @@ export class JobRoleService {
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
 				const status = error.response.status;
+				const responseData = error.response.data;
 				const responseErrors =
-					error.response.data?.errors &&
-					Array.isArray(error.response.data.errors)
-						? error.response.data.errors
-						: ["Failed to create job role"];
+					responseData?.errors && Array.isArray(responseData.errors)
+						? responseData.errors
+						: typeof responseData?.error === "string"
+							? [responseData.error]
+							: ["Failed to create job role"];
 				throw new JobRoleApiError(status, responseErrors);
 			}
 
