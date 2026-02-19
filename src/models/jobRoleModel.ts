@@ -70,7 +70,7 @@ export const buildCreateJobRolePayload = (
 		sharepointUrl: formData.sharepointUrl,
 		responsibilities: formData.responsibilities,
 		numberOfOpenPositions: Number.isNaN(parsedNumberOfOpenPositions)
-			? 0
+			? 1
 			: parsedNumberOfOpenPositions,
 		location: formData.location,
 		closingDate: formData.closingDate,
