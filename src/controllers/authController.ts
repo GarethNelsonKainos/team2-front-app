@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import type { AuthService } from "../services/authService.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 export class AuthController {
 	private authService: AuthService;
@@ -8,7 +9,7 @@ export class AuthController {
 	}
 
 	async getLoginPage(_req: Request, res: Response) {
-		res.render("login-page", { token: null, activeTab: "login" });
+		res.render("login-page", { activeTab: "login" });
 	}
 
 	async logout(_req: Request, res: Response) {
@@ -18,7 +19,6 @@ export class AuthController {
 
 	async getRegisterPage(_req: Request, res: Response) {
 		res.render("login-page", {
-			token: null,
 			activeTab: "register",
 		});
 	}
@@ -37,7 +37,6 @@ export class AuthController {
 				return res.redirect("/");
 			} else {
 				res.status(401).render("login-page", {
-					token: null,
 					error: "Login failed. Please try again.",
 					activeTab: "login",
 				});

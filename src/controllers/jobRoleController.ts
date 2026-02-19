@@ -1,16 +1,6 @@
 import type { Request, Response } from "express";
 import { JobRoleService } from "../services/jobRoleService.js";
-
-type JobRoleStatus = {
-	statusName?: string;
-};
-
-type JobRole = {
-	status?: JobRoleStatus;
-	numberOfOpenPositions?: number;
-};
-
-type ApplicationState = "can_apply" | "closed" | "not_logged_in";
+import { JobRole, JobRoleStatus } from "../types/JobRole.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
@@ -33,8 +23,8 @@ export class JobRoleController {
 					filteredRoles = roles.filter((role) => {
 						// Case-insensitive match for status
 						return (
-							role.status?.statusName &&
-							role.status.statusName.toLowerCase() === statusName.toLowerCase()
+							role.status &&
+							role.status.toLowerCase() === statusName.toLowerCase()
 						);
 					});
 				}
@@ -71,16 +61,18 @@ export class JobRoleController {
 					: null;
 
 			// Determine application state
-			let applicationState: ApplicationState;
+			let applicationState: string | null = null;
+
 			if (!res.locals.user) {
-				applicationState = "not_logged_in";
-			} else if (
-				role.numberOfOpenPositions > 0 &&
-				role.status?.statusName === "Open"
-			) {
-				applicationState = "can_apply";
+				applicationState = `<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>`;
+			} else if (role.status.statusName === JobRoleStatus.OPEN && role.numberOfOpenPositions > 0) {
+				applicationState = `<a href="/job-roles/${role.jobRoleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
+			} else if (role.status.statusName === JobRoleStatus.OPEN && role.numberOfOpenPositions === 0) {
+				applicationState = `<span class="text-muted">No positions available for this role</span>`;
+			} else if (role.status.statusName === JobRoleStatus.IN_PROGRESS) {
+				applicationState = '<span class="text-muted">You have already applied for this role</span>';
 			} else {
-				applicationState = "closed";
+				applicationState = `<span class="text-muted">This role is not currently open for applications</span>`;
 			}
 
 			res.render("job-role-information", { role, success, applicationState });

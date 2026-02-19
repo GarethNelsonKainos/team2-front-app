@@ -1,6 +1,6 @@
 import { Router } from "express";
-import type { JobRoleController } from "../UI/controllers/jobRoleController.js";
-import type { ApplicationController } from "../UI/controllers/applicationController.js";
+import type { JobRoleController } from "../controllers/jobRoleController.js";
+import type { ApplicationController } from "../controllers/applicationController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 export default function uiRouter(

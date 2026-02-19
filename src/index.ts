@@ -7,12 +7,12 @@ import uiRouter from "./routes/UIRoutes.js";
 import authRouter from "./routes/AuthRoutes.js";
 import applicationRouter from "./routes/applicationRoutes.js";
 
-import { ApplicationController } from "./UI/controllers/applicationController.js";
-import { ApplicationService } from "./UI/services/applicationService.js";
-import { JobRoleController } from "./UI/controllers/jobRoleController.js";
-import { JobRoleService } from "./UI/services/jobRoleService.js";
-import { AuthService } from "./UI/services/authService.js";
-import { AuthController } from "./UI/controllers/authController.js";
+import { ApplicationController } from "./controllers/applicationController.js";
+import { ApplicationService } from "./services/applicationService.js";
+import { JobRoleController } from "./controllers/jobRoleController.js";
+import { JobRoleService } from "./services/jobRoleService.js";
+import { AuthService } from "./services/authService.js";
+import { AuthController } from "./controllers/authController.js";
 import { authMiddleware } from "./middleware/authMiddleware.js";
 import { decodeTokenMiddleware } from "./middleware/authMiddleware.js";
 
@@ -34,7 +34,7 @@ const applicationController = new ApplicationController(
 	jobRoleService,
 );
 
-app.set("views", path.join(__dirname, "UI/views"));
+app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "ejs");
 
 app.use(express.json());
