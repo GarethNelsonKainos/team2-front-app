@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { ApplicationService } from "../services/applicationService.js";
-import { JobRoleService } from "../services/jobRoleService.js";
+import type { ApplicationService } from "../services/applicationService.js";
+import type { JobRoleService } from "../services/jobRoleService.js";
 
 export class ApplicationController {
 	private applicationService: ApplicationService;
@@ -20,15 +20,7 @@ export class ApplicationController {
 			return res.status(400).send("Invalid or missing job role ID.");
 		}
 		try {
-			if (!res.locals.user) {
-				return res
-					.status(401)
-					.send("Unauthorized: Missing authentication token.");
-			}
-			const role = await this.jobRoleService.getJobRoleById(
-				ID,
-				res.locals.token,
-			);
+			const role = await this.jobRoleService.getJobRoleById(ID);
 			if (!role) {
 				return res.status(404).send("Job role not found.");
 			}
@@ -44,18 +36,10 @@ export class ApplicationController {
 	// Handle application form submission with file upload
 	async handleApplicationSubmit(req: Request, res: Response) {
 		try {
-			if (!res.locals.user) {
-				return res
-					.status(401)
-					.send("Unauthorized: Missing authentication token.");
-			}
 			const { jobRoleId, userId } = req.body;
 			const file = req.file;
 			if (!file) {
-				const role = await this.jobRoleService.getJobRoleById(
-					jobRoleId,
-					res.locals.token,
-				);
+				const role = await this.jobRoleService.getJobRoleById(jobRoleId);
 				return res.status(400).render("application-form", {
 					jobRoleId,
 					error: "No file uploaded.",

@@ -94,6 +94,35 @@
 	color: white;
 }
 
+.card-header.kainos-blue:hover .new-role-title-input {
+	color: #212529;
+}
+
+.card-header.kainos-blue:hover .new-role-title-input::placeholder {
+	color: #6c757d;
+}
+
+.card-header.kainos-blue:hover .new-role-sharepoint-wrap .form-control {
+	color: #212529;
+}
+
+.card-header.kainos-blue:hover
+	.new-role-sharepoint-wrap
+	.form-control::placeholder {
+	color: #6c757d;
+}
+
+.card:hover .card-header.kainos-blue .new-role-sharepoint-wrap .form-control {
+	color: #212529;
+}
+
+.card:hover
+	.card-header.kainos-blue
+	.new-role-sharepoint-wrap
+	.form-control::placeholder {
+	color: #6c757d;
+}
+
 .kainos-blue-text {
 	color: #283583;
 }
@@ -218,6 +247,11 @@ body.bg-img {
 	box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
 }
 
+.form-select.is-invalid {
+	border-color: #dc3545 !important;
+	box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
 .invalid-feedback {
 	display: block;
 	color: #dc3545;
@@ -231,4 +265,26 @@ body.bg-img {
 
 .card.register-active {
 	max-width: 700px !important;
+}
+
+.new-role-sharepoint-wrap {
+	min-width: min(100%, 360px);
+}
+
+.new-role-form .invalid-feedback {
+	text-align: left;
+}
+
+.bg-level-action-btn:hover,
+.bg-level-action-btn:focus {
+	background-color: white;
+	color: #283583;
+	border-color: white;
+}
+
+.bg-level-cancel-btn:hover,
+.bg-level-cancel-btn:focus {
+	background-color: white;
+	color: #6c757d;
+	border-color: white;
 }
