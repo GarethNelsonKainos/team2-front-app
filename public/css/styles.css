@@ -304,3 +304,8 @@ body.bg-img {
 	color: #6c757d;
 	border-color: white;
 }
+
+.delete-role-btn {
+	margin-left: 1rem;
+	margin-right: -2rem;
+}

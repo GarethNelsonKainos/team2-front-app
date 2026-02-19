@@ -20,6 +20,9 @@ export default function uiRouter(
 	router.post("/job-roles/:id/edit", (req, res) =>
 		controller.updateJobRole(req, res),
 	);
+	router.post("/job-roles/:id/delete", (req, res) =>
+		controller.deleteJobRole(req, res),
+	);
 	router.get("/job-roles/:id", (req, res) =>
 		controller.getJobRoleById(req, res),
 	);
