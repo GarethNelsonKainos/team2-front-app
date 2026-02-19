@@ -10,7 +10,7 @@
   
   <!-- Show Home button if showHomeButton is true, otherwise show Login/Logout based on authentication status -->
   <% if (showHomeButton) { %>
-    <a href="/" class="btn btn-lg kainos-blue ms-auto">Home</a>
+    <a href="/home" class="btn btn-lg kainos-blue ms-auto">Home</a>
   <% } else if (showAuth) { %>
     <% if (!user) { %>
       <a href="/login" class="btn btn-lg kainos-blue ms-auto">Login</a>

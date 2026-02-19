@@ -62,4 +62,24 @@ export class ApplicationController {
 			});
 		}
 	}
+
+	async getUserApplications(req: Request, res: Response) {
+		try {
+			if (!res.locals.user) {
+				return res
+					.status(401)
+					.send("Unauthorized: Missing authentication token.");
+			}
+			const applications = await this.applicationService.getApplicationsByUserId(
+				res.locals.token,
+			);
+			res.render("/partials/my-applications", { applications });
+		} catch (error) {
+			console.error("[getUserApplications] Error:", error);
+			return res.status(500).render("/partials/my-applications", {
+				applications: [],
+				error: "Failed to fetch your applications.",
+			});
+		}
+	}
 }
