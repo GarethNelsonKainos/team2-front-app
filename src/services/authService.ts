@@ -18,7 +18,6 @@ export class AuthService {
 				email,
 				password,
 			});
-			console.log("Login response data:", response.data);
 			return response.data;
 		} catch (error) {
 			if (error instanceof yup.ValidationError) {

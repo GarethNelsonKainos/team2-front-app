@@ -107,9 +107,9 @@ export class JobRoleController {
 			}
 			if (appliedForRole || success || res.locals.isAdmin) {
 				applicationState = null;
-			}
-			if (!res.locals.user) {
-				applicationState = `<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>`;
+			} else if (!res.locals.user) {
+				const redirectUrl = `/login?redirect=/job-roles/${roleId}`;
+				applicationState = `<span class="text-muted">Please <a href="${redirectUrl}" class="kainos-blue-text">log in</a> to apply for this role</span>`;
 			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
 				applicationState = `<a href="/job-roles/${roleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
 			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions === 0) {

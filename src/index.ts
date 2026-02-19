@@ -53,7 +53,12 @@ app.use(decodeTokenMiddleware);
 app.use(checkAdminMiddleware);
 
 app.get("/", async (_req, res) => {
-	res.render("home-page", { showAuth: true, user: null, applications: [] });
+	res.render("home-page", {
+		showAuth: true,
+		user: null,
+		applications: [],
+		isAdmin: false,
+	});
 });
 app.use("/", authRouter(authController));
 app.use("/", jobRoleRouter(jobRoleController, applicationController));
