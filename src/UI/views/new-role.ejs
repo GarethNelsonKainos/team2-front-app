@@ -36,13 +36,9 @@
                 </div>
             </div>
 
-            <% if (apiErrors && apiErrors.length > 0) { %>
+            <% if (apiError) { %>
                 <div class="alert alert-danger" role="alert">
-                    <ul class="mb-0 ps-3">
-                        <% apiErrors.forEach(function(error) { %>
-                            <li><%= error %></li>
-                        <% }); %>
-                    </ul>
+                    <%= apiError %>
                 </div>
             <% } %>
 
@@ -446,6 +442,9 @@
                 return;
             }
             submitInProgress = true;
+            if (confirmSubmitButton) {
+                confirmSubmitButton.disabled = true;
+            }
 
             Object.keys(touched).forEach((fieldName) => {
                 touched[fieldName] = true;
@@ -458,6 +457,9 @@
             }
 
             submitInProgress = false;
+            if (confirmSubmitButton) {
+                confirmSubmitButton.disabled = false;
+            }
         }
 
         Object.keys(fields).forEach((fieldName) => {
@@ -486,12 +488,6 @@
             await handleSubmit();
         });
 
-        if (confirmSubmitButton) {
-            confirmSubmitButton.addEventListener("pointerdown", async (event) => {
-                event.preventDefault();
-                await handleSubmit();
-            });
-        }
     </script>
 </body>
 

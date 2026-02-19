@@ -5,7 +5,7 @@ import {
 	type CreateJobRoleFormData,
 	EMPTY_FORM_DATA,
 } from "../../models/jobRoleModel.js";
-import { JobRoleApiError, JobRoleService } from "../services/jobRoleService.js";
+import { JobRoleService } from "../services/jobRoleService.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
@@ -54,7 +54,7 @@ export class JobRoleController {
 		await this.renderCreateJobRolePage(res, {
 			formData: { ...EMPTY_FORM_DATA },
 			fieldErrors: {},
-			apiErrors: [],
+			apiError: "",
 		});
 	}
 
@@ -65,20 +65,15 @@ export class JobRoleController {
 		try {
 			await this.jobRoleService.createJobRole(payload);
 			res.redirect("/job-roles");
-		} catch (error) {
-			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const apiErrors =
-				error instanceof JobRoleApiError
-					? error.errors
-					: ["Unable to create role right now. Please try again."];
+		} catch (_error) {
 			await this.renderCreateJobRolePage(
 				res,
 				{
 					formData,
 					fieldErrors: {},
-					apiErrors,
+					apiError: "Cannot connect to server. Please check your connection.",
 				},
-				status,
+				500,
 			);
 		}
 	}
@@ -108,11 +103,11 @@ export class JobRoleController {
 		{
 			formData,
 			fieldErrors,
-			apiErrors,
+			apiError,
 		}: {
 			formData: CreateJobRoleFormData;
 			fieldErrors: CreateJobRoleFieldErrors;
-			apiErrors: string[];
+			apiError: string;
 		},
 		status: number = 200,
 	) {
@@ -125,7 +120,7 @@ export class JobRoleController {
 			res.status(status).render("new-role", {
 				formData,
 				fieldErrors,
-				apiErrors,
+				apiError,
 				capabilities,
 				bands,
 			});
@@ -133,9 +128,7 @@ export class JobRoleController {
 			res.status(500).render("new-role", {
 				formData,
 				fieldErrors,
-				apiErrors: [
-					"Unable to load capability and band options. Please try again.",
-				],
+				apiError: "Cannot connect to server. Please check your connection.",
 				capabilities: [],
 				bands: [],
 			});
