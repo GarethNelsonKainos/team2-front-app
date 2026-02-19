@@ -156,12 +156,8 @@
                     <div class="alert alert-success" role="alert">
                         <i class="bi bi-check-circle"></i> <%= success %>
                     </div>
-                <% } else if (role.numberOfOpenPositions > 0 && role.status.statusName === 'Open' && user) { %>
-                    <a href="/job-roles/<%= role.jobRoleId %>/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>
-                <% } else if (user) { %>
-                    <span class="text-muted">This role is not currently open for applications</span>
                 <% } else { %>
-                    <span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>
+                    <%- applicationState %>
                 <% } %>
             </div>
     </div>
