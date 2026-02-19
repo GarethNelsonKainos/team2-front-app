@@ -31,7 +31,21 @@ function statusIsServerError(status: number): boolean {
 	return status >= 500;
 }
 
-export function filterRolesByStatus<T extends { status?: string }>(
+type RoleStatus = string | { statusName?: string };
+
+function getRoleStatusName(status: RoleStatus | undefined): string {
+	if (!status) {
+		return "";
+	}
+
+	if (typeof status === "string") {
+		return status;
+	}
+
+	return getTrimmedString(status.statusName);
+}
+
+export function filterRolesByStatus<T extends { status?: RoleStatus }>(
 	roles: T[],
 	statusNameQuery: unknown,
 ): T[] {
@@ -44,11 +58,9 @@ export function filterRolesByStatus<T extends { status?: string }>(
 		return roles;
 	}
 
-	return roles.filter((role) => {
-		return (
-			role.status && role.status.toLowerCase() === statusName.toLowerCase()
-		);
-	});
+	return roles.filter((role) =>
+		getRoleStatusName(role.status).toLowerCase() === statusName.toLowerCase(),
+	);
 }
 
 export function buildApplicationState({

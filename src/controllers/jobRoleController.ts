@@ -7,7 +7,6 @@ import {
 } from "../models/jobRoleModel.js";
 import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
-import type { JobRole } from "../types/JobRole.js";
 import {
 	buildApplicationState,
 	buildErrorState,
@@ -24,7 +23,7 @@ export class JobRoleController {
 
 	async getJobRolesPage(req: Request, res: Response) {
 		try {
-			const roles = (await this.jobRoleService.getJobRoles()) as JobRole[];
+			const roles = await this.jobRoleService.getJobRoles();
 			const filteredRoles = filterRolesByStatus(roles, req.query.status_name);
 			res.render("job-role-list", { roles: filteredRoles });
 		} catch (_error) {
