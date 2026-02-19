@@ -100,7 +100,7 @@ export class JobRoleController {
 			"SharePoint link is required": "sharepointUrl",
 			"Invalid SharePoint URL format": "sharepointUrl",
 			"Responsibilities are required": "responsibilities",
-			"Number of open positions must be at least 1": "numberOfOpenPositions",
+			"Positions must be at least 1": "numberOfOpenPositions",
 			"Location is required": "location",
 			"Closing date is required": "closingDate",
 			"Closing date must be in the future": "closingDate",
