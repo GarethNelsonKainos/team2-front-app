@@ -94,11 +94,19 @@
 	color: white;
 }
 
-.card-header.kainos-blue:hover .create-edit-role-title-input {
+.card-header.kainos-blue:hover .new-role-title-input {
 	color: #212529;
 }
 
-.card-header.kainos-blue:hover .create-edit-role-title-input::placeholder {
+.card-header.kainos-blue:hover .new-role-title-input::placeholder {
+	color: #6c757d;
+}
+
+.card:hover .card-header.kainos-blue .new-role-title-input {
+	color: #212529;
+}
+
+.card:hover .card-header.kainos-blue .new-role-title-input::placeholder {
 	color: #6c757d;
 }
 
@@ -124,6 +132,11 @@
 	.create-edit-role-sharepoint-wrap
 	.form-control::placeholder {
 	color: #6c757d;
+}
+
+.card-header.kainos-blue:hover .invalid-feedback,
+.card:hover .card-header.kainos-blue .invalid-feedback {
+	color: #dc3545 !important;
 }
 
 .kainos-blue-text {
@@ -274,7 +287,7 @@ body.bg-img {
 	min-width: min(100%, 360px);
 }
 
-.create-edit-role-form .invalid-feedback {
+.new-role-form .invalid-feedback {
 	text-align: left;
 }
 

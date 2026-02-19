@@ -173,7 +173,7 @@
                                                 <strong>Band</strong><br>
                                                 <select id="bandId" name="bandId"
                                                     class="form-select form-select-sm mt-1 <%= fieldErrors.bandId ? 'is-invalid' : '' %>" required>
-                                                    <option value="">Select</option>
+                                                    <option value="" disabled <%= formData.bandId ? '' : 'selected' %>>Select</option>
                                                     <% bands.forEach(function(band) { %>
                                                         <% if (formData.bandId === band.bandId) { %>
                                                             <option value="<%= band.bandId %>" selected><%= band.bandName %></option>
@@ -200,7 +200,7 @@
                                                 <strong>Capability</strong><br>
                                                 <select id="capabilityId" name="capabilityId"
                                                     class="form-select form-select-sm mt-1 <%= fieldErrors.capabilityId ? 'is-invalid' : '' %>" required>
-                                                    <option value="">Select</option>
+                                                    <option value="" disabled <%= formData.capabilityId ? '' : 'selected' %>>Select</option>
                                                     <% capabilities.forEach(function(capability) { %>
                                                         <% if (formData.capabilityId === capability.capabilityId) { %>
                                                             <option value="<%= capability.capabilityId %>" selected><%= capability.capabilityName %></option>
