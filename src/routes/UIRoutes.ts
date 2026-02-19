@@ -14,7 +14,7 @@ export default function uiRouter(
 		controller.getCreateJobRolePage(req, res),
 	);
 	router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
-	router.post("/job-roles/:id/delete", (req, res) =>
+	router.delete("/job-roles/:id", (req, res) =>
 		controller.deleteJobRole(req, res),
 	);
 	router.get("/job-roles/:id", (req, res) =>
