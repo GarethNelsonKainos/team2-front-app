@@ -227,7 +227,7 @@
             </div>
 
             <div class="d-flex gap-2 justify-content-end">
-                <button type="submit" class="btn kainos-blue bg-level-action-btn">Confirm</button>
+                <button id="confirmSubmitButton" type="submit" class="btn kainos-blue bg-level-action-btn">Confirm</button>
                 <a href="/job-roles" class="btn btn-secondary bg-level-cancel-btn">Cancel</a>
             </div>
         </form>
@@ -243,6 +243,8 @@
         import * as yup from "https://cdn.jsdelivr.net/npm/yup@1.7.1/+esm";
 
         const form = document.getElementById("newRoleForm");
+        const confirmSubmitButton = document.getElementById("confirmSubmitButton");
+        let submitInProgress = false;
 
         window.addEventListener("DOMContentLoaded", () => {
             form.reset();
@@ -299,11 +301,24 @@
                     },
                 ),
             numberOfOpenPositions: yup
-                .number()
-                .required("Number of open positions is required")
-                .typeError("Number of open positions must be an integer")
-                .integer("Number of open positions must be an integer")
-                .min(1, "Number of open positions must be at least 1"),
+                .string()
+                .trim()
+                .required("Positions is required")
+                .test(
+                    "is-integer",
+                    "Positions must be an integer",
+                    (value) => /^\d+$/.test(value || ""),
+                )
+                .test(
+                    "min-one",
+                    "Positions must be at least 1",
+                    (value) => {
+                        if (!value || !/^\d+$/.test(value)) {
+                            return true;
+                        }
+                        return Number(value) >= 1;
+                    },
+                ),
             location: yup
                 .string()
                 .trim()
@@ -372,6 +387,14 @@
         }
 
         async function validateField(fieldName) {
+            if (
+                fieldName === "numberOfOpenPositions"
+                && fields.numberOfOpenPositions.validity.badInput
+            ) {
+                showError(fieldName, "Positions must be an integer");
+                return false;
+            }
+
             const values = getFormValues();
             try {
                 await schema.validateAt(fieldName, values);
@@ -386,34 +409,55 @@
         async function validateAllFields() {
             const values = getFormValues();
             let isValid = true;
+            const firstErrorByField = {};
+
+            if (fields.numberOfOpenPositions.validity.badInput) {
+                firstErrorByField.numberOfOpenPositions = "Positions must be an integer";
+            }
 
             try {
                 await schema.validate(values, { abortEarly: false });
-                Object.keys(fields).forEach((fieldName) => clearError(fieldName));
-                return true;
             } catch (error) {
                 if (!error.inner || !Array.isArray(error.inner)) {
                     return false;
                 }
 
-                const firstErrorByField = {};
                 error.inner.forEach((entry) => {
                     if (entry.path && !firstErrorByField[entry.path]) {
                         firstErrorByField[entry.path] = entry.message;
                     }
                 });
-
-                Object.keys(fields).forEach((fieldName) => {
-                    if (firstErrorByField[fieldName]) {
-                        showError(fieldName, firstErrorByField[fieldName]);
-                        isValid = false;
-                    } else {
-                        clearError(fieldName);
-                    }
-                });
             }
 
+            Object.keys(fields).forEach((fieldName) => {
+                if (firstErrorByField[fieldName]) {
+                    showError(fieldName, firstErrorByField[fieldName]);
+                    isValid = false;
+                } else {
+                    clearError(fieldName);
+                }
+            });
+
             return isValid;
+        }
+
+        async function handleSubmit() {
+            if (submitInProgress) {
+                return;
+            }
+            submitInProgress = true;
+
+            Object.keys(touched).forEach((fieldName) => {
+                touched[fieldName] = true;
+            });
+
+            const valid = await validateAllFields();
+            if (valid) {
+                form.submit();
+                return;
+            }
+
+            submitInProgress = false;
         }
 
         Object.keys(fields).forEach((fieldName) => {
@@ -439,15 +483,15 @@
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
-            Object.keys(touched).forEach((fieldName) => {
-                touched[fieldName] = true;
-            });
-
-            const valid = await validateAllFields();
-            if (valid) {
-                form.submit();
-            }
+            await handleSubmit();
         });
+
+        if (confirmSubmitButton) {
+            confirmSubmitButton.addEventListener("pointerdown", async (event) => {
+                event.preventDefault();
+                await handleSubmit();
+            });
+        }
     </script>
 </body>
 
