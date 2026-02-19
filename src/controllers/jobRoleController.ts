@@ -116,7 +116,10 @@ export class JobRoleController {
 				formAction: `/job-roles/${id}/edit`,
 			});
 		} catch (error) {
-			console.error(`Error fetching job role with id ${id} for edit page:`, error);
+			console.error(
+				`Error fetching job role with id ${id} for edit page:`,
+				error,
+			);
 			return res.status(500).render("job-role-no-data");
 		}
 	}
@@ -246,8 +249,8 @@ export class JobRoleController {
 
 	private mapJobRoleToFormData(role: unknown): CreateJobRoleFormData {
 		const jobRole = role as Record<string, unknown>;
-		const capability = (jobRole.capability as Record<string, unknown> | undefined) ||
-			{};
+		const capability =
+			(jobRole.capability as Record<string, unknown> | undefined) || {};
 		const band = (jobRole.band as Record<string, unknown> | undefined) || {};
 
 		return {

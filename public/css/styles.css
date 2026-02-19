@@ -112,7 +112,10 @@
 	color: #6c757d;
 }
 
-.card:hover .card-header.kainos-blue .create-edit-role-sharepoint-wrap .form-control {
+.card:hover
+	.card-header.kainos-blue
+	.create-edit-role-sharepoint-wrap
+	.form-control {
 	color: #212529;
 }
 

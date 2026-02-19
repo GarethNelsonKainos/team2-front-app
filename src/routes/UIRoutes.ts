@@ -10,7 +10,7 @@ export default function uiRouter(
 	const router = Router();
 
 	router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
-	router.get("/create-edit-role", (req, res) =>
+	router.get("/new-role", (req, res) =>
 		controller.getCreateJobRolePage(req, res),
 	);
 	router.post("/job-roles", (req, res) => controller.createJobRole(req, res));

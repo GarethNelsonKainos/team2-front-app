@@ -91,7 +91,10 @@ export class JobRoleService {
 		}
 	}
 
-	async updateJobRole(id: string, input: CreateJobRolePayload): Promise<JobRole> {
+	async updateJobRole(
+		id: string,
+		input: CreateJobRolePayload,
+	): Promise<JobRole> {
 		try {
 			const response = await axios.put<JobRole>(
 				`${API_BASE_URL}/job-roles/${id}`,
