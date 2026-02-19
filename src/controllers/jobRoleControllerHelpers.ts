@@ -62,12 +62,13 @@ export function buildApplicationState({
 	openPositions: number;
 	roleId: string;
 }): string {
+	const encodedRoleId = encodeURIComponent(roleId);
 	if (!hasUser) {
 		return '<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>';
 	}
 
 	if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
-		return `<a href="/job-roles/${roleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
+		return `<a href="/job-roles/${encodedRoleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
 	}
 
 	if (roleStatusName === JobRoleStatus.OPEN && openPositions === 0) {
