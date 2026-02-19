@@ -19,6 +19,11 @@
         navClass: 'kainos-font'
     }) %>
     <div class="container my-5 kainos-font">
+        <% if (deleteError) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= deleteError %>
+            </div>
+        <% } %>
         <div class="table-responsive rounded-4 shadow">
             <table class="table table-hover table-striped align-middle mb-0">
                 <thead>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= pageTitle || 'Add New Role' %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-img kainos-font">
+    <%- include('partials/navbar', {
+        showAuth: false,
+        showHomeButton: true,
+        pageTitle: pageTitle || 'Add New Role',
+        navClass: 'kainos-font'
+    }) %>
+
+    <div class="container my-5 kainos-font">
+        <form id="newRoleForm" class="new-role-form" action="<%= formAction || '/job-roles' %>" method="POST" novalidate>
+            <div class="card shadow rounded-4 mb-4">
+                <div class="card-header kainos-blue text-white d-flex align-items-center justify-content-between">
+                    <div class="w-100 pe-2">
+                        <label for="roleName" class="form-label mb-1 text-white">Job role name</label>
+                        <input type="text" id="roleName" name="roleName"
+                            class="form-control new-role-title-input <%= fieldErrors.roleName ? 'is-invalid' : '' %>" value="<%= formData.roleName %>"
+                            maxlength="255" required>
+                        <div class="invalid-feedback <%= fieldErrors.roleName ? '' : 'd-none' %>" data-field-error="roleName">
+                            <%= fieldErrors.roleName || '' %>
+                        </div>
+                    </div>
+                    <a href="/job-roles" class="btn btn-sm kainos-green back ms-2">Back</a>
+                </div>
+            </div>
+
+            <% if (apiError) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= apiError %>
+                </div>
+            <% } %>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm job-role-section">
+                        <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Description</h5>
+                        </div>
+                        <div class="card-body">
+                            <textarea id="description" name="description"
+                                class="form-control <%= fieldErrors.description ? 'is-invalid' : '' %>" rows="7" maxlength="2000"
+                                required><%= formData.description %></textarea>
+                            <div class="invalid-feedback <%= fieldErrors.description ? '' : 'd-none' %>" data-field-error="description">
+                                <%= fieldErrors.description || '' %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm job-role-section">
+                        <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Responsibilities</h5>
+                        </div>
+                        <div class="card-body">
+                            <textarea id="responsibilities" name="responsibilities"
+                                class="form-control <%= fieldErrors.responsibilities ? 'is-invalid' : '' %>" rows="7" maxlength="4000"
+                                required><%= formData.responsibilities %></textarea>
+                            <div class="invalid-feedback <%= fieldErrors.responsibilities ? '' : 'd-none' %>" data-field-error="responsibilities">
+                                <%= fieldErrors.responsibilities || '' %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header kainos-blue text-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <h5 class="mb-0">Details</h5>
+                            <div class="create-edit-role-sharepoint-wrap">
+                                <label for="sharepointUrl" class="form-label text-white mb-1">SharePoint link</label>
+                                <input type="url" id="sharepointUrl" name="sharepointUrl"
+                                    class="form-control form-control-sm <%= fieldErrors.sharepointUrl ? 'is-invalid' : '' %>"
+                                    value="<%= formData.sharepointUrl %>" maxlength="2048" required>
+                                <div class="invalid-feedback <%= fieldErrors.sharepointUrl ? '' : 'd-none' %>" data-field-error="sharepointUrl">
+                                    <%= fieldErrors.sharepointUrl || '' %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-2">
+                                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-calendar-event kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Closing</strong><br>
+                                                <input type="date" id="closingDate" name="closingDate"
+                                                    class="form-control form-control-sm mt-1 <%= fieldErrors.closingDate ? 'is-invalid' : '' %>"
+                                                    value="<%= formData.closingDate %>" required>
+                                                <div class="invalid-feedback <%= fieldErrors.closingDate ? '' : 'd-none' %>" data-field-error="closingDate">
+                                                    <%= fieldErrors.closingDate || '' %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-flag kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Status</strong><br>
+                                                <span>Open</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-people kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Positions</strong><br>
+                                                <input type="number" id="numberOfOpenPositions" name="numberOfOpenPositions"
+                                                    class="form-control form-control-sm mt-1 <%= fieldErrors.numberOfOpenPositions ? 'is-invalid' : '' %>"
+                                                    value="<%= formData.numberOfOpenPositions %>" min="1" step="1" required>
+                                                <div class="invalid-feedback <%= fieldErrors.numberOfOpenPositions ? '' : 'd-none' %>" data-field-error="numberOfOpenPositions">
+                                                    <%= fieldErrors.numberOfOpenPositions || '' %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-geo-alt kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Location</strong><br>
+                                                <input type="text" id="location" name="location"
+                                                    class="form-control form-control-sm mt-1 <%= fieldErrors.location ? 'is-invalid' : '' %>"
+                                                    value="<%= formData.location %>" maxlength="255" required>
+                                                <div class="invalid-feedback <%= fieldErrors.location ? '' : 'd-none' %>" data-field-error="location">
+                                                    <%= fieldErrors.location || '' %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-diagram-3 kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Band</strong><br>
+                                                <select id="bandId" name="bandId"
+                                                    class="form-select form-select-sm mt-1 <%= fieldErrors.bandId ? 'is-invalid' : '' %>" required>
+                                                    <option value="" disabled <%= formData.bandId ? '' : 'selected' %>>Select</option>
+                                                    <% bands.forEach(function(band) { %>
+                                                        <% if (formData.bandId === band.bandId) { %>
+                                                            <option value="<%= band.bandId %>" selected><%= band.bandName %></option>
+                                                        <% } else { %>
+                                                            <option value="<%= band.bandId %>"><%= band.bandName %></option>
+                                                        <% } %>
+                                                    <% }); %>
+                                                </select>
+                                                <div class="invalid-feedback <%= fieldErrors.bandId ? '' : 'd-none' %>" data-field-error="bandId">
+                                                    <%= fieldErrors.bandId || '' %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                                        <div class="card-body p-2">
+                                            <div class="mb-1" style="font-size:1.5rem;">
+                                                <i class="bi bi-lightbulb kainos-blue-text"></i>
+                                            </div>
+                                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                                <strong>Capability</strong><br>
+                                                <select id="capabilityId" name="capabilityId"
+                                                    class="form-select form-select-sm mt-1 <%= fieldErrors.capabilityId ? 'is-invalid' : '' %>" required>
+                                                    <option value="" disabled <%= formData.capabilityId ? '' : 'selected' %>>Select</option>
+                                                    <% capabilities.forEach(function(capability) { %>
+                                                        <% if (formData.capabilityId === capability.capabilityId) { %>
+                                                            <option value="<%= capability.capabilityId %>" selected><%= capability.capabilityName %></option>
+                                                        <% } else { %>
+                                                            <option value="<%= capability.capabilityId %>"><%= capability.capabilityName %></option>
+                                                        <% } %>
+                                                    <% }); %>
+                                                </select>
+                                                <div class="invalid-feedback <%= fieldErrors.capabilityId ? '' : 'd-none' %>" data-field-error="capabilityId">
+                                                    <%= fieldErrors.capabilityId || '' %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end">
+                <button id="confirmSubmitButton" type="submit" class="btn kainos-blue bg-level-action-btn">Confirm</button>
+                <a href="/job-roles" class="btn btn-secondary bg-level-cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+
+    <script type="module">
+        import * as yup from "https://cdn.jsdelivr.net/npm/yup@1.7.1/+esm";
+
+        const form = document.getElementById("newRoleForm");
+        const confirmSubmitButton = document.getElementById("confirmSubmitButton");
+        let submitInProgress = false;
+        const fields = {
+            roleName: document.getElementById("roleName"),
+            description: document.getElementById("description"),
+            responsibilities: document.getElementById("responsibilities"),
+            sharepointUrl: document.getElementById("sharepointUrl"),
+            numberOfOpenPositions: document.getElementById("numberOfOpenPositions"),
+            location: document.getElementById("location"),
+            closingDate: document.getElementById("closingDate"),
+            bandId: document.getElementById("bandId"),
+            capabilityId: document.getElementById("capabilityId"),
+        };
+
+        const feedbacks = Object.fromEntries(
+            Object.keys(fields).map((name) => [
+                name,
+                document.querySelector(`[data-field-error="${name}"]`),
+            ]),
+        );
+
+        const touched = Object.fromEntries(
+            Object.keys(fields).map((name) => [name, false]),
+        );
+
+        const schema = yup.object({
+            roleName: yup
+                .string()
+                .trim()
+                .required("Role name is required"),
+            description: yup
+                .string()
+                .trim()
+                .required("Job spec summary is required"),
+            responsibilities: yup
+                .string()
+                .trim()
+                .required("Responsibilities is required"),
+            sharepointUrl: yup
+                .string()
+                .trim()
+                .required("SharePoint link is required")
+                .url("Invalid SharePoint URL format")
+                .test(
+                    "http-or-https",
+                    "Invalid SharePoint URL format",
+                    (value) => {
+                        if (!value) {
+                            return false;
+                        }
+                        return value.startsWith("http://") || value.startsWith("https://");
+                    },
+                ),
+            numberOfOpenPositions: yup
+                .string()
+                .trim()
+                .required("Number of open positions is required")
+                .test(
+                    "is-integer",
+                    "Number of open positions must be at least 1",
+                    (value) => /^\d+$/.test(value || ""),
+                )
+                .test(
+                    "min-one",
+                    "Number of open positions must be at least 1",
+                    (value) => {
+                        if (!value || !/^\d+$/.test(value)) {
+                            return true;
+                        }
+                        return Number(value) >= 1;
+                    },
+                ),
+            location: yup
+                .string()
+                .trim()
+                .required("Location is required"),
+            closingDate: yup
+                .string()
+                .required("Closing date is required")
+                .test(
+                    "is-future-date",
+                    "Closing date must be in the future",
+                    (value) => {
+                        if (!value) {
+                            return false;
+                        }
+                        const selectedDate = new Date(value);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        selectedDate.setHours(0, 0, 0, 0);
+                        return selectedDate > today;
+                    },
+                ),
+            bandId: yup
+                .string()
+                .trim()
+                .required("Band is required"),
+            capabilityId: yup
+                .string()
+                .trim()
+                .required("Capability is required"),
+        });
+
+        function getFormValues() {
+            return {
+                roleName: fields.roleName.value.trim(),
+                description: fields.description.value.trim(),
+                responsibilities: fields.responsibilities.value.trim(),
+                sharepointUrl: fields.sharepointUrl.value.trim(),
+                numberOfOpenPositions: fields.numberOfOpenPositions.value,
+                location: fields.location.value.trim(),
+                closingDate: fields.closingDate.value,
+                bandId: fields.bandId.value,
+                capabilityId: fields.capabilityId.value,
+            };
+        }
+
+        function showError(fieldName, message) {
+            const input = fields[fieldName];
+            const feedback = feedbacks[fieldName];
+            if (!input || !feedback) {
+                return;
+            }
+            input.classList.add("is-invalid");
+            feedback.textContent = message;
+            feedback.classList.remove("d-none");
+        }
+
+        function clearError(fieldName) {
+            const input = fields[fieldName];
+            const feedback = feedbacks[fieldName];
+            if (!input || !feedback) {
+                return;
+            }
+            input.classList.remove("is-invalid");
+            feedback.textContent = "";
+            feedback.classList.add("d-none");
+        }
+
+        async function validateField(fieldName) {
+            if (
+                fieldName === "numberOfOpenPositions"
+                && fields.numberOfOpenPositions.validity.badInput
+            ) {
+                showError(fieldName, "Number of open positions must be at least 1");
+                return false;
+            }
+
+            const values = getFormValues();
+            try {
+                await schema.validateAt(fieldName, values);
+                clearError(fieldName);
+                return true;
+            } catch (error) {
+                showError(fieldName, error.message);
+                return false;
+            }
+        }
+
+        async function validateAllFields() {
+            const values = getFormValues();
+            let isValid = true;
+            const firstErrorByField = {};
+
+            if (fields.numberOfOpenPositions.validity.badInput) {
+                firstErrorByField.numberOfOpenPositions = "Number of open positions must be at least 1";
+            }
+
+            try {
+                await schema.validate(values, { abortEarly: false });
+            } catch (error) {
+                if (!error.inner || !Array.isArray(error.inner)) {
+                    return false;
+                }
+
+                error.inner.forEach((entry) => {
+                    if (entry.path && !firstErrorByField[entry.path]) {
+                        firstErrorByField[entry.path] = entry.message;
+                    }
+                });
+            }
+
+            Object.keys(fields).forEach((fieldName) => {
+                if (firstErrorByField[fieldName]) {
+                    showError(fieldName, firstErrorByField[fieldName]);
+                    isValid = false;
+                } else {
+                    clearError(fieldName);
+                }
+            });
+
+            return isValid;
+        }
+
+        async function handleSubmit() {
+            if (submitInProgress) {
+                return;
+            }
+            submitInProgress = true;
+            if (confirmSubmitButton) {
+                confirmSubmitButton.disabled = true;
+            }
+
+            Object.keys(touched).forEach((fieldName) => {
+                touched[fieldName] = true;
+            });
+
+            const valid = await validateAllFields();
+            if (valid) {
+                form.submit();
+                return;
+            }
+
+            submitInProgress = false;
+            if (confirmSubmitButton) {
+                confirmSubmitButton.disabled = false;
+            }
+        }
+
+        Object.keys(fields).forEach((fieldName) => {
+            const input = fields[fieldName];
+
+            input.addEventListener("blur", async () => {
+                touched[fieldName] = true;
+                await validateField(fieldName);
+            });
+
+            input.addEventListener("input", async () => {
+                if (touched[fieldName] && input.classList.contains("is-invalid")) {
+                    await validateField(fieldName);
+                }
+            });
+
+            input.addEventListener("change", async () => {
+                if (touched[fieldName]) {
+                    await validateField(fieldName);
+                }
+            });
+        });
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            await handleSubmit();
+        });
+
+    </script>
+</body>
+
+</html>
