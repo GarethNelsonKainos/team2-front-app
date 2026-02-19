@@ -90,4 +90,13 @@ export class JobRoleService {
 			]);
 		}
 	}
+
+	async deleteJobRole(id: string): Promise<void> {
+		try {
+			await axios.delete(`${API_BASE_URL}/job-role/${id}`);
+		} catch (error) {
+			console.error(`Error deleting job role with id ${id}:`, error);
+			throw new Error("Failed to delete job role");
+		}
+	}
 }

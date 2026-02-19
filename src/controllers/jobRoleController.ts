@@ -121,6 +121,21 @@ export class JobRoleController {
 		}
 	}
 
+	async deleteJobRole(req: Request, res: Response) {
+		const id = String(req.params.id);
+		if (!id || id.trim() === "") {
+			return res.status(400).send("Invalid or missing job role ID.");
+		}
+
+		try {
+			await this.jobRoleService.deleteJobRole(id);
+			return res.redirect("/job-roles");
+		} catch (error) {
+			console.error(`Error deleting job role with id ${id}:`, error);
+			return res.status(500).render("job-role-no-data");
+		}
+	}
+
 	private buildErrorState(error: unknown): {
 		fieldErrors: CreateJobRoleFieldErrors;
 		apiError: string;
