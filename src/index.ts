@@ -39,7 +39,7 @@ const applicationController = new ApplicationController(
 	applicationService,
 	jobRoleService,
 );
-const homeController = new HomeController(applicationService);
+const homeController = new HomeController(applicationService, authController);
 
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "ejs");

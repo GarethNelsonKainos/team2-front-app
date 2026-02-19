@@ -17,7 +17,11 @@
     <% } else { %>
       <div class="d-flex align-items-center gap-3 kainos-font">
         <h2>Welcome, <%= user.firstName || "" %> <%= user.secondName || "" %>!</h2>
-        <a href="/profile" class="btn btn kainos-blue-text bg-light ms-2"><i class="bi bi-person-circle fs-1 ms-3"></i></a>
+        <% if (isAdmin) { %>
+          <a href="/admin" class="btn btn-lg kainos-blue ms-auto">Admin Dashboard</a>
+        <% } else { %>
+          <a href="/profile" class="btn btn kainos-blue-text bg-light ms-2"><i class="bi bi-person-circle fs-1 ms-3"></i></a>
+        <% } %>
         <a href="/logout" class="btn btn-lg kainos-blue ms-auto">Logout</a>
       </div>
     <% } %>
