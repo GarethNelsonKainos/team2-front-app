@@ -4,7 +4,7 @@ import {
 	loginSchema,
 	registrationSchema,
 } from "../validationSchema/authValidation.js";
-import RegistrationRequest from "../types/RegistrationRequest.js";
+import type RegistrationRequest from "../types/RegistrationRequest.js";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 

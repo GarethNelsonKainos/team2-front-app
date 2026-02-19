@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { JobRoleService } from "../services/jobRoleService.js";
-import { JobRole, JobRoleStatus } from "../types/JobRole.js";
+import type { JobRoleService } from "../services/jobRoleService.js";
+import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;

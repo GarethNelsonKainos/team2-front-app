@@ -9,7 +9,7 @@ const passwordSchema = yup
 	.matches(/[a-z]/, "Password must contain at least one lowercase letter")
 	.matches(/[A-Z]/, "Password must contain at least one uppercase letter")
 	.matches(
-		/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+		/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/,
 		"Password must contain at least one special character",
 	);
 

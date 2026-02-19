@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { ApplicationService } from "../services/applicationService.js";
-import { JobRoleService } from "../services/jobRoleService.js";
+import type { ApplicationService } from "../services/applicationService.js";
+import type { JobRoleService } from "../services/jobRoleService.js";
 
 export class ApplicationController {
 	private applicationService: ApplicationService;

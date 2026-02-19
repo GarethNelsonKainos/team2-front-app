@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { authMiddleware } from "../middleware/authMiddleware.js";
-import { ApplicationController } from "../controllers/applicationController.js";
+import type { ApplicationController } from "../controllers/applicationController.js";
 
 const ACCEPTED_MIME_TYPES = [
 	"application/pdf",
