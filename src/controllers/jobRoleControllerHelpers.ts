@@ -45,7 +45,9 @@ export function filterRolesByStatus<T extends { status?: string }>(
 	}
 
 	return roles.filter((role) => {
-		return role.status && role.status.toLowerCase() === statusName.toLowerCase();
+		return (
+			role.status && role.status.toLowerCase() === statusName.toLowerCase()
+		);
 	});
 }
 
@@ -150,7 +152,9 @@ export function mapJobRoleToFormData(role: unknown): CreateJobRoleFormData {
 	return {
 		roleName: getTrimmedString(jobRole.roleName),
 		description: getTrimmedString(jobRole.description),
-		sharepointUrl: getTrimmedString(jobRole.sharepointUrl ?? jobRole.sharePointUrl),
+		sharepointUrl: getTrimmedString(
+			jobRole.sharepointUrl ?? jobRole.sharePointUrl,
+		),
 		responsibilities: getTrimmedString(jobRole.responsibilities),
 		numberOfOpenPositions:
 			typeof jobRole.numberOfOpenPositions === "number"
@@ -158,7 +162,9 @@ export function mapJobRoleToFormData(role: unknown): CreateJobRoleFormData {
 				: getTrimmedString(jobRole.numberOfOpenPositions),
 		location: getTrimmedString(jobRole.location),
 		closingDate: formatDateForInput(jobRole.closingDate),
-		capabilityId: getTrimmedString(jobRole.capabilityId ?? capability.capabilityId),
+		capabilityId: getTrimmedString(
+			jobRole.capabilityId ?? capability.capabilityId,
+		),
 		bandId: getTrimmedString(jobRole.bandId ?? band.bandId),
 	};
 }
