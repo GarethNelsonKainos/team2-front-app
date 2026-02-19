@@ -53,7 +53,10 @@ export const checkAdminMiddleware = async (
 		return next();
 	}
 	try {
-		res.locals.isAdmin = await authService.userRoleFlag(res.locals.token, user.id);
+		res.locals.isAdmin = await authService.userRoleFlag(
+			res.locals.token,
+			user.id,
+		);
 	} catch (error) {
 		console.error("Error checking admin role: ", error);
 		res.locals.isAdmin = false;

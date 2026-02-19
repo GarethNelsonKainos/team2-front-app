@@ -4,10 +4,13 @@ import { AuthController } from "./authController.js";
 
 export class HomeController {
 	private applicationService: ApplicationService;
-    private authController: AuthController;
-	constructor(applicationService: ApplicationService, authController: AuthController) {
+	private authController: AuthController;
+	constructor(
+		applicationService: ApplicationService,
+		authController: AuthController,
+	) {
 		this.applicationService = applicationService;
-        this.authController = authController;
+		this.authController = authController;
 	}
 
 	//home page shows user info and their applications if logged in, otherwise shows login/register options
@@ -15,15 +18,16 @@ export class HomeController {
 		const user = res.locals.user;
 		if (user) {
 			try {
-				const applications =
-					await this.applicationService.getUserApplications(
-						res.locals.token,
-					);
-                const isAdmin = await this.authController.checkUserRole(req, res);
-                    if (!isAdmin) {
-                        return res.status(403).send("Access denied. Admins only.");
-                     }
-				return res.render("home-page", { user, applications, showAuth: true, isAdmin });
+				const applications = await this.applicationService.getUserApplications(
+					res.locals.token,
+				);
+				const isAdmin = res.locals.isAdmin;
+				return res.render("home-page", {
+					user,
+					applications,
+					showAuth: true,
+					isAdmin,
+				});
 			} catch (error) {
 				console.error("Error fetching user applications:", error);
 				return res.render("home-page", {
@@ -34,7 +38,12 @@ export class HomeController {
 				});
 			}
 		}
-		res.render("home-page", { showAuth: false, user: null, applications: [], isAdmin: false });
+		res.render("home-page", {
+			showAuth: false,
+			user: null,
+			applications: [],
+			isAdmin: false,
+		});
 	}
 
 	async getProfilePage(_req: Request, res: Response) {
@@ -43,10 +52,16 @@ export class HomeController {
 			return res.redirect("/login");
 		}
 		try {
-			const applications =
-				await this.applicationService.getUserApplications(res.locals.token);
-			const isAdmin = await this.authController.checkUserRole(_req, res);
-			return res.render("profile", { user, applications, showAuth: true, isAdmin });
+			const applications = await this.applicationService.getUserApplications(
+				res.locals.token,
+			);
+			const isAdmin = res.locals.isAdmin;
+			return res.render("profile", {
+				user,
+				applications,
+				showAuth: true,
+				isAdmin,
+			});
 		} catch (error) {
 			console.error("Error fetching user applications:", error);
 			return res.render("profile", {
@@ -58,15 +73,15 @@ export class HomeController {
 		}
 	}
 
-    async getAdminPage(_req: Request, res: Response) {
-        const user = res.locals.user;
-        if (!user) {
-            return res.redirect("/login");
-        }
-        const isAdmin = await this.authController.checkUserRole(_req, res);
-        if (!isAdmin) {
-            return res.status(403).send("Access denied. Admins only.");
-        }
-        res.render("admin-dashboard", { user, showAuth: true, isAdmin });
-    }
+	async getAdminPage(_req: Request, res: Response) {
+		const user = res.locals.user;
+		if (!user) {
+			return res.redirect("/login");
+		}
+		const isAdmin = res.locals.isAdmin;
+		if (!isAdmin) {
+			return res.status(403).send("Access denied. Admins only.");
+		}
+		res.render("admin-dashboard", { user, showAuth: true, isAdmin });
+	}
 }

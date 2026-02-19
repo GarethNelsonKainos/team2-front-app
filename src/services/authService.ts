@@ -78,10 +78,10 @@ export class AuthService {
 			return true;
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response?.status === 403) {
-                return false;
-            }
-            console.error("Error checking user role:", error);
-            return false;
+				return false;
+			}
+			console.error("Error checking user role:", error);
+			return false;
 		}
 	}
 }

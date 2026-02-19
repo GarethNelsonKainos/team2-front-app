@@ -49,7 +49,12 @@ export class JobRoleController {
 					});
 				}
 			}
-			res.render("job-role-list", { roles: filteredRoles, deleteError, user: res.locals.user, isAdmin: res.locals.isAdmin });
+			res.render("job-role-list", {
+				roles: filteredRoles,
+				deleteError,
+				user: res.locals.user,
+				isAdmin: res.locals.isAdmin,
+			});
 		} catch (_error) {
 			console.error("Error in getJobRolesPage:", _error);
 			const deleteError =
@@ -61,9 +66,16 @@ export class JobRoleController {
 	async getOpenJobRoles(_req: Request, res: Response) {
 		try {
 			const roles = await this.jobRoleService.getJobRoles();
-			res.render("job-role-list", { roles, user: res.locals.user, isAdmin: res.locals.isAdmin });
+			res.render("job-role-list", {
+				roles,
+				user: res.locals.user,
+				isAdmin: res.locals.isAdmin,
+			});
 		} catch (_error) {
-			res.render("job-role-no-data", { user: res.locals.user, isAdmin: res.locals.isAdmin });
+			res.render("job-role-no-data", {
+				user: res.locals.user,
+				isAdmin: res.locals.isAdmin,
+			});
 		}
 	}
 
@@ -93,7 +105,7 @@ export class JobRoleController {
 					roleId,
 				);
 			}
-			if (appliedForRole || success) {
+			if (appliedForRole || success || res.locals.isAdmin) {
 				applicationState = null;
 			}
 			if (!res.locals.user) {
