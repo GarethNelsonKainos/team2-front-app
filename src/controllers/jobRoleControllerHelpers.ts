@@ -58,8 +58,9 @@ export function filterRolesByStatus<T extends { status?: RoleStatus }>(
 		return roles;
 	}
 
-	return roles.filter((role) =>
-		getRoleStatusName(role.status).toLowerCase() === statusName.toLowerCase(),
+	return roles.filter(
+		(role) =>
+			getRoleStatusName(role.status).toLowerCase() === statusName.toLowerCase(),
 	);
 }
 
