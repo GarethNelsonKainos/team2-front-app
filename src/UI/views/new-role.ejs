@@ -241,10 +241,6 @@
         const form = document.getElementById("newRoleForm");
         const confirmSubmitButton = document.getElementById("confirmSubmitButton");
         let submitInProgress = false;
-
-        window.addEventListener("DOMContentLoaded", () => {
-            form.reset();
-        });
         const fields = {
             roleName: document.getElementById("roleName"),
             description: document.getElementById("description"),

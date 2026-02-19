@@ -5,7 +5,7 @@ import {
 	type CreateJobRoleFormData,
 	EMPTY_FORM_DATA,
 } from "../../models/jobRoleModel.js";
-import { JobRoleService } from "../services/jobRoleService.js";
+import { JobRoleApiError, JobRoleService } from "../services/jobRoleService.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
@@ -65,17 +65,67 @@ export class JobRoleController {
 		try {
 			await this.jobRoleService.createJobRole(payload);
 			res.redirect("/job-roles");
-		} catch (_error) {
+		} catch (error) {
+			const status = error instanceof JobRoleApiError ? error.status : 500;
+			const { fieldErrors, apiError } = this.buildErrorState(error);
+
 			await this.renderCreateJobRolePage(
 				res,
 				{
 					formData,
-					fieldErrors: {},
-					apiError: "Cannot connect to server. Please check your connection.",
+					fieldErrors,
+					apiError,
 				},
-				500,
+				status,
 			);
 		}
+	}
+
+	private buildErrorState(error: unknown): {
+		fieldErrors: CreateJobRoleFieldErrors;
+		apiError: string;
+	} {
+		if (!(error instanceof JobRoleApiError)) {
+			return {
+				fieldErrors: {},
+				apiError: "Cannot connect to server. Please check your connection.",
+			};
+		}
+
+		const fieldErrors: CreateJobRoleFieldErrors = {};
+		const generalErrors: string[] = [];
+		const errorMapping: Record<string, keyof CreateJobRoleFormData> = {
+			"Role name is required": "roleName",
+			"Job spec summary is required": "description",
+			"SharePoint link is required": "sharepointUrl",
+			"Invalid SharePoint URL format": "sharepointUrl",
+			"Responsibilities are required": "responsibilities",
+			"Number of open positions must be at least 1": "numberOfOpenPositions",
+			"Location is required": "location",
+			"Closing date is required": "closingDate",
+			"Closing date must be in the future": "closingDate",
+			"Invalid closing date format": "closingDate",
+			"Capability is required": "capabilityId",
+			"Band is required": "bandId",
+		};
+
+		for (const errorMessage of error.errors) {
+			const mappedField = errorMapping[errorMessage];
+			if (mappedField) {
+				fieldErrors[mappedField] = errorMessage;
+				continue;
+			}
+
+			generalErrors.push(errorMessage);
+		}
+
+		const apiError =
+			generalErrors[0] ||
+			(statusIsServerError(error.status)
+				? "Cannot connect to server. Please check your connection."
+				: "");
+
+		return { fieldErrors, apiError };
 	}
 
 	private getFormDataFromRequest(req: Request): CreateJobRoleFormData {
@@ -134,4 +184,8 @@ export class JobRoleController {
 			});
 		}
 	}
+}
+
+function statusIsServerError(status: number): boolean {
+	return status >= 500;
 }
