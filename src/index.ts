@@ -33,6 +33,7 @@ const jobRoleService = new JobRoleService(applicationService);
 const jobRoleController = new JobRoleController(
 	jobRoleService,
 	applicationService,
+	authController,
 );
 const applicationController = new ApplicationController(
 	applicationService,

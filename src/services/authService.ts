@@ -67,4 +67,21 @@ export class AuthService {
 			};
 		}
 	}
+
+	async userRoleFlag(token: string, userId: string) {
+		try {
+			await axios.get(`${API_BASE_URL}/admin/job-roles/${userId}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			return true;
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response?.status === 403) {
+                return false;
+            }
+            console.error("Error checking user role:", error);
+            return false;
+		}
+	}
 }

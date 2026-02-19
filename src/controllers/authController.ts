@@ -87,4 +87,18 @@ export class AuthController {
 			});
 		}
 	}
+
+	async checkUserRole(req: Request, res: Response) {
+		try {
+			const token = res.locals.token;
+			if (!token) {
+				return res.status(401).json({ error: "Unauthorized" });
+			}
+			const isAdmin = await this.authService.userRoleFlag(token, res.locals.user?.userId);
+			return isAdmin;
+		} catch (_error) {
+			console.error("Error checking user role:", _error);
+			return res.status(500).json({ error: "Server error" });
+		}
+	}
 }

@@ -9,6 +9,7 @@ import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
 import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
 import type { ApplicationService } from "../services/applicationService.js";
+import { AuthController } from "./authController.js";
 
 const DELETE_JOB_ROLE_ERROR_MESSAGE =
 	"Failed to delete job role. Please check your connection.";
@@ -16,12 +17,15 @@ const DELETE_JOB_ROLE_ERROR_MESSAGE =
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
 	private applicationService: ApplicationService;
+	private authController: AuthController;
 	constructor(
 		jobRoleService: JobRoleService,
 		applicationService: ApplicationService,
+		authController: AuthController,
 	) {
 		this.jobRoleService = jobRoleService;
 		this.applicationService = applicationService;
+		this.authController = authController;
 	}
 
 	async getJobRolesPage(req: Request, res: Response) {
@@ -32,6 +36,8 @@ export class JobRoleController {
 
 			const { status_name } = req.query;
 			let filteredRoles = roles;
+
+			const isAdmin = await this.authController.checkUserRole(req, res);
 
 			if (status_name !== undefined && status_name !== null) {
 				const statusName = String(status_name).trim();
@@ -45,7 +51,7 @@ export class JobRoleController {
 					});
 				}
 			}
-			res.render("job-role-list", { roles: filteredRoles, deleteError });
+			res.render("job-role-list", { roles: filteredRoles, deleteError, user: res.locals.user, isAdmin });
 		} catch (_error) {
 			console.error("Error in getJobRolesPage:", _error);
 			const deleteError =
