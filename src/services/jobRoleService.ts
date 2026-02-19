@@ -99,7 +99,7 @@ export class JobRoleService {
 
 	async checkIfUserAppliedForRole(token: string, roleId: string) {
 		const applications =
-			await this.applicationService.getApplicationsByUserId(token);
+			await this.applicationService.getUserApplications(token);
 		return (
 			Array.isArray(applications) &&
 			applications.some(

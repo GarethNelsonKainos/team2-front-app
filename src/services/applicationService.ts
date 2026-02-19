@@ -38,7 +38,7 @@ export class ApplicationService {
 		}
 	}
 
-	async getApplicationsByUserId(token: string) {
+	async getUserApplications(token: string) {
 		try {
 			const response = await axios.get(`${API_BASE_URL}/myApplications`, {
 				headers: {
@@ -48,7 +48,7 @@ export class ApplicationService {
 			return response.data;
 		} catch (err) {
 			console.error(
-				"[getApplicationsByUserId] Error fetching applications:",
+				"[getUserApplications] Error fetching applications:",
 				err,
 			);
 			throw err;

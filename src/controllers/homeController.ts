@@ -13,7 +13,7 @@ export class HomeController {
 		if (user) {
 			try {
 				const applications =
-					await this.applicationService.getApplicationsByUserId(
+					await this.applicationService.getUserApplications(
 						res.locals.token,
 					);
 				return res.render("home-page", { user, applications, showAuth: true });
@@ -36,7 +36,7 @@ export class HomeController {
 		}
 		try {
 			const applications =
-				await this.applicationService.getApplicationsByUserId(res.locals.token);
+				await this.applicationService.getUserApplications(res.locals.token);
 			return res.render("profile", { user, applications, showAuth: true });
 		} catch (error) {
 			console.error("Error fetching user applications:", error);
