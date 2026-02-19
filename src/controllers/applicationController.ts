@@ -46,7 +46,7 @@ export class ApplicationController {
 					role,
 				});
 			}
-			
+
 			await this.applicationService.processApplication({
 				jobRoleId,
 				userId,
