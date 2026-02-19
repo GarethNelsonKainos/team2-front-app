@@ -72,10 +72,10 @@ export class ApplicationController {
 			}
 			const applications =
 				await this.applicationService.getApplicationsByUserId(res.locals.token);
-			res.render("/partials/my-applications", { applications });
+			return res.status(200).json({ applications });
 		} catch (error) {
 			console.error("[getUserApplications] Error:", error);
-			return res.status(500).render("/partials/my-applications", {
+			return res.status(500).json({
 				applications: [],
 				error: "Failed to fetch your applications.",
 			});

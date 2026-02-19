@@ -40,7 +40,7 @@ export class HomeController {
 			return res.render("profile", { user, applications, showAuth: true });
 		} catch (error) {
 			console.error("Error fetching user applications:", error);
-			return res.render("profile-page", {
+			return res.render("profile", {
 				user,
 				applications: [],
 				showAuth: true,
