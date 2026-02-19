@@ -65,12 +65,19 @@ export class JobRoleController {
 
 			if (!res.locals.user) {
 				applicationState = `<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>`;
-			} else if (role.status.statusName === JobRoleStatus.OPEN && role.numberOfOpenPositions > 0) {
+			} else if (
+				role.status.statusName === JobRoleStatus.OPEN &&
+				role.numberOfOpenPositions > 0
+			) {
 				applicationState = `<a href="/job-roles/${role.jobRoleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
-			} else if (role.status.statusName === JobRoleStatus.OPEN && role.numberOfOpenPositions === 0) {
+			} else if (
+				role.status.statusName === JobRoleStatus.OPEN &&
+				role.numberOfOpenPositions === 0
+			) {
 				applicationState = `<span class="text-muted">No positions available for this role</span>`;
 			} else if (role.status.statusName === JobRoleStatus.IN_PROGRESS) {
-				applicationState = '<span class="text-muted">You have already applied for this role</span>';
+				applicationState =
+					'<span class="text-muted">You have already applied for this role</span>';
 			} else {
 				applicationState = `<span class="text-muted">This role is not currently open for applications</span>`;
 			}
