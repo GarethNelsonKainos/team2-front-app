@@ -9,6 +9,10 @@ const loginController = new LoginController();
 const registerController = new RegisterController();
 
 router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
+router.get("/new-role", (req, res) =>
+	controller.getCreateJobRolePage(req, res),
+);
+router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
 router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
 
 router.get("/login", (_req, res) => {

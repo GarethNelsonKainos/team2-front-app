@@ -1,28 +1,26 @@
 import type { Request, Response } from "express";
-import { JobRoleService } from "../services/jobRoleService.js";
-
-type JobRoleStatus = {
-	statusName?: string;
-};
-
-type JobRole = {
-	status?: JobRoleStatus;
-};
+import {
+	buildCreateJobRolePayload,
+	type CreateJobRoleFieldErrors,
+	type CreateJobRoleFormData,
+	EMPTY_FORM_DATA,
+} from "../../models/jobRoleModel.js";
+import { JobRoleApiError, JobRoleService } from "../services/jobRoleService.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
+
 	constructor() {
 		this.jobRoleService = new JobRoleService();
 	}
 
 	async getJobRolesPage(req: Request, res: Response) {
 		try {
-			const roles = (await this.jobRoleService.getJobRoles()) as JobRole[];
+			const roles = await this.jobRoleService.getJobRoles();
 			const { statusName } = req.query;
 			let filteredRoles = roles;
 			if (statusName && typeof statusName === "string") {
 				filteredRoles = roles.filter((role) => {
-					// Case-insensitive match for status
 					return (
 						role.status?.statusName &&
 						role.status.statusName.toLowerCase() === statusName.toLowerCase()
@@ -30,15 +28,6 @@ export class JobRoleController {
 				});
 			}
 			res.render("job-role-list", { roles: filteredRoles });
-		} catch (_error) {
-			res.render("job-role-no-data");
-		}
-	}
-
-	async getOpenJobRoles(_req: Request, res: Response) {
-		try {
-			const roles = await this.jobRoleService.getJobRoles();
-			res.render("job-role-list", { roles });
 		} catch (_error) {
 			res.render("job-role-no-data");
 		}
@@ -58,7 +47,98 @@ export class JobRoleController {
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
 			res.status(500).send("Failed to load job role.");
-			res.render("job-role-no-data");
+		}
+	}
+
+	async getCreateJobRolePage(_req: Request, res: Response) {
+		await this.renderCreateJobRolePage(res, {
+			formData: { ...EMPTY_FORM_DATA },
+			fieldErrors: {},
+			apiErrors: [],
+		});
+	}
+
+	async createJobRole(req: Request, res: Response) {
+		const formData = this.getFormDataFromRequest(req);
+		const payload = buildCreateJobRolePayload(formData);
+
+		try {
+			await this.jobRoleService.createJobRole(payload);
+			res.redirect("/job-roles");
+		} catch (error) {
+			const status = error instanceof JobRoleApiError ? error.status : 500;
+			const apiErrors =
+				error instanceof JobRoleApiError
+					? error.errors
+					: ["Unable to create role right now. Please try again."];
+			await this.renderCreateJobRolePage(
+				res,
+				{
+					formData,
+					fieldErrors: {},
+					apiErrors,
+				},
+				status,
+			);
+		}
+	}
+
+	private getFormDataFromRequest(req: Request): CreateJobRoleFormData {
+		return {
+			roleName: this.getTrimmedString(req.body.roleName),
+			description: this.getTrimmedString(req.body.description),
+			sharepointUrl: this.getTrimmedString(req.body.sharepointUrl),
+			responsibilities: this.getTrimmedString(req.body.responsibilities),
+			numberOfOpenPositions: this.getTrimmedString(
+				req.body.numberOfOpenPositions,
+			),
+			location: this.getTrimmedString(req.body.location),
+			closingDate: this.getTrimmedString(req.body.closingDate),
+			capabilityId: this.getTrimmedString(req.body.capabilityId),
+			bandId: this.getTrimmedString(req.body.bandId),
+		};
+	}
+
+	private getTrimmedString(value: unknown): string {
+		return typeof value === "string" ? value.trim() : "";
+	}
+
+	private async renderCreateJobRolePage(
+		res: Response,
+		{
+			formData,
+			fieldErrors,
+			apiErrors,
+		}: {
+			formData: CreateJobRoleFormData;
+			fieldErrors: CreateJobRoleFieldErrors;
+			apiErrors: string[];
+		},
+		status: number = 200,
+	) {
+		try {
+			const [capabilities, bands] = await Promise.all([
+				this.jobRoleService.getCapabilities(),
+				this.jobRoleService.getBands(),
+			]);
+
+			res.status(status).render("new-role", {
+				formData,
+				fieldErrors,
+				apiErrors,
+				capabilities,
+				bands,
+			});
+		} catch (_error) {
+			res.status(500).render("new-role", {
+				formData,
+				fieldErrors,
+				apiErrors: [
+					"Unable to load capability and band options. Please try again.",
+				],
+				capabilities: [],
+				bands: [],
+			});
 		}
 	}
 }

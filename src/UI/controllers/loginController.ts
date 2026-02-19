@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { loginUser } from "../services/loginService.js";
 import jwt from "jsonwebtoken";
 
