@@ -94,31 +94,31 @@
 	color: white;
 }
 
-.card-header.kainos-blue:hover .new-role-title-input {
+.card-header.kainos-blue:hover .create-edit-role-title-input {
 	color: #212529;
 }
 
-.card-header.kainos-blue:hover .new-role-title-input::placeholder {
+.card-header.kainos-blue:hover .create-edit-role-title-input::placeholder {
 	color: #6c757d;
 }
 
-.card-header.kainos-blue:hover .new-role-sharepoint-wrap .form-control {
+.card-header.kainos-blue:hover .create-edit-role-sharepoint-wrap .form-control {
 	color: #212529;
 }
 
 .card-header.kainos-blue:hover
-	.new-role-sharepoint-wrap
+	.create-edit-role-sharepoint-wrap
 	.form-control::placeholder {
 	color: #6c757d;
 }
 
-.card:hover .card-header.kainos-blue .new-role-sharepoint-wrap .form-control {
+.card:hover .card-header.kainos-blue .create-edit-role-sharepoint-wrap .form-control {
 	color: #212529;
 }
 
 .card:hover
 	.card-header.kainos-blue
-	.new-role-sharepoint-wrap
+	.create-edit-role-sharepoint-wrap
 	.form-control::placeholder {
 	color: #6c757d;
 }
@@ -267,11 +267,11 @@ body.bg-img {
 	max-width: 700px !important;
 }
 
-.new-role-sharepoint-wrap {
+.create-edit-role-sharepoint-wrap {
 	min-width: min(100%, 360px);
 }
 
-.new-role-form .invalid-feedback {
+.create-edit-role-form .invalid-feedback {
 	text-align: left;
 }
 

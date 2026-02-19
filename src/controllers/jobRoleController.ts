@@ -310,7 +310,7 @@ export class JobRoleController {
 				this.jobRoleService.getBands(),
 			]);
 
-			res.status(status).render("new-role", {
+			res.status(status).render("create-edit-role", {
 				formData,
 				fieldErrors,
 				apiError,
@@ -320,7 +320,7 @@ export class JobRoleController {
 				bands,
 			});
 		} catch (_error) {
-			res.status(500).render("new-role", {
+			res.status(500).render("create-edit-role", {
 				formData,
 				fieldErrors,
 				apiError: "Cannot connect to server. Please check your connection.",
