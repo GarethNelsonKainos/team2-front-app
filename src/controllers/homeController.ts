@@ -29,24 +29,22 @@ export class HomeController {
 		res.render("home-page", { showAuth: false, user: null, applications: [] });
 	}
 
-    async getProfilePage(_req: Request, res: Response) {
-        const user = res.locals.user;
-        if (!user) {
-            return res.redirect("/login");
-        }
-        try {
-            const applications =
-                await this.applicationService.getApplicationsByUserId(
-                    res.locals.token,
-                );
-            return res.render("profile", { user, applications, showAuth: true });
-        } catch (error) {
-            console.error("Error fetching user applications:", error);
-            return res.render("profile-page", {
-                user,
-                applications: [],
-                showAuth: true,
-            }); 
-        }
-    }
+	async getProfilePage(_req: Request, res: Response) {
+		const user = res.locals.user;
+		if (!user) {
+			return res.redirect("/login");
+		}
+		try {
+			const applications =
+				await this.applicationService.getApplicationsByUserId(res.locals.token);
+			return res.render("profile", { user, applications, showAuth: true });
+		} catch (error) {
+			console.error("Error fetching user applications:", error);
+			return res.render("profile-page", {
+				user,
+				applications: [],
+				showAuth: true,
+			});
+		}
+	}
 }
