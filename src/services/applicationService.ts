@@ -8,10 +8,12 @@ export class ApplicationService {
 		jobRoleId,
 		userId,
 		file,
+		token,
 	}: {
 		jobRoleId: string;
 		userId: string;
 		file: Express.Multer.File;
+		token: string;
 	}) {
 		const form = new FormData();
 		form.append("jobRoleId", jobRoleId);
@@ -24,6 +26,7 @@ export class ApplicationService {
 			const response = await axios.post(`${API_BASE_URL}/application`, form, {
 				headers: {
 					...form.getHeaders(),
+					Authorization: `Bearer ${token}`,
 				},
 				maxContentLength: maxLength,
 				maxBodyLength: maxLength,
