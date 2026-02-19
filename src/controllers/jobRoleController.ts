@@ -22,9 +22,7 @@ export class JobRoleController {
 		try {
 			const roles = (await this.jobRoleService.getJobRoles()) as JobRole[];
 			const deleteError =
-				req.query.deleteError === "true"
-					? DELETE_JOB_ROLE_ERROR_MESSAGE
-					: null;
+				req.query.deleteError === "true" ? DELETE_JOB_ROLE_ERROR_MESSAGE : null;
 
 			const { status_name } = req.query;
 			let filteredRoles = roles;
@@ -45,9 +43,7 @@ export class JobRoleController {
 		} catch (_error) {
 			console.error("Error in getJobRolesPage:", _error);
 			const deleteError =
-				req.query.deleteError === "true"
-					? DELETE_JOB_ROLE_ERROR_MESSAGE
-					: null;
+				req.query.deleteError === "true" ? DELETE_JOB_ROLE_ERROR_MESSAGE : null;
 			res.render("job-role-no-data", { deleteError });
 		}
 	}
