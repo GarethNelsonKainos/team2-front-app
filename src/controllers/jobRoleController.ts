@@ -9,6 +9,9 @@ import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
 import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
 
+const DELETE_JOB_ROLE_ERROR_MESSAGE =
+	"Failed to delete job role. Please check your connection.";
+
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
 	constructor(jobRoleService: JobRoleService) {
@@ -18,6 +21,10 @@ export class JobRoleController {
 	async getJobRolesPage(req: Request, res: Response) {
 		try {
 			const roles = (await this.jobRoleService.getJobRoles()) as JobRole[];
+			const deleteError =
+				req.query.deleteError === "true"
+					? DELETE_JOB_ROLE_ERROR_MESSAGE
+					: null;
 
 			const { status_name } = req.query;
 			let filteredRoles = roles;
@@ -34,10 +41,14 @@ export class JobRoleController {
 					});
 				}
 			}
-			res.render("job-role-list", { roles: filteredRoles });
+			res.render("job-role-list", { roles: filteredRoles, deleteError });
 		} catch (_error) {
 			console.error("Error in getJobRolesPage:", _error);
-			res.render("job-role-no-data");
+			const deleteError =
+				req.query.deleteError === "true"
+					? DELETE_JOB_ROLE_ERROR_MESSAGE
+					: null;
+			res.render("job-role-no-data", { deleteError });
 		}
 	}
 
@@ -132,7 +143,7 @@ export class JobRoleController {
 			return res.redirect("/job-roles");
 		} catch (error) {
 			console.error(`Error deleting job role with id ${id}:`, error);
-			return res.status(500).render("job-role-no-data");
+			return res.redirect("/job-roles?deleteError=true");
 		}
 	}
 

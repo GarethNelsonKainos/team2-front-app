@@ -20,6 +20,11 @@
     }) %>
 
     <div class="container my-5 kainos-font">
+        <% if (deleteError) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= deleteError %>
+            </div>
+        <% } %>
         <div class="d-flex justify-content-start mb-3">
             <a href="/new-role" class="btn kainos-blue bg-level-action-btn">Add New Role</a>
         </div>
@@ -105,56 +110,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-    <script>
-        const deleteRoleForms = document.querySelectorAll(".delete-role-form");
-
-        deleteRoleForms.forEach((form) => {
-            form.addEventListener("submit", async (event) => {
-                event.preventDefault();
-
-                const confirmButton = form.querySelector("button[type='submit']");
-                if (confirmButton) {
-                    confirmButton.disabled = true;
-                }
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: "POST",
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                        },
-                    });
-
-                    if (!response.ok) {
-                        throw new Error("Delete request failed");
-                    }
-
-                    const modalElement = form.closest(".modal");
-                    if (modalElement && window.bootstrap) {
-                        const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
-                        if (modalInstance) {
-                            modalElement.addEventListener(
-                                "hidden.bs.modal",
-                                () => {
-                                    window.location.reload();
-                                },
-                                { once: true },
-                            );
-                            modalInstance.hide();
-                            return;
-                        }
-                    }
-
-                    window.location.reload();
-                } catch (_error) {
-                    if (confirmButton) {
-                        confirmButton.disabled = false;
-                    }
-                    window.alert("Failed to delete role. Please try again.");
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>
