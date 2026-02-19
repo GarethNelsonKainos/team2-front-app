@@ -47,7 +47,10 @@ export class ApplicationService {
 			});
 			return response.data;
 		} catch (err) {
-			console.error("[getApplicationsByUserId] Error fetching applications:", err);
+			console.error(
+				"[getApplicationsByUserId] Error fetching applications:",
+				err,
+			);
 			throw err;
 		}
 	}

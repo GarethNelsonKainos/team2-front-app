@@ -28,9 +28,12 @@ const __dirname = path.dirname(__filename);
 
 const authService = new AuthService();
 const authController = new AuthController(authService);
-const jobRoleService = new JobRoleService();
-const jobRoleController = new JobRoleController(jobRoleService);
 const applicationService = new ApplicationService();
+const jobRoleService = new JobRoleService(applicationService);
+const jobRoleController = new JobRoleController(
+	jobRoleService,
+	applicationService,
+);
 const applicationController = new ApplicationController(
 	applicationService,
 	jobRoleService,

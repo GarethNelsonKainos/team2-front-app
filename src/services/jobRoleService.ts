@@ -5,6 +5,7 @@ import type {
 	CreateJobRolePayload,
 	JobRole,
 } from "../models/jobRoleModel.js";
+import { ApplicationService } from "./applicationService.js";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
@@ -21,6 +22,11 @@ export class JobRoleApiError extends Error {
 }
 
 export class JobRoleService {
+	private applicationService: ApplicationService;
+	constructor(applicationService: ApplicationService) {
+		this.applicationService = applicationService;
+	}
+
 	async getJobRoles(): Promise<JobRole[]> {
 		try {
 			const response = await axios.get<JobRole[]>(`${API_BASE_URL}/job-roles`);
@@ -89,5 +95,17 @@ export class JobRoleService {
 				"Cannot connect to server. Please try again.",
 			]);
 		}
+	}
+
+	async checkIfUserAppliedForRole(token: string, roleId: string) {
+		const applications =
+			await this.applicationService.getApplicationsByUserId(token);
+		return (
+			Array.isArray(applications) &&
+			applications.some(
+				(application: { jobRoleId: string }) =>
+					application.jobRoleId === roleId,
+			)
+		);
 	}
 }

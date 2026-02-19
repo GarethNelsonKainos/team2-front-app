@@ -70,9 +70,8 @@ export class ApplicationController {
 					.status(401)
 					.send("Unauthorized: Missing authentication token.");
 			}
-			const applications = await this.applicationService.getApplicationsByUserId(
-				res.locals.token,
-			);
+			const applications =
+				await this.applicationService.getApplicationsByUserId(res.locals.token);
 			res.render("/partials/my-applications", { applications });
 		} catch (error) {
 			console.error("[getUserApplications] Error:", error);

@@ -152,9 +152,15 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center">
-                <% if (success) { %>
+                <% if (appliedForRole) { %>
                     <div class="alert alert-success" role="alert">
-                        <i class="bi bi-check-circle"></i> <%= success %>
+                        <i class="bi bi-check-circle"></i>
+                        You have already applied for this role.
+                    </div>
+                <% } else if (success) { %>
+                    <div class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle"></i>
+                        <%= success %>
                     </div>
                 <% } else { %>
                     <%- applicationState %>
