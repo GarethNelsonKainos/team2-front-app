@@ -82,7 +82,6 @@ export class JobRoleController {
 					roleId,
 				);
 			}
-			console.log("User applied for role:", appliedForRole);
 			if (appliedForRole || success) {
 				applicationState = null;
 			}
