@@ -151,6 +151,15 @@
                     </div>
                 </div>
             </div>
+            <div class="d-flex justify-content-center">
+                <% if (success) { %>
+                    <div class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle"></i> <%= success %>
+                    </div>
+                <% } else { %>
+                    <%- applicationState %>
+                <% } %>
+            </div>
     </div>
 
     <%- include('partials/footer') %>

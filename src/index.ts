@@ -1,34 +1,54 @@
 import express from "express";
-import type { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-import UIRoutes from "./routes/UIRoutes.js";
+import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+import uiRouter from "./routes/UIRoutes.js";
+import authRouter from "./routes/AuthRoutes.js";
+import applicationRouter from "./routes/applicationRoutes.js";
+
+import { ApplicationController } from "./controllers/applicationController.js";
+import { ApplicationService } from "./services/applicationService.js";
+import { JobRoleController } from "./controllers/jobRoleController.js";
+import { JobRoleService } from "./services/jobRoleService.js";
+import { AuthService } from "./services/authService.js";
+import { AuthController } from "./controllers/authController.js";
+import { authMiddleware } from "./middleware/authMiddleware.js";
+import { decodeTokenMiddleware } from "./middleware/authMiddleware.js";
+
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-import path from "path";
-import { fileURLToPath } from "url";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.set("views", path.join(__dirname, "UI/views"));
+const authService = new AuthService();
+const authController = new AuthController(authService);
+const jobRoleService = new JobRoleService();
+const jobRoleController = new JobRoleController(jobRoleService);
+const applicationService = new ApplicationService();
+const applicationController = new ApplicationController(
+	applicationService,
+	jobRoleService,
+);
+
+app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "ejs");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "../public")));
-app.use("/", UIRoutes);
+app.use(decodeTokenMiddleware);
 
-app.get("/", (_req: Request, res: Response, _next: NextFunction) => {
-	res.render("home-page", {
-		title: "Home",
-		token: null,
-		user: null,
-		showLoginModal: false,
-	});
+app.get("/", async (_req, res) => {
+	res.render("home-page", { showAuth: true });
 });
+app.use("/", authRouter(authController));
+app.use("/", uiRouter(jobRoleController, applicationController));
+app.use("/", applicationRouter(applicationController));
 
 app.listen(port, () => {
 	console.log(`App listening on port ${port}`);

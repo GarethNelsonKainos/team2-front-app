@@ -12,20 +12,19 @@
   <% if (showHomeButton) { %>
     <a href="/" class="btn btn-lg kainos-blue ms-auto">Home</a>
   <% } else if (showAuth) { %>
-    <% if (!token) { %>
+    <% if (!user) { %>
       <a href="/login" class="btn btn-lg kainos-blue ms-auto">Login</a>
     <% } else { %>
       <div class="d-flex align-items-center gap-3 kainos-font">
         <h2>Welcome, <%= user.firstName || "" %> <%= user.secondName || "" %>!</h2>
-        <button type="button" class="btn btn-lg kainos-blue ms-auto" data-bs-toggle="modal"
-          data-bs-target="#logoutModal">Logout</button>
+        <a href="/logout" class="btn btn-lg kainos-blue ms-auto">Logout</a>
       </div>
     <% } %>
   <% } %>
 </nav>
 
 <!-- Logout Modal (only included if user is authenticated) -->
-<% if (showAuth && token) { %>
+<% if (showAuth && user) { %>
   <!-- Logout Modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

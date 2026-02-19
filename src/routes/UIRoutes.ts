@@ -1,37 +1,25 @@
 import { Router } from "express";
-import { JobRoleController } from "../UI/controllers/jobRoleController.js";
-import { LoginController } from "../UI/controllers/loginController.js";
-import { RegisterController } from "../UI/controllers/registerController.js";
+import type { JobRoleController } from "../controllers/jobRoleController.js";
+import type { ApplicationController } from "../controllers/applicationController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
-const router = Router();
-const controller = new JobRoleController();
-const loginController = new LoginController();
-const registerController = new RegisterController();
+export default function uiRouter(
+	controller: JobRoleController,
+	applicationController: ApplicationController,
+) {
+	const router = Router();
 
-router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
+	router.get("/job-roles", (req, res) => controller.getJobRolesPage(req, res));
 router.get("/new-role", (req, res) =>
 	controller.getCreateJobRolePage(req, res),
 );
 router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
-router.get("/job-roles/:id", (req, res) => controller.getJobRoleById(req, res));
+	router.get("/job-roles/:id", (req, res) =>
+		controller.getJobRoleById(req, res),
+	);
+	router.get("/job-roles/:id/apply", authMiddleware, (req, res) => {
+		applicationController.getApplicationForm(req, res);
+	});
 
-router.get("/login", (_req, res) => {
-	res.render("login-page", { user: null, token: null, activeTab: "login" });
-});
-
-router.get("/register", (_req, res) => {
-	res.render("login-page", { user: null, token: null, activeTab: "register" });
-});
-
-router.post("/login", (req, res) => loginController.handleLogin(req, res));
-
-router.post("/register", (req, res) =>
-	registerController.handleRegister(req, res),
-);
-
-// Temporary route for logged-in page to test login functionality
-router.get("/logged-in", (_req, res) => {
-	res.render("logged-in");
-});
-
-export default router;
+	return router;
+}
