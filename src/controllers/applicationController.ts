@@ -46,20 +46,14 @@ export class ApplicationController {
 					role,
 				});
 			}
-
 			await this.applicationService.processApplication({
 				jobRoleId,
 				userId,
 				file,
+				token: res.locals.token,
 			});
-			// Fetch job role details again for the view
-			const role = await this.jobRoleService.getJobRoleById(jobRoleId);
-			return res.status(200).render("application-form", {
-				jobRoleId,
-				user: res.locals.user,
-				success: "Application submitted successfully!",
-				role,
-			});
+
+			return res.redirect(`/job-roles/${jobRoleId}?applicationSuccess=true`);
 		} catch (error) {
 			console.error("[handleApplicationSubmit] Error:", error);
 			return res.status(500).render("application-form", {

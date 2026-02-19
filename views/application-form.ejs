@@ -1,7 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-    <body> 
-        <h1>Application Form</h1>
-        <p>Apply for job role ID: <%= jobRoleId %> </p>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Application Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+    <body class="d-flex flex-column min-vh-100 bg-img kainos-font"> 
+        <%- include('partials/navbar', { 
+            showAuth: true, 
+            showHomeButton: true, 
+            user: user, 
+            pageTitle: 'Application Form',
+            navClass: 'kainos-font'
+        }) %>
+        <main class="container card card-shadow my-5 kainos-font flex-grow-1" style="max-width: 600px; margin: 2rem auto;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="mb-0">Application Form</h1>
+                <a href="/job-roles/<%= jobRoleId %>" class="btn kainos-blue btn-sm ms-2">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger"><%= error %></div>
+            <% } %>
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="alert alert-success d-flex align-items-center gap-2">
+                    <i class="bi bi-check-circle-fill" style="font-size: 1.5rem;"></i>
+                    <span><%= success %></span>
+                </div>
+            <% } %>
+
+            <% if (typeof role !== 'undefined' && role) { %>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-4">
+                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                        <div class="card-body p-2">
+                            <div class="mb-1" style="font-size:1.5rem;">
+                                <i class="bi bi-calendar-event kainos-blue-text"></i>
+                            </div>
+                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                <strong>Closing</strong><br>
+                                <span><%= role.closingDate ? new Date(role.closingDate).toLocaleDateString('en-GB') : '' %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                        <div class="card-body p-2">
+                            <div class="mb-1" style="font-size:1.5rem;">
+                                <i class="bi bi-flag kainos-blue-text"></i>
+                            </div>
+                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                <strong>Status</strong><br>
+                                <span><%= role.status && role.status.statusName ? role.status.statusName : '' %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                        <div class="card-body p-2">
+                            <div class="mb-1" style="font-size:1.5rem;">
+                                <i class="bi bi-people kainos-blue-text"></i>
+                            </div>
+                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                <strong>Positions</strong><br>
+                                <span><%= role.numberOfOpenPositions %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                        <div class="card-body p-2">
+                            <div class="mb-1" style="font-size:1.5rem;">
+                                <i class="bi bi-geo-alt kainos-blue-text"></i>
+                            </div>
+                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                <strong>Location</strong><br>
+                                <span><%= role.location %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                        <div class="card-body p-2">
+                            <div class="mb-1" style="font-size:1.5rem;">
+                                <i class="bi bi-diagram-3 kainos-blue-text"></i>
+                            </div>
+                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                <strong>Band</strong><br>
+                                <span><%= role.band && role.band.bandName ? role.band.bandName : '' %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card kainos-blue-border job-detail-card h-100 text-center bg-white">
+                        <div class="card-body p-2">
+                            <div class="mb-1" style="font-size:1.5rem;">
+                                <i class="bi bi-lightbulb kainos-blue-text"></i>
+                            </div>
+                            <div class="kainos-blue-text" style="font-size:0.9rem;">
+                                <strong>Capability</strong><br>
+                                <span><%= role.capability && role.capability.capabilityName ? role.capability.capabilityName : '' %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            <form id="appForm" method="post" action="/application" enctype="multipart/form-data" class="mt-4">
+                <input type="hidden" name="jobRoleId" value="<%= jobRoleId %>">
+                <input type="hidden" name="userId" value="<%= user && user.userId ? user.userId : '' %>">
+                <div class="mb-3">
+                    <label for="cv" class="form-label">Choose file to upload</label>
+                    <input type="file" class="form-control" id="cv" name="CV" accept=".pdf, .doc, .docx" required />
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" id="submitBtn" class="btn btn-lg kainos-blue">Submit</button>
+                </div>
+            </form>
+        </main>
+        <%- include('partials/footer') %>
     </body>
 </html>
