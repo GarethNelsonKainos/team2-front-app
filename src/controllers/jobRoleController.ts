@@ -7,6 +7,7 @@ import {
 } from "../models/jobRoleModel.js";
 import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
+import type { JobRole } from "../types/JobRole.js";
 import {
 	buildApplicationState,
 	buildErrorState,
@@ -179,7 +180,7 @@ export class JobRoleController {
 		}
 
 		return {
-			fieldErrors: error.fieldErrors || {},
+			fieldErrors: {},
 			apiError: error.message || "An error occurred. Please try again.",
 		};
 	}
