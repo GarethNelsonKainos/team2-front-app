@@ -37,8 +37,6 @@ export class JobRoleController {
 			const { status_name } = req.query;
 			let filteredRoles = roles;
 
-			const isAdmin = await this.authController.checkUserRole(req, res);
-
 			if (status_name !== undefined && status_name !== null) {
 				const statusName = String(status_name).trim();
 				if (statusName !== "") {
@@ -51,7 +49,7 @@ export class JobRoleController {
 					});
 				}
 			}
-			res.render("job-role-list", { roles: filteredRoles, deleteError, user: res.locals.user, isAdmin });
+			res.render("job-role-list", { roles: filteredRoles, deleteError, user: res.locals.user, isAdmin: res.locals.isAdmin });
 		} catch (_error) {
 			console.error("Error in getJobRolesPage:", _error);
 			const deleteError =
@@ -63,9 +61,9 @@ export class JobRoleController {
 	async getOpenJobRoles(_req: Request, res: Response) {
 		try {
 			const roles = await this.jobRoleService.getJobRoles();
-			res.render("job-role-list", { roles });
+			res.render("job-role-list", { roles, user: res.locals.user, isAdmin: res.locals.isAdmin });
 		} catch (_error) {
-			res.render("job-role-no-data");
+			res.render("job-role-no-data", { user: res.locals.user, isAdmin: res.locals.isAdmin });
 		}
 	}
 

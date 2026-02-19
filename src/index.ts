@@ -17,6 +17,7 @@ import { AuthController } from "./controllers/authController.js";
 import { HomeController } from "./controllers/homeController.js";
 import { authMiddleware } from "./middleware/authMiddleware.js";
 import { decodeTokenMiddleware } from "./middleware/authMiddleware.js";
+import { checkAdminMiddleware } from "./middleware/authMiddleware.js";
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(decodeTokenMiddleware);
+app.use(checkAdminMiddleware);
 
 app.get("/", async (_req, res) => {
 	res.render("home-page", { showAuth: true, user: null, applications: [] });
