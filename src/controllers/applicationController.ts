@@ -25,10 +25,7 @@ export class ApplicationController {
 					.status(401)
 					.send("Unauthorized: Missing authentication token.");
 			}
-			const role = await this.jobRoleService.getJobRoleById(
-				ID,
-				res.locals.token,
-			);
+			const role = await this.jobRoleService.getJobRoleById(ID);
 			if (!role) {
 				return res.status(404).send("Job role not found.");
 			}
@@ -52,10 +49,7 @@ export class ApplicationController {
 			const { jobRoleId, userId } = req.body;
 			const file = req.file;
 			if (!file) {
-				const role = await this.jobRoleService.getJobRoleById(
-					jobRoleId,
-					res.locals.token,
-				);
+				const role = await this.jobRoleService.getJobRoleById(jobRoleId);
 				return res.status(400).render("application-form", {
 					jobRoleId,
 					error: "No file uploaded.",
@@ -68,10 +62,7 @@ export class ApplicationController {
 				file,
 			});
 			// Fetch job role details again for the view
-			const role = await this.jobRoleService.getJobRoleById(
-				jobRoleId,
-				res.locals.token,
-			);
+			const role = await this.jobRoleService.getJobRoleById(jobRoleId);
 			return res.status(200).render("application-form", {
 				jobRoleId,
 				user: res.locals.user,
