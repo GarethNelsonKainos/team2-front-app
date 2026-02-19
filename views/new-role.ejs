@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Add New Role</title>
+    <title><%= pageTitle || 'Add New Role' %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/styles.css">
@@ -15,12 +15,12 @@
     <%- include('partials/navbar', {
         showAuth: false,
         showHomeButton: true,
-        pageTitle: 'Add New Role',
+        pageTitle: pageTitle || 'Add New Role',
         navClass: 'kainos-font'
     }) %>
 
     <div class="container my-5 kainos-font">
-        <form id="newRoleForm" class="new-role-form" action="/job-roles" method="POST" novalidate>
+        <form id="newRoleForm" class="new-role-form" action="<%= formAction || '/job-roles' %>" method="POST" novalidate>
             <div class="card shadow rounded-4 mb-4">
                 <div class="card-header kainos-blue text-white d-flex align-items-center justify-content-between">
                     <div class="w-100 pe-2">

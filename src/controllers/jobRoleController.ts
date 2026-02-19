@@ -95,7 +95,30 @@ export class JobRoleController {
 			formData: { ...EMPTY_FORM_DATA },
 			fieldErrors: {},
 			apiError: "",
+			pageTitle: "Add New Role",
+			formAction: "/job-roles",
 		});
+	}
+
+	async getEditJobRolePage(req: Request, res: Response) {
+		const id = String(req.params.id);
+		if (!id || id.trim() === "") {
+			return res.status(400).send("Invalid or missing job role ID.");
+		}
+
+		try {
+			const role = await this.jobRoleService.getJobRoleById(id);
+			await this.renderCreateJobRolePage(res, {
+				formData: this.mapJobRoleToFormData(role),
+				fieldErrors: {},
+				apiError: "",
+				pageTitle: "Edit Role",
+				formAction: `/job-roles/${id}/edit`,
+			});
+		} catch (error) {
+			console.error(`Error fetching job role with id ${id} for edit page:`, error);
+			return res.status(500).render("job-role-no-data");
+		}
 	}
 
 	async createJobRole(req: Request, res: Response) {
@@ -115,6 +138,38 @@ export class JobRoleController {
 					formData,
 					fieldErrors,
 					apiError,
+					pageTitle: "Add New Role",
+					formAction: "/job-roles",
+				},
+				status,
+			);
+		}
+	}
+
+	async updateJobRole(req: Request, res: Response) {
+		const id = String(req.params.id);
+		if (!id || id.trim() === "") {
+			return res.status(400).send("Invalid or missing job role ID.");
+		}
+
+		const formData = this.getFormDataFromRequest(req);
+		const payload = buildCreateJobRolePayload(formData);
+
+		try {
+			await this.jobRoleService.updateJobRole(id, payload);
+			res.redirect(`/job-roles/${id}`);
+		} catch (error) {
+			const status = error instanceof JobRoleApiError ? error.status : 500;
+			const { fieldErrors, apiError } = this.buildErrorState(error);
+
+			await this.renderCreateJobRolePage(
+				res,
+				{
+					formData,
+					fieldErrors,
+					apiError,
+					pageTitle: "Edit Role",
+					formAction: `/job-roles/${id}/edit`,
 				},
 				status,
 			);
@@ -189,16 +244,63 @@ export class JobRoleController {
 		return typeof value === "string" ? value.trim() : "";
 	}
 
+	private mapJobRoleToFormData(role: unknown): CreateJobRoleFormData {
+		const jobRole = role as Record<string, unknown>;
+		const capability = (jobRole.capability as Record<string, unknown> | undefined) ||
+			{};
+		const band = (jobRole.band as Record<string, unknown> | undefined) || {};
+
+		return {
+			roleName: this.getTrimmedString(jobRole.roleName),
+			description: this.getTrimmedString(jobRole.description),
+			sharepointUrl: this.getTrimmedString(
+				jobRole.sharepointUrl ?? jobRole.sharePointUrl,
+			),
+			responsibilities: this.getTrimmedString(jobRole.responsibilities),
+			numberOfOpenPositions:
+				typeof jobRole.numberOfOpenPositions === "number"
+					? String(jobRole.numberOfOpenPositions)
+					: this.getTrimmedString(jobRole.numberOfOpenPositions),
+			location: this.getTrimmedString(jobRole.location),
+			closingDate: this.formatDateForInput(jobRole.closingDate),
+			capabilityId: this.getTrimmedString(
+				jobRole.capabilityId ?? capability.capabilityId,
+			),
+			bandId: this.getTrimmedString(jobRole.bandId ?? band.bandId),
+		};
+	}
+
+	private formatDateForInput(value: unknown): string {
+		const rawValue = this.getTrimmedString(value);
+		if (!rawValue) {
+			return "";
+		}
+
+		const parsedDate = new Date(rawValue);
+		if (Number.isNaN(parsedDate.getTime())) {
+			return rawValue;
+		}
+
+		const year = parsedDate.getFullYear();
+		const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+		const day = String(parsedDate.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	}
+
 	private async renderCreateJobRolePage(
 		res: Response,
 		{
 			formData,
 			fieldErrors,
 			apiError,
+			pageTitle,
+			formAction,
 		}: {
 			formData: CreateJobRoleFormData;
 			fieldErrors: CreateJobRoleFieldErrors;
 			apiError: string;
+			pageTitle: string;
+			formAction: string;
 		},
 		status: number = 200,
 	) {
@@ -212,6 +314,8 @@ export class JobRoleController {
 				formData,
 				fieldErrors,
 				apiError,
+				pageTitle,
+				formAction,
 				capabilities,
 				bands,
 			});
@@ -220,6 +324,8 @@ export class JobRoleController {
 				formData,
 				fieldErrors,
 				apiError: "Cannot connect to server. Please check your connection.",
+				pageTitle,
+				formAction,
 				capabilities: [],
 				bands: [],
 			});

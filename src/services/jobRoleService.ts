@@ -90,4 +90,30 @@ export class JobRoleService {
 			]);
 		}
 	}
+
+	async updateJobRole(id: string, input: CreateJobRolePayload): Promise<JobRole> {
+		try {
+			const response = await axios.put<JobRole>(
+				`${API_BASE_URL}/job-roles/${id}`,
+				input,
+			);
+			return response.data;
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response) {
+				const status = error.response.status;
+				const responseData = error.response.data;
+				const responseErrors =
+					responseData?.errors && Array.isArray(responseData.errors)
+						? responseData.errors
+						: typeof responseData?.error === "string"
+							? [responseData.error]
+							: ["Failed to update job role"];
+				throw new JobRoleApiError(status, responseErrors);
+			}
+
+			throw new JobRoleApiError(503, [
+				"Cannot connect to server. Please try again.",
+			]);
+		}
+	}
 }

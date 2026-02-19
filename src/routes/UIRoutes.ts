@@ -14,6 +14,12 @@ export default function uiRouter(
 		controller.getCreateJobRolePage(req, res),
 	);
 	router.post("/job-roles", (req, res) => controller.createJobRole(req, res));
+	router.get("/job-roles/:id/edit", (req, res) =>
+		controller.getEditJobRolePage(req, res),
+	);
+	router.post("/job-roles/:id/edit", (req, res) =>
+		controller.updateJobRole(req, res),
+	);
 	router.get("/job-roles/:id", (req, res) =>
 		controller.getJobRoleById(req, res),
 	);
