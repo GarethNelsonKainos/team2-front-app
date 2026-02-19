@@ -7,7 +7,14 @@ import {
 } from "../models/jobRoleModel.js";
 import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
-import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
+import type { JobRole } from "../types/JobRole.js";
+import {
+	buildApplicationState,
+	buildErrorState,
+	filterRolesByStatus,
+	getFormDataFromRequest,
+	mapJobRoleToFormData,
+} from "./jobRoleControllerHelpers.js";
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
@@ -18,22 +25,7 @@ export class JobRoleController {
 	async getJobRolesPage(req: Request, res: Response) {
 		try {
 			const roles = (await this.jobRoleService.getJobRoles()) as JobRole[];
-
-			const { status_name } = req.query;
-			let filteredRoles = roles;
-
-			if (status_name !== undefined && status_name !== null) {
-				const statusName = String(status_name).trim();
-				if (statusName !== "") {
-					filteredRoles = roles.filter((role) => {
-						// Case-insensitive match for status
-						return (
-							role.status &&
-							role.status.toLowerCase() === statusName.toLowerCase()
-						);
-					});
-				}
-			}
+			const filteredRoles = filterRolesByStatus(roles, req.query.status_name);
 			res.render("job-role-list", { roles: filteredRoles });
 		} catch (_error) {
 			console.error("Error in getJobRolesPage:", _error);
@@ -66,22 +58,12 @@ export class JobRoleController {
 				req.query.applicationSuccess === "true"
 					? "Application submitted successfully!"
 					: null;
-
-			// Determine application state
-			let applicationState: string | null = null;
-
-			if (!res.locals.user) {
-				applicationState = `<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>`;
-			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
-				applicationState = `<a href="/job-roles/${roleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
-			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions === 0) {
-				applicationState = `<span class="text-muted">No positions available for this role</span>`;
-			} else if (roleStatusName === JobRoleStatus.IN_PROGRESS) {
-				applicationState =
-					'<span class="text-muted">You have already applied for this role</span>';
-			} else {
-				applicationState = `<span class="text-muted">This role is not currently open for applications</span>`;
-			}
+			const applicationState = buildApplicationState({
+				hasUser: Boolean(res.locals.user),
+				roleStatusName,
+				openPositions,
+				roleId,
+			});
 
 			res.render("job-role-information", { role, success, applicationState });
 		} catch (error) {
@@ -109,7 +91,7 @@ export class JobRoleController {
 		try {
 			const role = await this.jobRoleService.getJobRoleById(id);
 			await this.renderCreateJobRolePage(res, {
-				formData: this.mapJobRoleToFormData(role),
+				formData: mapJobRoleToFormData(role),
 				fieldErrors: {},
 				apiError: "",
 				pageTitle: "Edit Role",
@@ -125,7 +107,7 @@ export class JobRoleController {
 	}
 
 	async createJobRole(req: Request, res: Response) {
-		const formData = this.getFormDataFromRequest(req);
+		const formData = getFormDataFromRequest(req);
 		const payload = buildCreateJobRolePayload(formData);
 
 		try {
@@ -133,7 +115,7 @@ export class JobRoleController {
 			res.redirect("/job-roles");
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = this.buildErrorState(error);
+			const { fieldErrors, apiError } = buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
@@ -155,7 +137,7 @@ export class JobRoleController {
 			return res.status(400).send("Invalid or missing job role ID.");
 		}
 
-		const formData = this.getFormDataFromRequest(req);
+		const formData = getFormDataFromRequest(req);
 		const payload = buildCreateJobRolePayload(formData);
 
 		try {
@@ -163,7 +145,7 @@ export class JobRoleController {
 			res.redirect(`/job-roles/${id}`);
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = this.buildErrorState(error);
+			const { fieldErrors, apiError } = buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
@@ -177,117 +159,6 @@ export class JobRoleController {
 				status,
 			);
 		}
-	}
-
-	private buildErrorState(error: unknown): {
-		fieldErrors: CreateJobRoleFieldErrors;
-		apiError: string;
-	} {
-		if (!(error instanceof JobRoleApiError)) {
-			return {
-				fieldErrors: {},
-				apiError: "Cannot connect to server. Please check your connection.",
-			};
-		}
-
-		const fieldErrors: CreateJobRoleFieldErrors = {};
-		const generalErrors: string[] = [];
-		const errorMapping: Record<string, keyof CreateJobRoleFormData> = {
-			"Role name is required": "roleName",
-			"Job spec summary is required": "description",
-			"SharePoint link is required": "sharepointUrl",
-			"Invalid SharePoint URL format": "sharepointUrl",
-			"Responsibilities is required": "responsibilities",
-			"Number of open positions is required": "numberOfOpenPositions",
-			"Number of open positions must be at least 1": "numberOfOpenPositions",
-			"Location is required": "location",
-			"Closing date is required": "closingDate",
-			"Closing date must be in the future": "closingDate",
-			"Invalid closing date format": "closingDate",
-			"Capability is required": "capabilityId",
-			"Band is required": "bandId",
-		};
-
-		for (const errorMessage of error.errors) {
-			const mappedField = errorMapping[errorMessage];
-			if (mappedField) {
-				fieldErrors[mappedField] = errorMessage;
-				continue;
-			}
-
-			generalErrors.push(errorMessage);
-		}
-
-		const apiError =
-			generalErrors[0] ||
-			(statusIsServerError(error.status)
-				? "Cannot connect to server. Please check your connection."
-				: "");
-
-		return { fieldErrors, apiError };
-	}
-
-	private getFormDataFromRequest(req: Request): CreateJobRoleFormData {
-		return {
-			roleName: this.getTrimmedString(req.body.roleName),
-			description: this.getTrimmedString(req.body.description),
-			sharepointUrl: this.getTrimmedString(req.body.sharepointUrl),
-			responsibilities: this.getTrimmedString(req.body.responsibilities),
-			numberOfOpenPositions: this.getTrimmedString(
-				req.body.numberOfOpenPositions,
-			),
-			location: this.getTrimmedString(req.body.location),
-			closingDate: this.getTrimmedString(req.body.closingDate),
-			capabilityId: this.getTrimmedString(req.body.capabilityId),
-			bandId: this.getTrimmedString(req.body.bandId),
-		};
-	}
-
-	private getTrimmedString(value: unknown): string {
-		return typeof value === "string" ? value.trim() : "";
-	}
-
-	private mapJobRoleToFormData(role: unknown): CreateJobRoleFormData {
-		const jobRole = role as Record<string, unknown>;
-		const capability =
-			(jobRole.capability as Record<string, unknown> | undefined) || {};
-		const band = (jobRole.band as Record<string, unknown> | undefined) || {};
-
-		return {
-			roleName: this.getTrimmedString(jobRole.roleName),
-			description: this.getTrimmedString(jobRole.description),
-			sharepointUrl: this.getTrimmedString(
-				jobRole.sharepointUrl ?? jobRole.sharePointUrl,
-			),
-			responsibilities: this.getTrimmedString(jobRole.responsibilities),
-			numberOfOpenPositions:
-				typeof jobRole.numberOfOpenPositions === "number"
-					? String(jobRole.numberOfOpenPositions)
-					: this.getTrimmedString(jobRole.numberOfOpenPositions),
-			location: this.getTrimmedString(jobRole.location),
-			closingDate: this.formatDateForInput(jobRole.closingDate),
-			capabilityId: this.getTrimmedString(
-				jobRole.capabilityId ?? capability.capabilityId,
-			),
-			bandId: this.getTrimmedString(jobRole.bandId ?? band.bandId),
-		};
-	}
-
-	private formatDateForInput(value: unknown): string {
-		const rawValue = this.getTrimmedString(value);
-		if (!rawValue) {
-			return "";
-		}
-
-		const parsedDate = new Date(rawValue);
-		if (Number.isNaN(parsedDate.getTime())) {
-			return rawValue;
-		}
-
-		const year = parsedDate.getFullYear();
-		const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
-		const day = String(parsedDate.getDate()).padStart(2, "0");
-		return `${year}-${month}-${day}`;
 	}
 
 	private async renderCreateJobRolePage(
@@ -334,8 +205,4 @@ export class JobRoleController {
 			});
 		}
 	}
-}
-
-function statusIsServerError(status: number): boolean {
-	return status >= 500;
 }
