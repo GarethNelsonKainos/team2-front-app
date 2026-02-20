@@ -3,7 +3,7 @@ import type { JobRoleController } from "../controllers/jobRoleController.js";
 import type { ApplicationController } from "../controllers/applicationController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
-export default function uiRouter(
+export default function jobRoleRouter(
 	controller: JobRoleController,
 	applicationController: ApplicationController,
 ) {

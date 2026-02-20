@@ -34,7 +34,7 @@ export class AuthController {
 					secure: process.env.NODE_ENV === "production",
 					sameSite: "strict",
 				});
-				return res.redirect("/");
+				return res.redirect("/home");
 			} else {
 				res.status(401).render("login-page", {
 					error: "Login failed. Please try again.",
@@ -70,10 +70,7 @@ export class AuthController {
 					secure: process.env.NODE_ENV === "production",
 					sameSite: "strict",
 				});
-				res.render("home-page", {
-					showAuth: true,
-					user: res.locals.user,
-				});
+				res.redirect("/home");
 				return;
 			} else {
 				res.status(400).render("login-page", {

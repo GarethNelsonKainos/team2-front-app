@@ -1,5 +1,5 @@
 <nav class="text-bg-light p-3 d-flex align-items-center justify-content-between <%= navClass || 'kainos-font' %>">
-  <a href="/" class="d-inline-block">
+  <a href="/home" class="d-inline-block">
     <img src="/logos/kainos_logo.png" alt="Kainos Logo" height="80px">
   </a>
   
@@ -10,13 +10,14 @@
   
   <!-- Show Home button if showHomeButton is true, otherwise show Login/Logout based on authentication status -->
   <% if (showHomeButton) { %>
-    <a href="/" class="btn btn-lg kainos-blue ms-auto">Home</a>
+    <a href="/home" class="btn btn-lg kainos-blue ms-auto">Home</a>
   <% } else if (showAuth) { %>
     <% if (!user) { %>
       <a href="/login" class="btn btn-lg kainos-blue ms-auto">Login</a>
     <% } else { %>
       <div class="d-flex align-items-center gap-3 kainos-font">
         <h2>Welcome, <%= user.firstName || "" %> <%= user.secondName || "" %>!</h2>
+        <a href="/profile" class="btn btn kainos-blue-text bg-light ms-2"><i class="bi bi-person-circle fs-1 ms-3"></i></a>
         <a href="/logout" class="btn btn-lg kainos-blue ms-auto">Logout</a>
       </div>
     <% } %>

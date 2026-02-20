@@ -38,16 +38,16 @@ export class ApplicationService {
 		}
 	}
 
-	async getApplications(token: string) {
+	async getUserApplications(token: string) {
 		try {
-			const response = await axios.get(`${API_BASE_URL}/application`, {
+			const response = await axios.get(`${API_BASE_URL}/myApplications`, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
 			});
 			return response.data;
 		} catch (err) {
-			console.error("[getApplications] Error fetching applications:", err);
+			console.error("[getUserApplications] Error fetching applications:", err);
 			throw err;
 		}
 	}

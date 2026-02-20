@@ -7,7 +7,8 @@ import {
 } from "../models/jobRoleModel.js";
 import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
-import type { JobRole } from "../types/JobRole.js";
+import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
+import type { ApplicationService } from "../services/applicationService.js";
 import {
 	buildApplicationState,
 	buildErrorState,
@@ -21,8 +22,13 @@ const DELETE_JOB_ROLE_ERROR_MESSAGE =
 
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
-	constructor(jobRoleService: JobRoleService) {
+	private applicationService: ApplicationService;
+	constructor(
+		jobRoleService: JobRoleService,
+		applicationService: ApplicationService,
+	) {
 		this.jobRoleService = jobRoleService;
+		this.applicationService = applicationService;
 	}
 
 	async getJobRolesPage(req: Request, res: Response) {
@@ -80,14 +86,35 @@ export class JobRoleController {
 				req.query.applicationSuccess === "true"
 					? "Application submitted successfully!"
 					: null;
-			const applicationState = buildApplicationState({
-				hasUser: Boolean(res.locals.user),
-				roleStatusName,
-				openPositions,
-				roleId,
-			});
 
-			res.render("job-role-information", { role, success, applicationState });
+			// Determine application state
+			let applicationState: string | null = null;
+			let appliedForRole = false;
+			if (res.locals.user) {
+				appliedForRole = await this.jobRoleService.checkIfUserAppliedForRole(
+					res.locals.token,
+					roleId,
+				);
+			}
+			if (appliedForRole || success) {
+				applicationState = null;
+			}
+			if (!res.locals.user) {
+				applicationState = `<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>`;
+			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
+				applicationState = `<a href="/job-roles/${roleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
+			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions === 0) {
+				applicationState = `<span class="text-muted">No positions available for this role</span>`;
+			} else {
+				applicationState = `<span class="text-muted">This role is not currently open for applications</span>`;
+			}
+
+			res.render("job-role-information", {
+				role,
+				success,
+				applicationState,
+				appliedForRole,
+			});
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
 			return res.status(500).render("job-role-no-data");
@@ -137,7 +164,7 @@ export class JobRoleController {
 			res.redirect("/job-roles");
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = buildErrorState(error);
+			const { fieldErrors, apiError } = this.buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
@@ -199,7 +226,7 @@ export class JobRoleController {
 			res.redirect(`/job-roles/${id}`);
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = buildErrorState(error);
+			const { fieldErrors, apiError } = this.buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
