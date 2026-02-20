@@ -9,6 +9,13 @@ import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
 import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
 import type { ApplicationService } from "../services/applicationService.js";
+import {
+	buildApplicationState,
+	buildErrorState,
+	filterRolesByStatus,
+	getFormDataFromRequest,
+	mapJobRoleToFormData,
+} from "./jobRoleControllerHelpers.js";
 
 const DELETE_JOB_ROLE_ERROR_MESSAGE =
 	"Failed to delete job role. Please check your connection.";
@@ -119,11 +126,37 @@ export class JobRoleController {
 			formData: { ...EMPTY_FORM_DATA },
 			fieldErrors: {},
 			apiError: "",
+			pageTitle: "Add New Role",
+			formAction: "/job-roles",
 		});
 	}
 
+	async getEditJobRolePage(req: Request, res: Response) {
+		const id = String(req.params.id);
+		if (!id || id.trim() === "") {
+			return res.status(400).send("Invalid or missing job role ID.");
+		}
+
+		try {
+			const role = await this.jobRoleService.getJobRoleById(id);
+			await this.renderCreateJobRolePage(res, {
+				formData: mapJobRoleToFormData(role),
+				fieldErrors: {},
+				apiError: "",
+				pageTitle: "Edit Role",
+				formAction: `/job-roles/${id}/edit`,
+			});
+		} catch (error) {
+			console.error(
+				`Error fetching job role with id ${id} for edit page:`,
+				error,
+			);
+			return res.status(500).render("job-role-no-data");
+		}
+	}
+
 	async createJobRole(req: Request, res: Response) {
-		const formData = this.getFormDataFromRequest(req);
+		const formData = getFormDataFromRequest(req);
 		const payload = buildCreateJobRolePayload(formData);
 
 		try {
@@ -139,6 +172,8 @@ export class JobRoleController {
 					formData,
 					fieldErrors,
 					apiError,
+					pageTitle: "Add New Role",
+					formAction: "/job-roles",
 				},
 				status,
 			);
@@ -171,61 +206,40 @@ export class JobRoleController {
 			};
 		}
 
-		const fieldErrors: CreateJobRoleFieldErrors = {};
-		const generalErrors: string[] = [];
-		const errorMapping: Record<string, keyof CreateJobRoleFormData> = {
-			"Role name is required": "roleName",
-			"Job spec summary is required": "description",
-			"SharePoint link is required": "sharepointUrl",
-			"Invalid SharePoint URL format": "sharepointUrl",
-			"Responsibilities is required": "responsibilities",
-			"Number of open positions is required": "numberOfOpenPositions",
-			"Number of open positions must be at least 1": "numberOfOpenPositions",
-			"Location is required": "location",
-			"Closing date is required": "closingDate",
-			"Closing date must be in the future": "closingDate",
-			"Invalid closing date format": "closingDate",
-			"Capability is required": "capabilityId",
-			"Band is required": "bandId",
+		return {
+			fieldErrors: {},
+			apiError: error.message || "An error occurred. Please try again.",
 		};
+	}
 
-		for (const errorMessage of error.errors) {
-			const mappedField = errorMapping[errorMessage];
-			if (mappedField) {
-				fieldErrors[mappedField] = errorMessage;
-				continue;
-			}
-
-			generalErrors.push(errorMessage);
+	async updateJobRole(req: Request, res: Response) {
+		const id = String(req.params.id);
+		if (!id || id.trim() === "") {
+			return res.status(400).send("Invalid or missing job role ID.");
 		}
 
-		const apiError =
-			generalErrors[0] ||
-			(statusIsServerError(error.status)
-				? "Cannot connect to server. Please check your connection."
-				: "");
+		const formData = getFormDataFromRequest(req);
+		const payload = buildCreateJobRolePayload(formData);
 
-		return { fieldErrors, apiError };
-	}
+		try {
+			await this.jobRoleService.updateJobRole(id, payload);
+			res.redirect(`/job-roles/${id}`);
+		} catch (error) {
+			const status = error instanceof JobRoleApiError ? error.status : 500;
+			const { fieldErrors, apiError } = this.buildErrorState(error);
 
-	private getFormDataFromRequest(req: Request): CreateJobRoleFormData {
-		return {
-			roleName: this.getTrimmedString(req.body.roleName),
-			description: this.getTrimmedString(req.body.description),
-			sharepointUrl: this.getTrimmedString(req.body.sharepointUrl),
-			responsibilities: this.getTrimmedString(req.body.responsibilities),
-			numberOfOpenPositions: this.getTrimmedString(
-				req.body.numberOfOpenPositions,
-			),
-			location: this.getTrimmedString(req.body.location),
-			closingDate: this.getTrimmedString(req.body.closingDate),
-			capabilityId: this.getTrimmedString(req.body.capabilityId),
-			bandId: this.getTrimmedString(req.body.bandId),
-		};
-	}
-
-	private getTrimmedString(value: unknown): string {
-		return typeof value === "string" ? value.trim() : "";
+			await this.renderCreateJobRolePage(
+				res,
+				{
+					formData,
+					fieldErrors,
+					apiError,
+					pageTitle: "Edit Role",
+					formAction: `/job-roles/${id}/edit`,
+				},
+				status,
+			);
+		}
 	}
 
 	private async renderCreateJobRolePage(
@@ -234,10 +248,14 @@ export class JobRoleController {
 			formData,
 			fieldErrors,
 			apiError,
+			pageTitle,
+			formAction,
 		}: {
 			formData: CreateJobRoleFormData;
 			fieldErrors: CreateJobRoleFieldErrors;
 			apiError: string;
+			pageTitle: string;
+			formAction: string;
 		},
 		status: number = 200,
 	) {
@@ -247,25 +265,25 @@ export class JobRoleController {
 				this.jobRoleService.getBands(),
 			]);
 
-			res.status(status).render("new-role", {
+			res.status(status).render("create-edit-role", {
 				formData,
 				fieldErrors,
 				apiError,
+				pageTitle,
+				formAction,
 				capabilities,
 				bands,
 			});
 		} catch (_error) {
-			res.status(500).render("new-role", {
+			res.status(500).render("create-edit-role", {
 				formData,
 				fieldErrors,
 				apiError: "Cannot connect to server. Please check your connection.",
+				pageTitle,
+				formAction,
 				capabilities: [],
 				bands: [],
 			});
 		}
 	}
-}
-
-function statusIsServerError(status: number): boolean {
-	return status >= 500;
 }
