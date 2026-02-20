@@ -132,8 +132,7 @@ export class JobRoleController {
 					userApp = userApplications.find((app) => app.jobRoleId === roleId);
 				}
 			}
-			console.log("Applications for this role:", applications);
-			console.log("User application for this role:", userApp);
+			
 			if (success || res.locals.isAdmin) {
 				applicationState = null;
 			} else if (appliedForRole && userApp) {
@@ -218,7 +217,7 @@ export class JobRoleController {
 			res.redirect("/job-roles");
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = buildErrorState(error);
+			const { fieldErrors, apiError } = this.buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
@@ -280,7 +279,7 @@ export class JobRoleController {
 			res.redirect(`/job-roles/${id}`);
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = buildErrorState(error);
+			const { fieldErrors, apiError } = this.buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
