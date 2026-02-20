@@ -9,9 +9,8 @@ import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
 import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
 import type { ApplicationService } from "../services/applicationService.js";
-import { AuthController } from "./authController.js";
+import type { AuthController } from "./authController.js";
 import {
-	buildApplicationState,
 	buildErrorState,
 	filterRolesByStatus,
 	getFormDataFromRequest,
@@ -132,7 +131,7 @@ export class JobRoleController {
 					userApp = userApplications.find((app) => app.jobRoleId === roleId);
 				}
 			}
-			
+
 			if (success || res.locals.isAdmin) {
 				applicationState = null;
 			} else if (appliedForRole && userApp) {
@@ -150,7 +149,8 @@ export class JobRoleController {
 						applicationState = null;
 				}
 			} else if (!res.locals.user) {
-				const redirectUrl = `/login?redirect=/job-roles/${roleId}`;
+				const currentHost = "http://localhost:3001";
+				const redirectUrl = `/login?redirect=${currentHost}/job-roles/${roleId}`;
 				applicationState = `<div class="alert kainos-blue" role="alert"> <i class="bi bi-info-circle"></i> Please <a href="${redirectUrl}" class="text-white">log in</a> to apply for this role</div>`;
 			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
 				applicationState = `<a href="/job-roles/${roleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;

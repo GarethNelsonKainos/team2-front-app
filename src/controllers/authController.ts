@@ -2,6 +2,12 @@ import type { Request, Response } from "express";
 import type { AuthService } from "../services/authService.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
+const ALLOWED_REDIRECTS = ["http://localhost:3001"];
+
+const isAllowedRedirectURL = (url: string): boolean => {
+	return ALLOWED_REDIRECTS.some((allowed) => url.startsWith(allowed));
+};
+
 export class AuthController {
 	private authService: AuthService;
 	constructor(authService: AuthService) {
@@ -35,8 +41,8 @@ export class AuthController {
 					secure: process.env.NODE_ENV === "production",
 					sameSite: "strict",
 				});
-				const redirectTo = req.query.redirect || req.body.redirect;
-				if (redirectTo) {
+				const redirectTo = req.body.redirect;
+				if (redirectTo && isAllowedRedirectURL(redirectTo)) {
 					return res.redirect(redirectTo);
 				}
 				return res.redirect("/home");

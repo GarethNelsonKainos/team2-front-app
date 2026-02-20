@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { ApplicationService } from "../services/applicationService.js";
-import { AuthController } from "./authController.js";
+import type { Request, Response } from "express";
+import type { ApplicationService } from "../services/applicationService.js";
+import type { AuthController } from "./authController.js";
 
 export class HomeController {
 	private applicationService: ApplicationService;
