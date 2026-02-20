@@ -51,4 +51,24 @@ export class ApplicationService {
 			throw err;
 		}
 	}
+
+	async getApplicationByJobRoleId(jobRoleId: string, token: string) {
+		try {
+			const response = await axios.get(
+				`${API_BASE_URL}/admin/job-roles/${jobRoleId}`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			);
+			return response.data;
+		} catch (err) {
+			console.error(
+				`[getApplicationByJobRoleId] Error fetching applications for job role ${jobRoleId}:`,
+				err,
+			);
+			throw err;
+		}
+	}
 }

@@ -30,7 +30,7 @@ export class ApplicationController {
 			});
 		} catch (error) {
 			console.error(`Error fetching job role with id ${ID}:`, error);
-			return res.status(500).render("job-role-no-data");
+			return res.status(500).render("job-role-no-data", { deleteError: null });
 		}
 	}
 	// Handle application form submission with file upload

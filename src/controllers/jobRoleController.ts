@@ -72,10 +72,7 @@ export class JobRoleController {
 				isAdmin: res.locals.isAdmin,
 			});
 		} catch (_error) {
-			res.render("job-role-no-data", {
-				user: res.locals.user,
-				isAdmin: res.locals.isAdmin,
-			});
+			res.render("job-role-no-data", { deleteError: null });
 		}
 	}
 
@@ -95,6 +92,8 @@ export class JobRoleController {
 				req.query.applicationSuccess === "true"
 					? "Application submitted successfully!"
 					: null;
+
+			const isAdmin = res.locals.isAdmin;
 
 			// Determine application state
 			let applicationState: string | null = null;
@@ -118,15 +117,26 @@ export class JobRoleController {
 				applicationState = `<span class="text-muted">This role is not currently open for applications</span>`;
 			}
 
+			// Only fetch applications and pass to view for admins
+			let applications = null;
+			if (isAdmin) {
+				applications = await this.applicationService.getApplicationByJobRoleId(
+					roleId,
+					res.locals.token,
+				);
+			}
+
 			res.render("job-role-information", {
 				role,
 				success,
 				applicationState,
 				appliedForRole,
+				isAdmin,
+				applications,
 			});
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
-			return res.status(500).render("job-role-no-data");
+			return res.status(500).render("job-role-no-data", { deleteError: null });
 		}
 	}
 
