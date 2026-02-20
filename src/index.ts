@@ -17,6 +17,7 @@ import { AuthController } from "./controllers/authController.js";
 import { HomeController } from "./controllers/homeController.js";
 import { authMiddleware } from "./middleware/authMiddleware.js";
 import { decodeTokenMiddleware } from "./middleware/authMiddleware.js";
+import { checkAdminMiddleware } from "./middleware/authMiddleware.js";
 
 dotenv.config();
 
@@ -33,12 +34,13 @@ const jobRoleService = new JobRoleService(applicationService);
 const jobRoleController = new JobRoleController(
 	jobRoleService,
 	applicationService,
+	authController,
 );
 const applicationController = new ApplicationController(
 	applicationService,
 	jobRoleService,
 );
-const homeController = new HomeController(applicationService);
+const homeController = new HomeController(applicationService, authController);
 
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "ejs");
@@ -48,9 +50,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(decodeTokenMiddleware);
+app.use(checkAdminMiddleware);
 
 app.get("/", async (_req, res) => {
-	res.render("home-page", { showAuth: true, user: null, applications: [] });
+	res.render("home-page", {
+		showAuth: true,
+		user: null,
+		applications: [],
+		isAdmin: false,
+	});
 });
 app.use("/", authRouter(authController));
 app.use("/", jobRoleRouter(jobRoleController, applicationController));

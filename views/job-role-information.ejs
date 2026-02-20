@@ -21,9 +21,11 @@
     }) %>
 
     <div class="container my-5 kainos-font">
-        <div class="d-flex justify-content-end mb-3">
-            <a href="/job-roles/<%= role.jobRoleId %>/edit" class="btn kainos-blue bg-level-action-btn">Edit Role</a>
-        </div>
+        <% if (isAdmin) { %>
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/job-roles/<%= role.jobRoleId %>/edit" class="btn kainos-blue bg-level-action-btn">Edit Role</a>
+            </div>
+        <% } %>
         <div class="card shadow rounded-4 mb-4">
             <div class="card-header kainos-blue text-white d-flex align-items-center justify-content-between">
                 <h2 class="mb-0">

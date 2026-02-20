@@ -8,8 +8,9 @@ export class AuthController {
 		this.authService = authService;
 	}
 
-	async getLoginPage(_req: Request, res: Response) {
-		res.render("login-page", { activeTab: "login" });
+	async getLoginPage(req: Request, res: Response) {
+		const redirect = req.query.redirect ? String(req.query.redirect) : null;
+		res.render("login-page", { activeTab: "login", redirect });
 	}
 
 	async logout(_req: Request, res: Response) {
@@ -34,6 +35,10 @@ export class AuthController {
 					secure: process.env.NODE_ENV === "production",
 					sameSite: "strict",
 				});
+				const redirectTo = req.query.redirect || req.body.redirect;
+				if (redirectTo) {
+					return res.redirect(redirectTo);
+				}
 				return res.redirect("/home");
 			} else {
 				res.status(401).render("login-page", {
@@ -70,7 +75,10 @@ export class AuthController {
 					secure: process.env.NODE_ENV === "production",
 					sameSite: "strict",
 				});
-				res.redirect("/home");
+				const redirectTo = req.query.redirect
+					? String(req.query.redirect)
+					: "/home";
+				res.redirect(redirectTo);
 				return;
 			} else {
 				res.status(400).render("login-page", {

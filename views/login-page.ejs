@@ -64,6 +64,9 @@
                                 <button type="submit" class="btn kainos-blue">Submit</button>
                                 <a href="/" class="btn btn-outline-secondary">Cancel</a>
                             </div>
+                            <% if (redirect) { %>
+                                <input type="hidden" name="redirect" value="<%= redirect %>">
+                            <% } %>
                         </form>
                     </div>
                     <div class="tab-pane fade <%= activeTab === 'register' ? 'show active' : '' %>" id="register-pane" role="tabpanel" aria-labelledby="register-tab"
@@ -95,6 +98,9 @@
                                     placeholder="Email" required data-bs-toggle="tooltip" data-bs-placement="bottom">
                                 <div class="invalid-feedback d-none" id="registerEmailError"></div>
                             </div>
+                            <% if (redirect) { %>
+                                <input type="hidden" name="redirect" value="<%= redirect %>">
+                            <% } %>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="registerPassword" class="form-label">Password:</label>

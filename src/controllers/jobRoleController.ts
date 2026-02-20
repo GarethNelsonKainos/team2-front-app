@@ -9,6 +9,7 @@ import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
 import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
 import type { ApplicationService } from "../services/applicationService.js";
+import { AuthController } from "./authController.js";
 import {
 	buildApplicationState,
 	buildErrorState,
@@ -23,12 +24,15 @@ const DELETE_JOB_ROLE_ERROR_MESSAGE =
 export class JobRoleController {
 	private jobRoleService: JobRoleService;
 	private applicationService: ApplicationService;
+	private authController: AuthController;
 	constructor(
 		jobRoleService: JobRoleService,
 		applicationService: ApplicationService,
+		authController: AuthController,
 	) {
 		this.jobRoleService = jobRoleService;
 		this.applicationService = applicationService;
+		this.authController = authController;
 	}
 
 	async getJobRolesPage(req: Request, res: Response) {
@@ -52,7 +56,12 @@ export class JobRoleController {
 					});
 				}
 			}
-			res.render("job-role-list", { roles: filteredRoles, deleteError });
+			res.render("job-role-list", {
+				roles: filteredRoles,
+				deleteError,
+				user: res.locals.user,
+				isAdmin: res.locals.isAdmin,
+			});
 		} catch (_error) {
 			console.error("Error in getJobRolesPage:", _error);
 			const deleteError =
@@ -64,9 +73,16 @@ export class JobRoleController {
 	async getOpenJobRoles(_req: Request, res: Response) {
 		try {
 			const roles = await this.jobRoleService.getJobRoles();
-			res.render("job-role-list", { roles });
+			res.render("job-role-list", {
+				roles,
+				user: res.locals.user,
+				isAdmin: res.locals.isAdmin,
+			});
 		} catch (_error) {
-			res.render("job-role-no-data");
+			res.render("job-role-no-data", {
+				user: res.locals.user,
+				isAdmin: res.locals.isAdmin,
+			});
 		}
 	}
 
@@ -113,7 +129,6 @@ export class JobRoleController {
 				role,
 				success,
 				applicationState,
-				appliedForRole,
 			});
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
