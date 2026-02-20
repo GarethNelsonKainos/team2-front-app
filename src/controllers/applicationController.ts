@@ -30,7 +30,7 @@ export class ApplicationController {
 			});
 		} catch (error) {
 			console.error(`Error fetching job role with id ${ID}:`, error);
-			return res.status(500).render("job-role-no-data");
+			return res.status(500).render("job-role-no-data", { deleteError: null });
 		}
 	}
 	// Handle application form submission with file upload
@@ -79,6 +79,39 @@ export class ApplicationController {
 			return res.status(500).json({
 				applications: [],
 				error: "Failed to fetch your applications.",
+			});
+		}
+	}
+
+	async updateApplicationStatus(req: Request, res: Response) {
+		const { applicationID, newStatus } = req.params;
+		const applicationId = String(applicationID ?? "");
+		const status = String(newStatus ?? "");
+
+		if (!applicationId || applicationId.trim() === "") {
+			return res.status(400).send("Invalid or missing application ID.");
+		}
+		if (!status || status.trim() === "") {
+			return res.status(400).send("Invalid or missing new status.");
+		}
+
+		try {
+			await this.applicationService.updateApplicationStatus(
+				applicationId,
+				status,
+				res.locals.token,
+			);
+			console.log(`Application ${applicationId} status updated to ${status}.`);
+			const referer = req.get("referer");
+			if (referer) {
+				return res.redirect(referer);
+			} else {
+				return res.redirect("/job-roles");
+			}
+		} catch (error) {
+			console.error("[updateApplicationStatus] Error:", error);
+			return res.status(500).json({
+				error: "Failed to update application status.",
 			});
 		}
 	}

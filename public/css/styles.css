@@ -309,3 +309,22 @@ body.bg-img {
 	margin-left: 1rem;
 	margin-right: -2rem;
 }
+
+.nav-tabs .nav-link.kainos-blue.active,
+.nav-tabs .nav-link.kainos-blue.active:focus,
+.nav-tabs .nav-link.kainos-blue.active:hover {
+	color: #283583 !important;
+	background-color: #fff !important;
+	border-color: #283583 #283583 #fff !important;
+}
+
+.nav-tabs .nav-link.kainos-blue {
+	background-color: #252d4f !important;
+	color: #fff !important;
+	border-color: #252d4f #252d4f #fff !important;
+}
+
+.rejected {
+	background-color: #ea5d6b;
+	color: white;
+}

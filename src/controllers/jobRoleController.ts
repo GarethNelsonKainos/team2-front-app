@@ -9,9 +9,8 @@ import { JobRoleApiError } from "../services/jobRoleService.js";
 import type { JobRoleService } from "../services/jobRoleService.js";
 import { type JobRole, JobRoleStatus } from "../types/JobRole.js";
 import type { ApplicationService } from "../services/applicationService.js";
-import { AuthController } from "./authController.js";
+import type { AuthController } from "./authController.js";
 import {
-	buildApplicationState,
 	buildErrorState,
 	filterRolesByStatus,
 	getFormDataFromRequest,
@@ -79,10 +78,7 @@ export class JobRoleController {
 				isAdmin: res.locals.isAdmin,
 			});
 		} catch (_error) {
-			res.render("job-role-no-data", {
-				user: res.locals.user,
-				isAdmin: res.locals.isAdmin,
-			});
+			res.render("job-role-no-data", { deleteError: null });
 		}
 	}
 
@@ -103,6 +99,8 @@ export class JobRoleController {
 					? "Application submitted successfully!"
 					: null;
 
+			const isAdmin = res.locals.isAdmin;
+
 			// Determine application state
 			let applicationState: string | null = null;
 			let appliedForRole = false;
@@ -112,11 +110,48 @@ export class JobRoleController {
 					roleId,
 				);
 			}
-			if (appliedForRole || success) {
-				applicationState = null;
+
+			let applications = null;
+			let userApp = null;
+			if (isAdmin) {
+				applications = await this.applicationService.getApplicationByJobRoleId(
+					roleId,
+					res.locals.token,
+				);
+				if (applications && Array.isArray(applications) && res.locals.user) {
+					userApp = applications.find(
+						(app) => app.userId === res.locals.user.userId,
+					);
+				}
+			} else if (res.locals.user) {
+				// For non-admin, get all applications for the user, then filter for this jobRoleId
+				const userApplications =
+					await this.applicationService.getUserApplications(res.locals.token);
+				if (userApplications && Array.isArray(userApplications)) {
+					userApp = userApplications.find((app) => app.jobRoleId === roleId);
+				}
 			}
-			if (!res.locals.user) {
-				applicationState = `<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>`;
+
+			if (success || res.locals.isAdmin) {
+				applicationState = null;
+			} else if (appliedForRole && userApp) {
+				switch (userApp.status) {
+					case "HIRED":
+						applicationState = `<div class="alert alert-success" role="alert"> <i class="bi bi-check-circle"></i> Congratulations! You have been hired for this role.</div>`;
+						break;
+					case "REJECTED":
+						applicationState = `<div class="alert alert-danger" role="alert"> <i class="bi bi-x-circle"></i> Your application for this role was not successful.</div>`;
+						break;
+					case "IN_PROGRESS":
+						applicationState = `<div class="alert alert-warning" role="alert"> <i class="bi bi-hourglass-split"></i> Your application for this role has been submitted.</div>`;
+						break;
+					default:
+						applicationState = null;
+				}
+			} else if (!res.locals.user) {
+				const currentHost = "http://localhost:3001";
+				const redirectUrl = `/login?redirect=${currentHost}/job-roles/${roleId}`;
+				applicationState = `<div class="alert kainos-blue" role="alert"> <i class="bi bi-info-circle"></i> Please <a href="${redirectUrl}" class="text-white">log in</a> to apply for this role</div>`;
 			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
 				applicationState = `<a href="/job-roles/${roleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
 			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions === 0) {
@@ -129,10 +164,13 @@ export class JobRoleController {
 				role,
 				success,
 				applicationState,
+				isAdmin,
+				applications,
+				appliedForRole,
 			});
 		} catch (error) {
 			console.error(`Error fetching job role with id ${id}:`, error);
-			return res.status(500).render("job-role-no-data");
+			return res.status(500).render("job-role-no-data", { deleteError: null });
 		}
 	}
 

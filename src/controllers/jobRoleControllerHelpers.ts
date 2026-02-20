@@ -64,37 +64,6 @@ export function filterRolesByStatus<T extends { status?: RoleStatus }>(
 	);
 }
 
-export function buildApplicationState({
-	hasUser,
-	roleStatusName,
-	openPositions,
-	roleId,
-}: {
-	hasUser: boolean;
-	roleStatusName?: string;
-	openPositions: number;
-	roleId: string;
-}): string {
-	const encodedRoleId = encodeURIComponent(roleId);
-	if (!hasUser) {
-		return '<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>';
-	}
-
-	if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
-		return `<a href="/job-roles/${encodedRoleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
-	}
-
-	if (roleStatusName === JobRoleStatus.OPEN && openPositions === 0) {
-		return '<span class="text-muted">No positions available for this role</span>';
-	}
-
-	if (roleStatusName === JobRoleStatus.IN_PROGRESS) {
-		return '<span class="text-muted">You have already applied for this role</span>';
-	}
-
-	return '<span class="text-muted">This role is not currently open for applications</span>';
-}
-
 export function buildErrorState(error: unknown): {
 	fieldErrors: CreateJobRoleFieldErrors;
 	apiError: string;
