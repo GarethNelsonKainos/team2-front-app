@@ -102,12 +102,28 @@ export class JobRoleController {
 				req.query.applicationSuccess === "true"
 					? "Application submitted successfully!"
 					: null;
-			const applicationState = buildApplicationState({
-				hasUser: Boolean(res.locals.user),
-				roleStatusName,
-				openPositions,
-				roleId,
-			});
+
+			// Determine application state
+			let applicationState: string | null = null;
+			let appliedForRole = false;
+			if (res.locals.user) {
+				appliedForRole = await this.jobRoleService.checkIfUserAppliedForRole(
+					res.locals.token,
+					roleId,
+				);
+			}
+			if (appliedForRole || success) {
+				applicationState = null;
+			}
+			if (!res.locals.user) {
+				applicationState = `<span class="text-muted">Please <a href="/login" class="kainos-blue-text">log in</a> to apply for this role</span>`;
+			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
+				applicationState = `<a href="/job-roles/${roleId}/apply" class="btn kainos-green btn-lg" rel="noopener">Apply Now</a>`;
+			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions === 0) {
+				applicationState = `<span class="text-muted">No positions available for this role</span>`;
+			} else {
+				applicationState = `<span class="text-muted">This role is not currently open for applications</span>`;
+			}
 
 			res.render("job-role-information", {
 				role,
@@ -163,7 +179,7 @@ export class JobRoleController {
 			res.redirect("/job-roles");
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = buildErrorState(error);
+			const { fieldErrors, apiError } = this.buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
@@ -225,7 +241,7 @@ export class JobRoleController {
 			res.redirect(`/job-roles/${id}`);
 		} catch (error) {
 			const status = error instanceof JobRoleApiError ? error.status : 500;
-			const { fieldErrors, apiError } = buildErrorState(error);
+			const { fieldErrors, apiError } = this.buildErrorState(error);
 
 			await this.renderCreateJobRolePage(
 				res,
