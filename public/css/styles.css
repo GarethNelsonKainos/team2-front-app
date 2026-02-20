@@ -307,3 +307,8 @@ body.bg-img {
 	color: #fff !important;
 	border-color: #252d4f #252d4f #fff !important;
 }
+
+.rejected {
+	background-color: #ea5d6b;
+	color: white;
+}
