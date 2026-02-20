@@ -47,18 +47,18 @@
           </td>
           <% if (app.status === 'IN_PROGRESS') { %>
             <td>
-              <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#hireModal-<%= app.id %>">Hire</button>
+              <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#hireModal-<%= app.applicationId %>">Hire</button>
               <!-- Hire Confirmation Modal -->
-              <div class="modal fade" id="hireModal-<%= app.id %>" tabindex="-1" aria-labelledby="hireModalLabel-<%= app.id %>" aria-hidden="true">
+              <div class="modal fade" id="hireModal-<%= app.applicationId %>" tabindex="-1" aria-labelledby="hireModalLabel-<%= app.applicationId %>" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="hireModalLabel-<%= app.id %>">Confirm Hire</h5>
+                      <h5 class="modal-title" id="hireModalLabel-<%= app.applicationId %>">Confirm Hire</h5>
                     </div>
-                    <form method="POST" action="/applications/<%= app.id %>/status">
+                    <form method="POST" action="/admin/application/<%= app.applicationId %>/HIRED">
+                      <input type="hidden" name="_method" value="POST">
                       <div class="modal-body">
                         Are you sure you want to hire <%= app.user ? `${app.user.firstName} ${app.user.secondName}` : 'this applicant' %>?
-                        <input type="hidden" name="status" value="HIRED">
                       </div>
                       <div class="modal-footer justify-content-center">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -70,18 +70,18 @@
               </div>
             </td>
             <td>
-              <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#rejectModal-<%= app.id %>">Reject</button>
+              <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#rejectModal-<%= app.applicationId %>">Reject</button>
               <!-- Reject Confirmation Modal -->
-              <div class="modal fade" id="rejectModal-<%= app.id %>" tabindex="-1" aria-labelledby="rejectModalLabel-<%= app.id %>" aria-hidden="true">
+              <div class="modal fade" id="rejectModal-<%= app.applicationId %>" tabindex="-1" aria-labelledby="rejectModalLabel-<%= app.applicationId %>" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="rejectModalLabel-<%= app.id %>">Confirm Reject</h5>
+                      <h5 class="modal-title" id="rejectModalLabel-<%= app.applicationId %>">Confirm Reject</h5>
                     </div>
-                    <form method="POST" action="/applications/<%= app.id %>/status">
+                    <form method="POST" action="/admin/application/<%= app.applicationId %>/REJECTED">
+                      <input type="hidden" name="_method" value="POST">
                       <div class="modal-body">
                         Are you sure you want to reject <%= app.user ? `${app.user.firstName} ${app.user.secondName}` : 'this applicant' %>?
-                        <input type="hidden" name="status" value="REJECTED">
                       </div>
                       <div class="modal-footer justify-content-center">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

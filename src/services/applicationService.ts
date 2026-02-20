@@ -71,4 +71,29 @@ export class ApplicationService {
 			throw err;
 		}
 	}
+
+	async updateApplicationStatus(
+		applicationId: string,
+		newStatus: string,
+		token: string,
+	) {
+		try {
+			const response = await axios.put(
+				`${API_BASE_URL}/admin/application/${applicationId}/${newStatus}`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			);
+			return response.data;
+		} catch (err) {
+			console.error(
+				`[updateApplicationStatus] Error updating status for application ${applicationId}:`,
+				err,
+			);
+			throw err;
+		}
+	}
 }
