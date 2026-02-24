@@ -10,6 +10,7 @@ const test = base.extend<{ authenticatedPage: typeof base['page'] }>({
     await page.getByRole('textbox', { name: 'Email:' }).fill('david@test.com');
     await page.getByRole('textbox', { name: 'Password:' }).fill('Password123!');
     await page.getByRole('button', { name: 'Submit' }).click();
+    await page.waitForNavigation();
     // Now authenticated
     await use(page);
   },

@@ -16,7 +16,7 @@ export class AuthController {
 
 	async getLoginPage(req: Request, res: Response) {
 		const redirect = req.query.redirect ? String(req.query.redirect) : null;
-		res.render("login-page", { activeTab: "login", redirect });
+		res.render("login-page", { activeTab: "login", redirectTo: redirect });
 	}
 
 	async logout(_req: Request, res: Response) {
@@ -27,7 +27,7 @@ export class AuthController {
 	async getRegisterPage(_req: Request, res: Response) {
 		res.render("login-page", {
 			activeTab: "register",
-			redirect: null,
+			redirectTo: null,
 		});
 	}
 
@@ -51,14 +51,14 @@ export class AuthController {
 				res.status(401).render("login-page", {
 					error: "Login failed. Please try again.",
 					activeTab: "login",
-					redirect: null,
+					redirectTo: null,
 				});
 			}
 		} catch (_error) {
 			res.status(500).render("login-page", {
 				error: "Server error during login.",
 				activeTab: "login",
-				redirect: null,
+				redirectTo: null,
 			});
 		}
 	}
@@ -74,7 +74,7 @@ export class AuthController {
 					token: null,
 					error: data.error,
 					activeTab: "register",
-					redirect: null,
+					redirectTo: null,
 				});
 				return;
 			}
@@ -95,7 +95,7 @@ export class AuthController {
 					token: null,
 					error: "Registration failed. Please try again.",
 					activeTab: "register",
-					redirect: null,
+					redirectTo: null,
 				});
 			}
 		} catch (_error) {
@@ -103,7 +103,7 @@ export class AuthController {
 				token: null,
 				error: "Server error during registration.",
 				activeTab: "register",
-				redirect: null,
+				redirectTo: null,
 			});
 		}
 	}
