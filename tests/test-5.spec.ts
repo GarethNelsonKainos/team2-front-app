@@ -1,14 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { AuthPage } from './pages/authPage';
+import { HomePage } from './pages/homePage';
 
 test.describe('Add a new job role', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3001/login');
-    await page.getByRole('textbox', { name: 'Email:' }).click();
-    await page.getByRole('textbox', { name: 'Email:' }).fill('nick@test.com');
-    await page.getByRole('textbox', { name: 'Password:' }).click();
-    await page.getByRole('textbox', { name: 'Password:' }).fill('kHuRi8+w_@3)+k5');
-    await page.getByRole('button', { name: 'Submit' }).click();
-    await page.getByRole('link', { name: 'Admin Dashboard' }).click();
+    const authPage = new AuthPage(page);
+    const homePage = new HomePage(page);
+    
+    await authPage.gotoLogin();
+    await authPage.fillLoginForm({ email: 'nick@test.com', password: 'kHuRi8+w_@3)+k5' });
+    await authPage.submitLogin();
+    await homePage.adminDashboardLink().click();
     await page.getByRole('link', { name: 'Create New Job Role' }).click();
     await page.waitForLoadState('networkidle');
   });
