@@ -50,12 +50,14 @@ export class AuthController {
 				res.status(401).render("login-page", {
 					error: "Login failed. Please try again.",
 					activeTab: "login",
+					redirect: null,
 				});
 			}
 		} catch (_error) {
 			res.status(500).render("login-page", {
 				error: "Server error during login.",
 				activeTab: "login",
+				redirect: null,
 			});
 		}
 	}
