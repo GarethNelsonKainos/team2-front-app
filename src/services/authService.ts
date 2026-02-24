@@ -18,7 +18,6 @@ export class AuthService {
 				email,
 				password,
 			});
-			console.log("Login response data:", response.data);
 			return response.data;
 		} catch (error) {
 			if (error instanceof yup.ValidationError) {
@@ -65,6 +64,23 @@ export class AuthService {
 				error: "An unexpected error occurred. Please try again.",
 				status: 500,
 			};
+		}
+	}
+
+	async userRoleFlag(token: string, userId: string) {
+		try {
+			await axios.get(`${API_BASE_URL}/admin/job-roles/${userId}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			return true;
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response?.status === 403) {
+				return false;
+			}
+			console.error("Error checking user role:", error);
+			return false;
 		}
 	}
 }

@@ -5,6 +5,7 @@ import type {
 	CreateJobRolePayload,
 	JobRole,
 } from "../models/jobRoleModel.js";
+import type { ApplicationService } from "./applicationService.js";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
@@ -21,6 +22,11 @@ export class JobRoleApiError extends Error {
 }
 
 export class JobRoleService {
+	private applicationService: ApplicationService;
+	constructor(applicationService: ApplicationService) {
+		this.applicationService = applicationService;
+	}
+
 	async getJobRoles(): Promise<JobRole[]> {
 		try {
 			const response = await axios.get<JobRole[]>(`${API_BASE_URL}/job-roles`);
@@ -82,6 +88,46 @@ export class JobRoleService {
 						: typeof responseData?.error === "string"
 							? [responseData.error]
 							: ["Failed to create job role"];
+				throw new JobRoleApiError(status, responseErrors);
+			}
+
+			throw new JobRoleApiError(503, [
+				"Cannot connect to server. Please try again.",
+			]);
+		}
+	}
+
+	async checkIfUserAppliedForRole(token: string, roleId: string) {
+		const applications =
+			await this.applicationService.getUserApplications(token);
+		return (
+			Array.isArray(applications) &&
+			applications.some(
+				(application: { jobRoleId: string }) =>
+					application.jobRoleId === roleId,
+			)
+		);
+	}
+	async updateJobRole(
+		id: string,
+		input: CreateJobRolePayload,
+	): Promise<JobRole> {
+		try {
+			const response = await axios.put<JobRole>(
+				`${API_BASE_URL}/job-roles/${id}`,
+				input,
+			);
+			return response.data;
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response) {
+				const status = error.response.status;
+				const responseData = error.response.data;
+				const responseErrors =
+					responseData?.errors && Array.isArray(responseData.errors)
+						? responseData.errors
+						: typeof responseData?.error === "string"
+							? [responseData.error]
+							: ["Failed to update job role"];
 				throw new JobRoleApiError(status, responseErrors);
 			}
 

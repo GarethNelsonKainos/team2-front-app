@@ -30,5 +30,15 @@ export default function applicationRouter(
 		applicationController.handleApplicationSubmit(req, res),
 	);
 
+	router.get("/myApplications", authMiddleware, (req, res) =>
+		applicationController.getUserApplications(req, res),
+	);
+
+	router.post(
+		"/admin/application/:applicationID/:newStatus",
+		authMiddleware,
+		(req, res) => applicationController.updateApplicationStatus(req, res),
+	);
+
 	return router;
 }
