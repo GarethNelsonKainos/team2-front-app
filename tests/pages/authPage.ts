@@ -14,7 +14,11 @@ export type LoginData = {
 };
  
 export class AuthPage {
-  constructor(private readonly page: Page) {}
+  readonly registerTab: Locator;
+  constructor(private readonly page: Page) {
+      this.registerTab = this.page.getByRole('tab', { name: 'Register' });
+
+  }
  
   async gotoLogin(redirect?: string) {
     const url = redirect
@@ -26,7 +30,7 @@ export class AuthPage {
  
   async gotoRegisterTab() {
     await this.gotoLogin();
-    await this.page.getByRole('tab', { name: 'Register' }).click();
+    await this.registerTab.click();
   }
  
   async fillRegistrationForm(data: RegistrationData) {

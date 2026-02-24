@@ -10,4 +10,8 @@ export class HomePage {
   logoutLink(): Locator {
     return this.page.getByRole('link', { name: 'Logout' });
   }
+
+  adminDashboardLink(): Locator {
+    return this.page.getByRole('link', { name: 'Admin Dashboard' });
+  }
 }
