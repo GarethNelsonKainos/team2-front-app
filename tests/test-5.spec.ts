@@ -10,6 +10,7 @@ test.describe('Add a new job role', () => {
     await page.getByRole('button', { name: 'Submit' }).click();
     await page.getByRole('link', { name: 'Admin Dashboard' }).click();
     await page.getByRole('link', { name: 'Create New Job Role' }).click();
+    await page.waitForLoadState('networkidle');
   });
 
   test('displays the add job role form', async ({ page }) => {
@@ -25,7 +26,6 @@ test.describe('Add a new job role', () => {
   });
   
   test('contains blank form fields', async ({ page }) => {
-    
     await expect(page.getByRole('textbox', { name: 'Job role name' })).toHaveValue('');
     await expect(page.locator('#description')).toHaveValue('');
     await expect(page.locator('#responsibilities')).toHaveValue('');
@@ -38,6 +38,11 @@ test.describe('Add a new job role', () => {
   });
 
   test('adds new role and navigates to /job-roles on valid data submit', async ({ page }) => {
+    await page.goto('http://localhost:3001/job-roles');
+    const rows = page.locator('table tbody tr');
+    const beforeCount = await rows.count();
+    
+    await page.goto('http://localhost:3001/new-role');
     await page.getByRole('textbox', { name: 'Job role name' }).fill('Test Role');
     await page.locator('#description').fill('Test Description');
     await page.locator('#responsibilities').fill('Test Responsibilities');
@@ -49,17 +54,20 @@ test.describe('Add a new job role', () => {
     await page.locator('#capabilityId').selectOption('aa47edf4-af6f-4287-84d3-118d011b8324');
     await page.getByRole('button', { name: 'Confirm' }).click();
 
-    await expect(page.getByRole('cell', { name: 'Test Role', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Belfast' }).nth(5)).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Architecture' }).nth(1)).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Apprentice' }).nth(2)).toBeVisible();
-    await expect(page.getByRole('cell', { name: '/03/4567' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Delete Test Role' })).toBeVisible();
-    await expect(page.locator('tr:nth-child(7) > td:nth-child(6) > .d-flex > .btn.kainos-blue')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    await expect(rows).toHaveCount(beforeCount + 1);
+    const lastRow = rows.last();
+
+    await expect(lastRow.getByRole('cell', { name: 'Test Role', exact: true })).toBeVisible();
+    await expect(lastRow.getByRole('cell', { name: 'Belfast' })).toBeVisible();
+    await expect(lastRow.getByRole('cell', { name: 'Architecture' })).toBeVisible();
+    await expect(lastRow.getByRole('cell', { name: 'Apprentice' })).toBeVisible();
+    await expect(lastRow.getByRole('cell', { name: '/03/4567' })).toBeVisible();
+    await expect(lastRow.getByRole('button', { name: 'Delete Test Role' })).toBeVisible();
+    await expect(lastRow.locator('.d-flex > .btn.kainos-blue')).toBeVisible();
   });
 
   test('shows validation error when required fields are missing', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
     await page.getByRole('button', { name: 'Confirm' }).click();
 
     await expect(page.getByText('Role name is required')).toBeVisible();
