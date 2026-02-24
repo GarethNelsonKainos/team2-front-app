@@ -2,8 +2,10 @@ import jwt from "jsonwebtoken";
 import { describe, expect, it, vi } from "vitest";
 import {
 	authMiddleware,
+	checkAdminMiddleware,
 	decodeTokenMiddleware,
 } from "../../../src/middleware/authMiddleware";
+import { AuthService } from "../../../src/services/authService";
 import {
 	createMockNext,
 	createMockRequest,
@@ -80,5 +82,57 @@ describe("decodeTokenMiddleware", () => {
 		expect(res.locals.token).toBeNull();
 		expect(next).toHaveBeenCalledOnce();
 		decodeSpy.mockRestore();
+	});
+});
+
+describe("checkAdminMiddleware", () => {
+	it("sets isAdmin to false when user is missing", async () => {
+		const userRoleFlagSpy = vi.spyOn(AuthService.prototype, "userRoleFlag");
+		const req = createMockRequest();
+		const res = createMockResponse();
+		const next = createMockNext();
+		res.locals.user = null;
+
+		await checkAdminMiddleware(req, res, next);
+
+		expect(res.locals.isAdmin).toBe(false);
+		expect(userRoleFlagSpy).not.toHaveBeenCalled();
+		expect(next).toHaveBeenCalledOnce();
+		userRoleFlagSpy.mockRestore();
+	});
+
+	it("sets isAdmin based on userRoleFlag when user exists", async () => {
+		const userRoleFlagSpy = vi
+			.spyOn(AuthService.prototype, "userRoleFlag")
+			.mockResolvedValueOnce(true);
+		const req = createMockRequest();
+		const res = createMockResponse();
+		const next = createMockNext();
+		res.locals.user = { id: "user-1" };
+		res.locals.token = "token-123";
+
+		await checkAdminMiddleware(req, res, next);
+
+		expect(userRoleFlagSpy).toHaveBeenCalledWith("token-123", "user-1");
+		expect(res.locals.isAdmin).toBe(true);
+		expect(next).toHaveBeenCalledOnce();
+		userRoleFlagSpy.mockRestore();
+	});
+
+	it("falls back to isAdmin false when userRoleFlag throws", async () => {
+		const userRoleFlagSpy = vi
+			.spyOn(AuthService.prototype, "userRoleFlag")
+			.mockRejectedValueOnce(new Error("down"));
+		const req = createMockRequest();
+		const res = createMockResponse();
+		const next = createMockNext();
+		res.locals.user = { id: "user-1" };
+		res.locals.token = "token-123";
+
+		await checkAdminMiddleware(req, res, next);
+
+		expect(res.locals.isAdmin).toBe(false);
+		expect(next).toHaveBeenCalledOnce();
+		userRoleFlagSpy.mockRestore();
 	});
 });

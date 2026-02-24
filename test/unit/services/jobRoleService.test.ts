@@ -7,22 +7,22 @@ import {
 import type { ApplicationService } from "../../../src/services/applicationService";
 
 vi.mock("axios", () => ({
-    default: {
-        get: vi.fn(),
-        post: vi.fn(),
-        put: vi.fn(),
-        delete: vi.fn(),
-        isAxiosError: vi.fn(),
-    },
-    isAxiosError: vi.fn(),
+	default: {
+		get: vi.fn(),
+		post: vi.fn(),
+		put: vi.fn(),
+		delete: vi.fn(),
+		isAxiosError: vi.fn(),
+	},
+	isAxiosError: vi.fn(),
 }));
 
 describe("JobRoleService", () => {
 	const applicationServiceMock = {
-        getUserApplications: vi.fn(),
-    } as unknown as ApplicationService;
+		getUserApplications: vi.fn(),
+	} as unknown as ApplicationService;
 
-    const service = new JobRoleService(applicationServiceMock);
+	const service = new JobRoleService(applicationServiceMock);
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -206,6 +206,160 @@ describe("JobRoleService", () => {
 
 		await expect(
 			service.createJobRole({
+				roleName: "Engineer",
+				description: "desc",
+				sharepointUrl: "https://example.com",
+				responsibilities: "build features",
+				numberOfOpenPositions: 2,
+				location: "Belfast",
+				closingDate: "2026-12-31",
+				capabilityId: "cap-1",
+				bandId: "band-1",
+			}),
+		).rejects.toMatchObject({
+			name: "JobRoleApiError",
+			status: 503,
+		});
+	});
+
+	it("returns true when user has applied for role", async () => {
+		(
+			applicationServiceMock.getUserApplications as ReturnType<typeof vi.fn>
+		).mockResolvedValueOnce([{ jobRoleId: "role-1" }, { jobRoleId: "role-2" }]);
+
+		await expect(
+			service.checkIfUserAppliedForRole("token-123", "role-2"),
+		).resolves.toBe(true);
+	});
+
+	it("returns false when user applications list does not include role", async () => {
+		(
+			applicationServiceMock.getUserApplications as ReturnType<typeof vi.fn>
+		).mockResolvedValueOnce([{ jobRoleId: "role-1" }]);
+
+		await expect(
+			service.checkIfUserAppliedForRole("token-123", "role-3"),
+		).resolves.toBe(false);
+	});
+
+	it("returns false when user applications response is not an array", async () => {
+		(
+			applicationServiceMock.getUserApplications as ReturnType<typeof vi.fn>
+		).mockResolvedValueOnce(null);
+
+		await expect(
+			service.checkIfUserAppliedForRole("token-123", "role-3"),
+		).resolves.toBe(false);
+	});
+
+	it("updates a job role and returns API response", async () => {
+		const payload = {
+			roleName: "Engineer",
+			description: "desc",
+			sharepointUrl: "https://example.com",
+			responsibilities: "build features",
+			numberOfOpenPositions: 2,
+			location: "Belfast",
+			closingDate: "2026-12-31",
+			capabilityId: "cap-1",
+			bandId: "band-1",
+		};
+		vi.mocked(axios.put).mockResolvedValue({ data: { jobRoleId: "role-1" } });
+
+		const result = await service.updateJobRole("role-1", payload);
+
+		expect(result).toEqual({ jobRoleId: "role-1" });
+	});
+
+	it("throws mapped JobRoleApiError when update returns errors array", async () => {
+		const axiosError = {
+			response: {
+				status: 400,
+				data: { errors: ["Role name is required"] },
+			},
+		};
+		vi.mocked(axios.isAxiosError).mockReturnValue(true);
+		vi.mocked(axios.put).mockRejectedValue(axiosError);
+
+		await expect(
+			service.updateJobRole("role-1", {
+				roleName: "",
+				description: "desc",
+				sharepointUrl: "https://example.com",
+				responsibilities: "build features",
+				numberOfOpenPositions: 2,
+				location: "Belfast",
+				closingDate: "2026-12-31",
+				capabilityId: "cap-1",
+				bandId: "band-1",
+			}),
+		).rejects.toMatchObject({
+			name: "JobRoleApiError",
+			status: 400,
+			errors: ["Role name is required"],
+		});
+	});
+
+	it("throws mapped JobRoleApiError when update returns single error string", async () => {
+		const axiosError = {
+			response: {
+				status: 400,
+				data: { error: "Invalid SharePoint URL format" },
+			},
+		};
+		vi.mocked(axios.isAxiosError).mockReturnValue(true);
+		vi.mocked(axios.put).mockRejectedValue(axiosError);
+
+		await expect(
+			service.updateJobRole("role-1", {
+				roleName: "Engineer",
+				description: "desc",
+				sharepointUrl: "bad-url",
+				responsibilities: "build features",
+				numberOfOpenPositions: 2,
+				location: "Belfast",
+				closingDate: "2026-12-31",
+				capabilityId: "cap-1",
+				bandId: "band-1",
+			}),
+		).rejects.toBeInstanceOf(JobRoleApiError);
+	});
+
+	it("falls back to default update error when backend response has no error fields", async () => {
+		const axiosError = {
+			response: {
+				status: 400,
+				data: {},
+			},
+		};
+		vi.mocked(axios.isAxiosError).mockReturnValue(true);
+		vi.mocked(axios.put).mockRejectedValue(axiosError);
+
+		await expect(
+			service.updateJobRole("role-1", {
+				roleName: "Engineer",
+				description: "desc",
+				sharepointUrl: "https://example.com",
+				responsibilities: "build features",
+				numberOfOpenPositions: 2,
+				location: "Belfast",
+				closingDate: "2026-12-31",
+				capabilityId: "cap-1",
+				bandId: "band-1",
+			}),
+		).rejects.toMatchObject({
+			name: "JobRoleApiError",
+			status: 400,
+			errors: ["Failed to update job role"],
+		});
+	});
+
+	it("throws service-unavailable error when updateJobRole cannot reach server", async () => {
+		vi.mocked(axios.isAxiosError).mockReturnValue(false);
+		vi.mocked(axios.put).mockRejectedValue(new Error("socket hang up"));
+
+		await expect(
+			service.updateJobRole("role-1", {
 				roleName: "Engineer",
 				description: "desc",
 				sharepointUrl: "https://example.com",

@@ -19,6 +19,7 @@ describe("JobRoleController", () => {
 		getBands: ReturnType<typeof vi.fn>;
 		deleteJobRole: ReturnType<typeof vi.fn>;
 		checkIfUserAppliedForRole: ReturnType<typeof vi.fn>;
+		updateJobRole: ReturnType<typeof vi.fn>;
 	};
 	let applicationServiceMock: {
 		getUserApplications: ReturnType<typeof vi.fn>;
@@ -35,6 +36,7 @@ describe("JobRoleController", () => {
 			getBands: vi.fn().mockResolvedValue([]),
 			deleteJobRole: vi.fn(),
 			checkIfUserAppliedForRole: vi.fn().mockResolvedValue(false),
+			updateJobRole: vi.fn(),
 		};
 
 		applicationServiceMock = {
@@ -580,6 +582,265 @@ describe("JobRoleController", () => {
 			expect.objectContaining({
 				capabilityId: "",
 				bandId: "",
+			}),
+		);
+	});
+
+	it("renders admin view with role applications and current user application", async () => {
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 2,
+		});
+		jobRoleService.checkIfUserAppliedForRole.mockResolvedValue(true);
+		applicationServiceMock.getApplicationByJobRoleId.mockResolvedValue([
+			{ userId: "user-1", status: "IN_PROGRESS", jobRoleId: "role-1" },
+		]);
+		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
+		const res = createMockResponse();
+		res.locals.user = { userId: "user-1" };
+		res.locals.isAdmin = true;
+		res.locals.token = "token-123";
+
+		await controller.getJobRoleById(req, res);
+
+		expect(
+			applicationServiceMock.getApplicationByJobRoleId,
+		).toHaveBeenCalledWith("role-1", "token-123");
+		expect(res.render).toHaveBeenCalledWith(
+			"job-role-information",
+			expect.objectContaining({
+				isAdmin: true,
+				applications: [
+					{ userId: "user-1", status: "IN_PROGRESS", jobRoleId: "role-1" },
+				],
+				appliedForRole: true,
+				applicationState: null,
+			}),
+		);
+	});
+
+	it("renders hired state when user has been hired", async () => {
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 2,
+		});
+		jobRoleService.checkIfUserAppliedForRole.mockResolvedValue(true);
+		applicationServiceMock.getUserApplications.mockResolvedValue([
+			{ jobRoleId: "role-1", status: "HIRED" },
+		]);
+		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
+		const res = createMockResponse();
+		res.locals.user = { sub: "user-1" };
+		res.locals.isAdmin = false;
+		res.locals.token = "token-123";
+
+		await controller.getJobRoleById(req, res);
+
+		expect(res.render).toHaveBeenCalledWith(
+			"job-role-information",
+			expect.objectContaining({
+				applicationState: expect.stringContaining("have been hired"),
+			}),
+		);
+	});
+
+	it("renders rejected state when user has been rejected", async () => {
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 2,
+		});
+		jobRoleService.checkIfUserAppliedForRole.mockResolvedValue(true);
+		applicationServiceMock.getUserApplications.mockResolvedValue([
+			{ jobRoleId: "role-1", status: "REJECTED" },
+		]);
+		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
+		const res = createMockResponse();
+		res.locals.user = { sub: "user-1" };
+		res.locals.isAdmin = false;
+		res.locals.token = "token-123";
+
+		await controller.getJobRoleById(req, res);
+
+		expect(res.render).toHaveBeenCalledWith(
+			"job-role-information",
+			expect.objectContaining({
+				applicationState: expect.stringContaining("not successful"),
+			}),
+		);
+	});
+
+	it("sets null applicationState for unknown user application status", async () => {
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 2,
+		});
+		jobRoleService.checkIfUserAppliedForRole.mockResolvedValue(true);
+		applicationServiceMock.getUserApplications.mockResolvedValue([
+			{ jobRoleId: "role-1", status: "WITHDRAWN" },
+		]);
+		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
+		const res = createMockResponse();
+		res.locals.user = { sub: "user-1" };
+		res.locals.isAdmin = false;
+		res.locals.token = "token-123";
+
+		await controller.getJobRoleById(req, res);
+
+		expect(res.render).toHaveBeenCalledWith(
+			"job-role-information",
+			expect.objectContaining({ applicationState: null }),
+		);
+	});
+
+	it("returns 400 when getEditJobRolePage is called without id", async () => {
+		const req = createMockRequest({ params: { id: "" } });
+		const res = createMockResponse();
+
+		await controller.getEditJobRolePage(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(400);
+		expect(res.send).toHaveBeenCalledWith("Invalid or missing job role ID.");
+	});
+
+	it("renders edit page when getEditJobRolePage succeeds", async () => {
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			roleName: "Engineer",
+			description: "desc",
+			sharepointUrl: "https://example.com",
+			responsibilities: "do stuff",
+			numberOfOpenPositions: 2,
+			location: "Belfast",
+			closingDate: "2026-12-31",
+			capabilityId: "cap-1",
+			bandId: "band-1",
+		});
+		const req = createMockRequest({ params: { id: "role-1" } });
+		const res = createMockResponse();
+
+		await controller.getEditJobRolePage(req, res);
+
+		expect(res.render).toHaveBeenCalledWith(
+			"create-edit-role",
+			expect.objectContaining({
+				pageTitle: "Edit Role",
+				formAction: "/job-roles/role-1/edit",
+			}),
+		);
+	});
+
+	it("returns 500 no-data page when getEditJobRolePage fails", async () => {
+		jobRoleService.getJobRoleById.mockRejectedValue(new Error("down"));
+		const req = createMockRequest({ params: { id: "role-1" } });
+		const res = createMockResponse();
+
+		await controller.getEditJobRolePage(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(500);
+		expect(res.render).toHaveBeenCalledWith("job-role-no-data");
+	});
+
+	it("returns 400 when updateJobRole is called without id", async () => {
+		const req = createMockRequest({ params: { id: "" } });
+		const res = createMockResponse();
+
+		await controller.updateJobRole(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(400);
+		expect(res.send).toHaveBeenCalledWith("Invalid or missing job role ID.");
+	});
+
+	it("redirects to role page when updateJobRole succeeds", async () => {
+		jobRoleService.updateJobRole.mockResolvedValue({ jobRoleId: "role-1" });
+		const req = createMockRequest({
+			params: { id: "role-1" },
+			body: {
+				roleName: "Engineer",
+				description: "desc",
+				sharepointUrl: "https://example.com",
+				responsibilities: "do stuff",
+				numberOfOpenPositions: "2",
+				location: "Belfast",
+				closingDate: "2026-12-31",
+				capabilityId: "cap-1",
+				bandId: "band-1",
+			},
+		});
+		const res = createMockResponse();
+
+		await controller.updateJobRole(req, res);
+
+		expect(jobRoleService.updateJobRole).toHaveBeenCalledWith(
+			"role-1",
+			expect.objectContaining({ roleName: "Engineer" }),
+		);
+		expect(res.redirect).toHaveBeenCalledWith("/job-roles/role-1");
+	});
+
+	it("renders edit page with API error when updateJobRole fails with JobRoleApiError", async () => {
+		jobRoleService.updateJobRole.mockRejectedValue(
+			new JobRoleApiError(400, ["Role already exists"]),
+		);
+		const req = createMockRequest({
+			params: { id: "role-1" },
+			body: {
+				roleName: "Engineer",
+				description: "desc",
+				sharepointUrl: "https://example.com",
+				responsibilities: "do stuff",
+				numberOfOpenPositions: "2",
+				location: "Belfast",
+				closingDate: "2026-12-31",
+				capabilityId: "cap-1",
+				bandId: "band-1",
+			},
+		});
+		const res = createMockResponse();
+
+		await controller.updateJobRole(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(400);
+		expect(res.render).toHaveBeenCalledWith(
+			"create-edit-role",
+			expect.objectContaining({
+				pageTitle: "Edit Role",
+				formAction: "/job-roles/role-1/edit",
+				apiError: "Role already exists",
+			}),
+		);
+	});
+
+	it("renders edit page with connection message when updateJobRole fails with non-api error", async () => {
+		jobRoleService.updateJobRole.mockRejectedValue(new Error("down"));
+		const req = createMockRequest({
+			params: { id: "role-1" },
+			body: {
+				roleName: "Engineer",
+				description: "desc",
+				sharepointUrl: "https://example.com",
+				responsibilities: "do stuff",
+				numberOfOpenPositions: "2",
+				location: "Belfast",
+				closingDate: "2026-12-31",
+				capabilityId: "cap-1",
+				bandId: "band-1",
+			},
+		});
+		const res = createMockResponse();
+
+		await controller.updateJobRole(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(500);
+		expect(res.render).toHaveBeenCalledWith(
+			"create-edit-role",
+			expect.objectContaining({
+				pageTitle: "Edit Role",
+				formAction: "/job-roles/role-1/edit",
+				apiError: "Cannot connect to server. Please check your connection.",
 			}),
 		);
 	});

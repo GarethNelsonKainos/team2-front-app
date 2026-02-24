@@ -17,6 +17,7 @@ export function createMockResponse(): Response {
 		status: vi.fn(),
 		render: vi.fn(),
 		send: vi.fn(),
+		json: vi.fn(),
 		redirect: vi.fn(),
 		cookie: vi.fn(),
 		clearCookie: vi.fn(),
@@ -25,6 +26,7 @@ export function createMockResponse(): Response {
 	res.status.mockReturnValue(res);
 	res.render.mockReturnValue(res);
 	res.send.mockReturnValue(res);
+	res.json.mockReturnValue(res);
 	res.redirect.mockReturnValue(res);
 	res.cookie.mockReturnValue(res);
 	res.clearCookie.mockReturnValue(res);
