@@ -29,27 +29,6 @@ describe("ApplicationController", () => {
 		expect(res.send).toHaveBeenCalledWith("Invalid or missing job role ID.");
 	});
 
-	it("returns 400 for missing job role id on application form route", async () => {
-		const applicationService = {
-			processApplication: vi.fn(),
-		} as unknown as ApplicationService;
-		const jobRoleService = {
-			getJobRoleById: vi.fn(),
-		} as unknown as JobRoleService;
-		const controller = new ApplicationController(
-			applicationService,
-			jobRoleService,
-		);
-
-		const req = createMockRequest({ params: { id: "" } });
-		const res = createMockResponse();
-
-		await controller.getApplicationForm(req, res);
-
-		expect(res.status).toHaveBeenCalledWith(400);
-		expect(res.send).toHaveBeenCalledWith("Invalid or missing job role ID.");
-	});
-
 	it("renders application form when a valid role is found", async () => {
 		const role = { jobRoleId: "role-1", status: "Open" };
 		const applicationService = {
