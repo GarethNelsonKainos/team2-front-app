@@ -27,6 +27,7 @@ export class AuthController {
 	async getRegisterPage(_req: Request, res: Response) {
 		res.render("login-page", {
 			activeTab: "register",
+			redirect: null,
 		});
 	}
 
@@ -73,6 +74,7 @@ export class AuthController {
 					token: null,
 					error: data.error,
 					activeTab: "register",
+					redirect: null,
 				});
 				return;
 			}
@@ -93,6 +95,7 @@ export class AuthController {
 					token: null,
 					error: "Registration failed. Please try again.",
 					activeTab: "register",
+					redirect: null,
 				});
 			}
 		} catch (_error) {
@@ -100,6 +103,7 @@ export class AuthController {
 				token: null,
 				error: "Server error during registration.",
 				activeTab: "register",
+				redirect: null,
 			});
 		}
 	}
