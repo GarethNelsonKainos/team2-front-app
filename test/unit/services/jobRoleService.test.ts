@@ -4,19 +4,25 @@ import {
 	JobRoleApiError,
 	JobRoleService,
 } from "../../../src/services/jobRoleService";
+import type { ApplicationService } from "../../../src/services/applicationService";
 
 vi.mock("axios", () => ({
-	default: {
-		get: vi.fn(),
-		post: vi.fn(),
-		delete: vi.fn(),
-		isAxiosError: vi.fn(),
-	},
-	isAxiosError: vi.fn(),
+    default: {
+        get: vi.fn(),
+        post: vi.fn(),
+        put: vi.fn(),
+        delete: vi.fn(),
+        isAxiosError: vi.fn(),
+    },
+    isAxiosError: vi.fn(),
 }));
 
 describe("JobRoleService", () => {
-	const service = new JobRoleService();
+	const applicationServiceMock = {
+        getUserApplications: vi.fn(),
+    } as unknown as ApplicationService;
+
+    const service = new JobRoleService(applicationServiceMock);
 
 	beforeEach(() => {
 		vi.clearAllMocks();

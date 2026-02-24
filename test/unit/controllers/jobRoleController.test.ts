@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { JobRoleController } from "../../../src/controllers/jobRoleController";
 import { JobRoleStatus } from "../../../src/types/JobRole";
 import { JobRoleApiError } from "../../../src/services/jobRoleService";
@@ -7,17 +7,57 @@ import {
 	createMockRequest,
 	createMockResponse,
 } from "../../helpers/expressMocks";
+import type { ApplicationService } from "../../../src/services/applicationService";
+import type { AuthController } from "../../../src/controllers/authController";
 
 describe("JobRoleController", () => {
-	it("filters job roles by status query value case-insensitively", async () => {
-		const jobRoleService = {
-			getJobRoles: vi.fn().mockResolvedValue([
-				{ roleName: "Engineer", status: "Open" },
-				{ roleName: "Designer", status: "Closed" },
-			]),
-		} as unknown as JobRoleService;
+	let jobRoleService: {
+		getJobRoles: ReturnType<typeof vi.fn>;
+		getJobRoleById: ReturnType<typeof vi.fn>;
+		createJobRole: ReturnType<typeof vi.fn>;
+		getCapabilities: ReturnType<typeof vi.fn>;
+		getBands: ReturnType<typeof vi.fn>;
+		deleteJobRole: ReturnType<typeof vi.fn>;
+		checkIfUserAppliedForRole: ReturnType<typeof vi.fn>;
+	};
+	let applicationServiceMock: {
+		getUserApplications: ReturnType<typeof vi.fn>;
+		getApplicationByJobRoleId: ReturnType<typeof vi.fn>;
+	};
+	let controller: JobRoleController;
 
-		const controller = new JobRoleController(jobRoleService);
+	beforeEach(() => {
+		jobRoleService = {
+			getJobRoles: vi.fn(),
+			getJobRoleById: vi.fn(),
+			createJobRole: vi.fn(),
+			getCapabilities: vi.fn().mockResolvedValue([]),
+			getBands: vi.fn().mockResolvedValue([]),
+			deleteJobRole: vi.fn(),
+			checkIfUserAppliedForRole: vi.fn().mockResolvedValue(false),
+		};
+
+		applicationServiceMock = {
+			getUserApplications: vi.fn().mockResolvedValue([]),
+			getApplicationByJobRoleId: vi.fn().mockResolvedValue([]),
+		};
+
+		const authControllerMock = {
+			isAuthenticated: vi.fn(),
+		} as unknown as AuthController;
+
+		controller = new JobRoleController(
+			jobRoleService as unknown as JobRoleService,
+			applicationServiceMock as unknown as ApplicationService,
+			authControllerMock,
+		);
+	});
+
+	it("filters job roles by status query value case-insensitively", async () => {
+		jobRoleService.getJobRoles.mockResolvedValue([
+			{ roleName: "Engineer", status: "Open" },
+			{ roleName: "Designer", status: "Closed" },
+		]);
 		const req = createMockRequest({ query: { status_name: "open" } });
 		const res = createMockResponse();
 
@@ -34,11 +74,7 @@ describe("JobRoleController", () => {
 			{ roleName: "Engineer", status: "Open" },
 			{ roleName: "Designer", status: "Closed" },
 		];
-		const jobRoleService = {
-			getJobRoles: vi.fn().mockResolvedValue(roles),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoles.mockResolvedValue(roles);
 		const req = createMockRequest({
 			query: { status_name: "   ", deleteError: "true" },
 		});
@@ -53,11 +89,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders no-data page when role list fetch fails", async () => {
-		const jobRoleService = {
-			getJobRoles: vi.fn().mockRejectedValue(new Error("backend down")),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoles.mockRejectedValue(new Error("backend down"));
 		const req = createMockRequest({ query: { deleteError: "true" } });
 		const res = createMockResponse();
 
@@ -69,11 +101,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders no-data page with null deleteError when fetch fails without delete flag", async () => {
-		const jobRoleService = {
-			getJobRoles: vi.fn().mockRejectedValue(new Error("backend down")),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoles.mockRejectedValue(new Error("backend down"));
 		const req = createMockRequest({ query: { deleteError: "false" } });
 		const res = createMockResponse();
 
@@ -85,15 +113,11 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders login prompt application state when user is not authenticated", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockResolvedValue({
-				jobRoleId: "role-1",
-				status: { statusName: JobRoleStatus.OPEN },
-				numberOfOpenPositions: 3,
-			}),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 3,
+		});
 		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
 		const res = createMockResponse();
 		res.locals.user = null;
@@ -103,21 +127,19 @@ describe("JobRoleController", () => {
 		expect(res.render).toHaveBeenCalledWith(
 			"job-role-information",
 			expect.objectContaining({
-				applicationState: expect.stringContaining('Please <a href="/login"'),
+				applicationState: expect.stringContaining(
+					'Please <a href="/login?redirect=',
+				),
 			}),
 		);
 	});
 
 	it("renders apply action when role is open and positions are available for authenticated user", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockResolvedValue({
-				jobRoleId: "role-1",
-				status: { statusName: JobRoleStatus.OPEN },
-				numberOfOpenPositions: 2,
-			}),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 2,
+		});
 		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
 		const res = createMockResponse();
 		res.locals.user = { sub: "user-1" };
@@ -133,15 +155,11 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders no positions message when role is open but no positions remain", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockResolvedValue({
-				jobRoleId: "role-1",
-				status: { statusName: JobRoleStatus.OPEN },
-				numberOfOpenPositions: 0,
-			}),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 0,
+		});
 		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
 		const res = createMockResponse();
 		res.locals.user = { sub: "user-1" };
@@ -157,37 +175,33 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders already-applied message when role is in progress", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockResolvedValue({
-				jobRoleId: "role-1",
-				status: { statusName: JobRoleStatus.IN_PROGRESS },
-				numberOfOpenPositions: 1,
-			}),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.IN_PROGRESS },
+			numberOfOpenPositions: 1,
+		});
 		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
 		const res = createMockResponse();
 		res.locals.user = { sub: "user-1" };
+		jobRoleService.checkIfUserAppliedForRole.mockResolvedValue(true);
+		applicationServiceMock.getUserApplications.mockResolvedValue([
+			{ jobRoleId: "role-1", status: "IN_PROGRESS" },
+		]);
 
 		await controller.getJobRoleById(req, res);
 
 		expect(res.render).toHaveBeenCalledWith(
 			"job-role-information",
 			expect.objectContaining({
-				applicationState: expect.stringContaining("already applied"),
+				applicationState: expect.stringContaining("has been submitted"),
 			}),
 		);
 	});
 
 	it("falls back to request id and zero positions when role fields are missing", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockResolvedValue({
-				status: { statusName: JobRoleStatus.OPEN },
-			}),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			status: { statusName: JobRoleStatus.OPEN },
+		});
 		const req = createMockRequest({ params: { id: "fallback-id" }, query: {} });
 		const res = createMockResponse();
 		res.locals.user = { sub: "user-1" };
@@ -203,11 +217,6 @@ describe("JobRoleController", () => {
 	});
 
 	it("returns 400 when job role id is missing", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn(),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
 		const req = createMockRequest({ params: { id: "" } });
 		const res = createMockResponse();
 
@@ -218,30 +227,24 @@ describe("JobRoleController", () => {
 	});
 
 	it("returns 500 no-data page when fetching a specific role fails", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockRejectedValue(new Error("backend down")),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockRejectedValue(new Error("backend down"));
 		const req = createMockRequest({ params: { id: "role-1" } });
 		const res = createMockResponse();
 
 		await controller.getJobRoleById(req, res);
 
 		expect(res.status).toHaveBeenCalledWith(500);
-		expect(res.render).toHaveBeenCalledWith("job-role-no-data");
+		expect(res.render).toHaveBeenCalledWith("job-role-no-data", {
+			deleteError: null,
+		});
 	});
 
 	it("renders closed state message for authenticated user when role is not open", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockResolvedValue({
-				jobRoleId: "role-1",
-				status: { statusName: JobRoleStatus.CLOSED },
-				numberOfOpenPositions: 1,
-			}),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.CLOSED },
+			numberOfOpenPositions: 1,
+		});
 		const req = createMockRequest({ params: { id: "role-1" }, query: {} });
 		const res = createMockResponse();
 		res.locals.user = { sub: "user-1" };
@@ -257,15 +260,11 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders success message when applicationSuccess query flag is true", async () => {
-		const jobRoleService = {
-			getJobRoleById: vi.fn().mockResolvedValue({
-				jobRoleId: "role-1",
-				status: { statusName: JobRoleStatus.OPEN },
-				numberOfOpenPositions: 2,
-			}),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoleById.mockResolvedValue({
+			jobRoleId: "role-1",
+			status: { statusName: JobRoleStatus.OPEN },
+			numberOfOpenPositions: 2,
+		});
 		const req = createMockRequest({
 			params: { id: "role-1" },
 			query: { applicationSuccess: "true" },
@@ -284,13 +283,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("redirects to roles list after successful creation", async () => {
-		const jobRoleService = {
-			createJobRole: vi.fn().mockResolvedValue({ jobRoleId: "role-1" }),
-			getCapabilities: vi.fn().mockResolvedValue([]),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockResolvedValue({ jobRoleId: "role-1" });
 		const req = createMockRequest({
 			body: {
 				roleName: "Engineer",
@@ -312,11 +305,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("redirects to /job-roles when deletion is successful", async () => {
-		const jobRoleService = {
-			deleteJobRole: vi.fn().mockResolvedValue(undefined),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.deleteJobRole.mockResolvedValue(undefined);
 		const req = createMockRequest({ params: { id: "role-1" } });
 		const res = createMockResponse();
 
@@ -326,26 +315,18 @@ describe("JobRoleController", () => {
 	});
 
 	it("maps API validation errors back to form fields", async () => {
-		const jobRoleService = {
-			createJobRole: vi
-				.fn()
-				.mockRejectedValue(
-					new JobRoleApiError(400, [
-						"Role name is required",
-						"Capability is required",
-					]),
-				),
-			getCapabilities: vi
-				.fn()
-				.mockResolvedValue([
-					{ capabilityId: "cap-1", capabilityName: "Engineering" },
-				]),
-			getBands: vi
-				.fn()
-				.mockResolvedValue([{ bandId: "band-1", bandName: "B2" }]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockRejectedValue(
+			new JobRoleApiError(400, [
+				"Role name is required",
+				"Capability is required",
+			]),
+		);
+		jobRoleService.getCapabilities.mockResolvedValue([
+			{ capabilityId: "cap-1", capabilityName: "Engineering" },
+		]);
+		jobRoleService.getBands.mockResolvedValue([
+			{ bandId: "band-1", bandName: "B2" },
+		]);
 		const req = createMockRequest({
 			body: {
 				roleName: "",
@@ -365,26 +346,18 @@ describe("JobRoleController", () => {
 
 		expect(res.status).toHaveBeenCalledWith(400);
 		expect(res.render).toHaveBeenCalledWith(
-			"new-role",
+			"create-edit-role",
 			expect.objectContaining({
-				fieldErrors: expect.objectContaining({
-					roleName: "Role name is required",
-					capabilityId: "Capability is required",
-				}),
+				apiError: "Role name is required, Capability is required",
+				fieldErrors: {},
 			}),
 		);
 	});
 
 	it("keeps apiError empty for mapped client validation errors", async () => {
-		const jobRoleService = {
-			createJobRole: vi
-				.fn()
-				.mockRejectedValue(new JobRoleApiError(400, ["Role name is required"])),
-			getCapabilities: vi.fn().mockResolvedValue([]),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockRejectedValue(
+			new JobRoleApiError(400, ["Role name is required"]),
+		);
 		const req = createMockRequest({
 			body: {
 				roleName: "",
@@ -404,26 +377,18 @@ describe("JobRoleController", () => {
 
 		expect(res.status).toHaveBeenCalledWith(400);
 		expect(res.render).toHaveBeenCalledWith(
-			"new-role",
+			"create-edit-role",
 			expect.objectContaining({
-				fieldErrors: expect.objectContaining({
-					roleName: "Role name is required",
-				}),
-				apiError: "",
+				fieldErrors: {},
+				apiError: "Role name is required",
 			}),
 		);
 	});
 
 	it("uses connection apiError for mapped validation errors when status is server error", async () => {
-		const jobRoleService = {
-			createJobRole: vi
-				.fn()
-				.mockRejectedValue(new JobRoleApiError(503, ["Role name is required"])),
-			getCapabilities: vi.fn().mockResolvedValue([]),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockRejectedValue(
+			new JobRoleApiError(503, ["Role name is required"]),
+		);
 		const req = createMockRequest({
 			body: {
 				roleName: "",
@@ -443,26 +408,18 @@ describe("JobRoleController", () => {
 
 		expect(res.status).toHaveBeenCalledWith(503);
 		expect(res.render).toHaveBeenCalledWith(
-			"new-role",
+			"create-edit-role",
 			expect.objectContaining({
-				fieldErrors: expect.objectContaining({
-					roleName: "Role name is required",
-				}),
-				apiError: "Cannot connect to server. Please check your connection.",
+				fieldErrors: {},
+				apiError: "Role name is required",
 			}),
 		);
 	});
 
 	it("shows general API error message when backend error is not field-mapped", async () => {
-		const jobRoleService = {
-			createJobRole: vi
-				.fn()
-				.mockRejectedValue(new JobRoleApiError(400, ["Role already exists"])),
-			getCapabilities: vi.fn().mockResolvedValue([]),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockRejectedValue(
+			new JobRoleApiError(400, ["Role already exists"]),
+		);
 		const req = createMockRequest({
 			body: {
 				roleName: "Engineer",
@@ -481,7 +438,7 @@ describe("JobRoleController", () => {
 		await controller.createJobRole(req, res);
 
 		expect(res.render).toHaveBeenCalledWith(
-			"new-role",
+			"create-edit-role",
 			expect.objectContaining({
 				apiError: "Role already exists",
 				fieldErrors: {},
@@ -490,13 +447,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("shows connection message for non-JobRoleApiError failures during creation", async () => {
-		const jobRoleService = {
-			createJobRole: vi.fn().mockRejectedValue(new Error("socket hang up")),
-			getCapabilities: vi.fn().mockResolvedValue([]),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockRejectedValue(new Error("socket hang up"));
 		const req = createMockRequest({
 			body: {
 				roleName: "Engineer",
@@ -516,7 +467,7 @@ describe("JobRoleController", () => {
 
 		expect(res.status).toHaveBeenCalledWith(500);
 		expect(res.render).toHaveBeenCalledWith(
-			"new-role",
+			"create-edit-role",
 			expect.objectContaining({
 				apiError: "Cannot connect to server. Please check your connection.",
 			}),
@@ -524,12 +475,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders create-role page with empty capabilities/bands when lookup fails", async () => {
-		const jobRoleService = {
-			getCapabilities: vi.fn().mockRejectedValue(new Error("down")),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getCapabilities.mockRejectedValue(new Error("down"));
 		const req = createMockRequest();
 		const res = createMockResponse();
 
@@ -537,7 +483,7 @@ describe("JobRoleController", () => {
 
 		expect(res.status).toHaveBeenCalledWith(500);
 		expect(res.render).toHaveBeenCalledWith(
-			"new-role",
+			"create-edit-role",
 			expect.objectContaining({
 				capabilities: [],
 				bands: [],
@@ -547,14 +493,9 @@ describe("JobRoleController", () => {
 	});
 
 	it("renders open roles list on getOpenJobRoles success and fallback page on failure", async () => {
-		const jobRoleService = {
-			getJobRoles: vi
-				.fn()
-				.mockResolvedValueOnce([{ roleName: "Engineer" }])
-				.mockRejectedValueOnce(new Error("down")),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.getJobRoles
+			.mockResolvedValueOnce([{ roleName: "Engineer" }])
+			.mockRejectedValueOnce(new Error("down"));
 		const req = createMockRequest();
 		const successRes = createMockResponse();
 		const failureRes = createMockResponse();
@@ -565,15 +506,12 @@ describe("JobRoleController", () => {
 		expect(successRes.render).toHaveBeenCalledWith("job-role-list", {
 			roles: [{ roleName: "Engineer" }],
 		});
-		expect(failureRes.render).toHaveBeenCalledWith("job-role-no-data");
+		expect(failureRes.render).toHaveBeenCalledWith("job-role-no-data", {
+			deleteError: null,
+		});
 	});
 
 	it("returns 400 when deleting without an id", async () => {
-		const jobRoleService = {
-			deleteJobRole: vi.fn(),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
 		const req = createMockRequest({ params: { id: "" } });
 		const res = createMockResponse();
 
@@ -584,11 +522,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("redirects with delete error flag when deletion fails", async () => {
-		const jobRoleService = {
-			deleteJobRole: vi.fn().mockRejectedValue(new Error("delete failed")),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.deleteJobRole.mockRejectedValue(new Error("delete failed"));
 		const req = createMockRequest({ params: { id: "role-1" } });
 		const res = createMockResponse();
 
@@ -598,13 +532,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("trims and sanitizes input during createJobRole", async () => {
-		const jobRoleService = {
-			createJobRole: vi.fn().mockResolvedValue({ jobRoleId: "role-1" }),
-			getCapabilities: vi.fn().mockResolvedValue([]),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockResolvedValue({ jobRoleId: "role-1" });
 		const req = createMockRequest({
 			body: {
 				roleName: "  Engineer  ",
@@ -630,13 +558,7 @@ describe("JobRoleController", () => {
 	});
 
 	it("returns empty strings for non-string fields during createJobRole", async () => {
-		const jobRoleService = {
-			createJobRole: vi.fn().mockResolvedValue({ jobRoleId: "role-1" }),
-			getCapabilities: vi.fn().mockResolvedValue([]),
-			getBands: vi.fn().mockResolvedValue([]),
-		} as unknown as JobRoleService;
-
-		const controller = new JobRoleController(jobRoleService);
+		jobRoleService.createJobRole.mockResolvedValue({ jobRoleId: "role-1" });
 		const req = createMockRequest({
 			body: {
 				roleName: "Engineer",

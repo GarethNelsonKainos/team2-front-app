@@ -115,7 +115,9 @@ describe("ApplicationController", () => {
 		await controller.getApplicationForm(req, res);
 
 		expect(res.status).toHaveBeenCalledWith(500);
-		expect(res.render).toHaveBeenCalledWith("job-role-no-data");
+		expect(res.render).toHaveBeenCalledWith("job-role-no-data", {
+			deleteError: null,
+		});
 	});
 
 	it("returns a validation error when no CV file is uploaded", async () => {
