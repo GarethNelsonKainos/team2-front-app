@@ -3,8 +3,6 @@ import { HomePage } from "./pages/homePage";
 import { JobRolePage } from "./pages/jobRolePage";
 
 test.describe("Job Role Details Page", () => {
-	const jobTitle = "Software Engineer";
-
 	test("displays complete job role details and can navigate back", async ({
 		page,
 	}) => {
@@ -14,18 +12,18 @@ test.describe("Job Role Details Page", () => {
 		// Navigate to job role
 		await page.goto("http://localhost:3001/");
 		await homePage.goToAllJobRoles();
-		await jobRolePage.openJobRole(jobTitle);
+		await jobRolePage.openJobRole();
 
 		// Verify all details in one flow
-		await jobRolePage.heading(jobTitle);
-		await jobRolePage.description(jobTitle);
-		await jobRolePage.responsibilities();
-		await jobRolePage.closing();
-		await jobRolePage.status();
-		await jobRolePage.positions();
-		await jobRolePage.location();
-		await jobRolePage.band();
-		await jobRolePage.capability();
+		expect(await jobRolePage.heading()).toBe(true);
+		expect(await jobRolePage.description()).toBe(true);
+		expect(await jobRolePage.responsibilities()).toBe(true);
+		expect(await jobRolePage.closing()).toBe(true);
+		expect(await jobRolePage.status()).toBe(true);
+		expect(await jobRolePage.positions()).toBe(true);
+		expect(await jobRolePage.location()).toBe(true);
+		expect(await jobRolePage.band()).toBe(true);
+		expect(await jobRolePage.capability()).toBe(true);
 
 		// Navigate back
 		await jobRolePage.goBack();

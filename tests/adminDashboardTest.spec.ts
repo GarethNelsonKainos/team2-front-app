@@ -20,22 +20,14 @@ test.describe("Admin Dashboard Page", () => {
 		await homePage.gotoAdminDashboard();
 	});
 
-	test("displays admin dashboard heading", async ({ page }) => {
+	test("displays admin dashboard", async ({ page }) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
 		await expect
 			.poll(() => adminDashboardPage.expectHeadingVisible())
 			.toBe(true);
-	});
-
-	test("displays admin details", async ({ page }) => {
-		const adminDashboardPage = new AdminDashboardPage(page);
 		await expect
 			.poll(() => adminDashboardPage.expectAdminDetailsVisible())
 			.toBe(true);
-	});
-
-	test("displays admin actions", async ({ page }) => {
-		const adminDashboardPage = new AdminDashboardPage(page);
 		await expect
 			.poll(() => adminDashboardPage.expectActionsVisible())
 			.toBe(true);
