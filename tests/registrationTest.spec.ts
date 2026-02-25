@@ -10,6 +10,10 @@ if (!userPasswordForTesting) {
 	throw new Error("USER_PASSWORD_FOR_TESTING is not set");
 }
 
+if (!incorrectUserPasswordForTesting) {
+	throw new Error("INCORRECT_USER_PASSWORD_FOR_TESTING is not set");
+}
+
 test.describe("User Authentication", () => {
 	test("registers a new user successfully", async ({ page }) => {
 		const uniqueEmail = `jsimpson_${Date.now()}@gmail.com`;
