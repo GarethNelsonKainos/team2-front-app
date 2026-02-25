@@ -10,10 +10,10 @@ export class JobRolePage {
 			.click();
 	}
 
-	checkJobRole(jobTitle: string,): Locator {
+	checkJobRole(jobTitle: string): Locator {
 		return this.page
-		.getByRole("row", { name: `${jobTitle}` })
-		.getByRole("link")
+			.getByRole("row", { name: `${jobTitle}` })
+			.getByRole("link");
 	}
 
 	heading(jobTitle: string): Locator {

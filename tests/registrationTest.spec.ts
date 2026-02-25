@@ -3,9 +3,9 @@ import { AuthPage } from "./pages/authPage";
 import { HomePage } from "./pages/homePage";
 import { RegistrationPage } from "./pages/registrationPage";
 
-const userPasswordForTesting = process.env.USER_PASSWORD_FOR_TESTING;
+const userPasswordForTesting = process.env.PLAYWRIGHT_USER_PASSWORD;
 const incorrectUserPasswordForTesting =
-	process.env.INCORRECT_USER_PASSWORD_FOR_TESTING;
+	process.env.PLAYWRIGHT_USER_INCORRECT_PASSWORD;
 const baseUrl = process.env.BASE_URL ?? "http://localhost:3001";
 
 if (!userPasswordForTesting) {
@@ -32,8 +32,8 @@ test.describe("User Authentication", () => {
 		});
 		await registrationPage.submitRegistration();
 
-		await expect(page).toHaveURL(/\/home$/);
-		await expect(homePage.welcomeHeading("John Simpson")).toBeVisible();
+		await registrationPage.expectToBeOnHomePage();
+		await homePage.expectWelcomeHeadingVisible("John Simpson");
 	});
 
 	test("shows validation error for invalid email during registration", async ({
@@ -52,11 +52,10 @@ test.describe("User Authentication", () => {
 
 		await registrationPage.submitRegistration();
 
-		await expect(registrationPage.registerEmailError()).toBeVisible();
-		await expect(registrationPage.registerEmailError()).toHaveText(
+		await registrationPage.expectEmailError(
 			"Must be a valid email address (max 254 characters)",
 		);
-		await expect(page).toHaveURL(/\/(login|register)$/);
+		await registrationPage.expectToStayOnLoginOrRegister();
 	});
 
 	test("shows validation error when passwords do not match", async ({
@@ -75,11 +74,8 @@ test.describe("User Authentication", () => {
 
 		await registrationPage.submitRegistration();
 
-		await expect(registrationPage.registerConfirmPasswordError()).toBeVisible();
-		await expect(registrationPage.registerConfirmPasswordError()).toHaveText(
-			"Passwords do not match",
-		);
-		await expect(page).toHaveURL(/\/(login|register)$/);
+		await registrationPage.expectConfirmPasswordError("Passwords do not match");
+		await registrationPage.expectToStayOnLoginOrRegister();
 	});
 
 	test("shows required field validation on blur for empty inputs", async ({
@@ -90,14 +86,8 @@ test.describe("User Authentication", () => {
 		await registrationPage.gotoRegisterTab();
 		await registrationPage.blurEmptyRegisterRequiredFields();
 
-		await expect(registrationPage.registerFirstNameError()).toBeVisible();
-		await expect(registrationPage.registerFirstNameError()).toHaveText(
-			"First name is required",
-		);
-		await expect(registrationPage.registerEmailError()).toBeVisible();
-		await expect(registrationPage.registerEmailError()).toHaveText(
-			"Email is required",
-		);
+		await registrationPage.expectFirstNameError("First name is required");
+		await registrationPage.expectEmailError("Email is required");
 	});
 
 	test("shows an error when trying to register an already registered user", async ({
@@ -116,11 +106,10 @@ test.describe("User Authentication", () => {
 
 		await registrationPage.submitRegistration();
 
-		await expect(registrationPage.alert()).toBeVisible();
-		await expect(registrationPage.alert()).toContainText(
+		await registrationPage.expectRegistrationAlertContains(
 			/An error occurred during registration|Registration failed/i,
 		);
-		await expect(page).toHaveURL(/\/(login|register)$/);
+		await registrationPage.expectToStayOnLoginOrRegister();
 	});
 
 	test("shows an error for invalid login credentials", async ({ page }) => {
@@ -131,11 +120,9 @@ test.describe("User Authentication", () => {
 			email: "david@test.com",
 			password: incorrectUserPasswordForTesting,
 		});
-
 		await authPage.submitLogin();
 
-		await expect(authPage.alert()).toBeVisible();
-		await expect(authPage.alert()).toContainText(
+		await authPage.expectAlertContains(
 			/Login failed|An error occurred during login/i,
 		);
 		await expect(page).toHaveURL(/\/login$/);
@@ -149,7 +136,6 @@ test.describe("User Authentication", () => {
 			email: "david@test.com",
 			password: userPasswordForTesting,
 		});
-
 		await authPage.submitLogin();
 
 		await expect(page).toHaveURL(/\/profile$/);
@@ -165,7 +151,6 @@ test.describe("User Authentication", () => {
 			email: "david@test.com",
 			password: userPasswordForTesting,
 		});
-
 		await authPage.submitLogin();
 
 		await expect(page).toHaveURL(/\/home$/);
@@ -188,7 +173,7 @@ test.describe("User Authentication", () => {
 		await homePage.logoutLink().click();
 
 		await expect(page).toHaveURL(/\/login$/);
-		await expect(authPage.loginSubmitButton()).toBeVisible();
+		await authPage.expectLoginSubmitVisible();
 	});
 
 	test("redirects unauthenticated users from profile to login", async ({
@@ -199,6 +184,6 @@ test.describe("User Authentication", () => {
 		await page.goto(`${baseUrl}/profile`);
 
 		await expect(page).toHaveURL(/\/login$/);
-		await expect(authPage.loginSubmitButton()).toBeVisible();
+		await authPage.expectLoginSubmitVisible();
 	});
 });

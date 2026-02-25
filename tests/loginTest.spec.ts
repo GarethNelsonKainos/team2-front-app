@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"; 
+import { test, expect } from "@playwright/test";
 import { AuthPage } from "./pages/authPage";
 import { HomePage } from "./pages/homePage";
 import { AdminDashboardPage } from "./pages/adminDashboardPage";
@@ -9,7 +9,6 @@ Dotenv.config({ path: ".env" });
 const env = process.env;
 
 test.describe("Login and View All Roles", () => {
-
 	const admin = env.PLAYWRIGHT_ADMIN_USERNAME || "";
 	const adminPassword = env.PLAYWRIGHT_ADMIN_PASSWORD || "";
 	const user = env.PLAYWRIGHT_USER_USERNAME || "";
@@ -22,7 +21,7 @@ test.describe("Login and View All Roles", () => {
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
 			email: admin,
-			password: adminPassword
+			password: adminPassword,
 		});
 		await authPage.submitLogin();
 		await expect(homePage.adminDashboardLink()).toBeVisible();
@@ -34,7 +33,7 @@ test.describe("Login and View All Roles", () => {
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
 			email: user,
-			password: userPassword
+			password: userPassword,
 		});
 		await authPage.submitLogin();
 		await expect(homePage.welcomeHeading(userFullName)).toBeVisible();
@@ -46,7 +45,7 @@ test.describe("Login and View All Roles", () => {
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
 			email: user,
-			password: userPassword
+			password: userPassword,
 		});
 		await authPage.submitLogin();
 		await homePage.gotoAllJobroles();

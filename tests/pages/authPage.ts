@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 export type RegistrationData = {
 	firstName: string;
@@ -14,9 +14,33 @@ export type LoginData = {
 };
 
 export class AuthPage {
-	readonly registerTab: Locator;
+	private readonly registerTab: Locator;
+	private readonly firstNameInput: Locator;
+	private readonly surnameInput: Locator;
+	private readonly emailInput: Locator;
+	private readonly passwordInput: Locator;
+	private readonly confirmPasswordInput: Locator;
+	private readonly registerButton: Locator;
+	private readonly loginButton: Locator;
+	private readonly alertMessage: Locator;
+
 	constructor(private readonly page: Page) {
 		this.registerTab = this.page.getByRole("tab", { name: "Register" });
+		this.firstNameInput = this.page.getByRole("textbox", {
+			name: "First Name:",
+		});
+		this.surnameInput = this.page.getByRole("textbox", { name: "Surname:" });
+		this.emailInput = this.page.getByRole("textbox", { name: "Email:" });
+		this.passwordInput = this.page.getByRole("textbox", {
+			name: "Password:",
+			exact: true,
+		});
+		this.confirmPasswordInput = this.page.getByRole("textbox", {
+			name: "Confirm Password:",
+		});
+		this.registerButton = this.page.getByRole("button", { name: "Register" });
+		this.loginButton = this.page.getByRole("button", { name: "Submit" });
+		this.alertMessage = this.page.getByRole("alert");
 	}
 
 	async gotoLogin(redirect?: string) {
@@ -33,46 +57,36 @@ export class AuthPage {
 	}
 
 	async fillRegistrationForm(data: RegistrationData) {
-		await this.page
-			.getByRole("textbox", { name: "First Name:" })
-			.fill(data.firstName);
-		await this.page
-			.getByRole("textbox", { name: "Surname:" })
-			.fill(data.secondName);
-		await this.page.getByRole("textbox", { name: "Email:" }).fill(data.email);
-		await this.page
-			.getByRole("textbox", { name: "Password:", exact: true })
-			.fill(data.password);
-		await this.page
-			.getByRole("textbox", { name: "Confirm Password:" })
-			.fill(data.confirmedPassword);
+		await this.firstNameInput.fill(data.firstName);
+		await this.surnameInput.fill(data.secondName);
+		await this.emailInput.fill(data.email);
+		await this.passwordInput.fill(data.password);
+		await this.confirmPasswordInput.fill(data.confirmedPassword);
 	}
 
 	async submitRegistration() {
-		await this.page.getByRole("button", { name: "Register" }).click();
+		await this.registerButton.click();
 	}
 
 	async blurEmptyRegisterRequiredFields() {
-		await this.page.getByRole("textbox", { name: "First Name:" }).click();
-		await this.page.getByRole("textbox", { name: "First Name:" }).press("Tab");
+		await this.firstNameInput.click();
+		await this.firstNameInput.press("Tab");
 
-		await this.page.getByRole("textbox", { name: "Email:" }).click();
-		await this.page.getByRole("textbox", { name: "Email:" }).press("Tab");
+		await this.emailInput.click();
+		await this.emailInput.press("Tab");
 	}
 
 	async fillLoginForm(data: LoginData) {
-		await this.page.getByRole("textbox", { name: "Email:" }).fill(data.email);
-		await this.page
-			.getByRole("textbox", { name: "Password:" })
-			.fill(data.password);
+		await this.emailInput.fill(data.email);
+		await this.passwordInput.fill(data.password);
 	}
 
 	async submitLogin() {
-		await this.page.getByRole("button", { name: "Submit" }).click();
+		await this.loginButton.click();
 	}
 
 	alert(): Locator {
-		return this.page.getByRole("alert");
+		return this.alertMessage;
 	}
 
 	registerEmailError(): Locator {
@@ -88,6 +102,15 @@ export class AuthPage {
 	}
 
 	loginSubmitButton(): Locator {
-		return this.page.getByRole("button", { name: "Submit" });
+		return this.loginButton;
+	}
+
+	async expectAlertContains(message: RegExp) {
+		await expect(this.alertMessage).toBeVisible();
+		await expect(this.alertMessage).toContainText(message);
+	}
+
+	async expectLoginSubmitVisible() {
+		await expect(this.loginButton).toBeVisible();
 	}
 }

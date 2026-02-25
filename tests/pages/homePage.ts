@@ -1,10 +1,14 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 export class HomePage {
 	constructor(private readonly page: Page) {}
 
 	welcomeHeading(name: string): Locator {
 		return this.page.getByRole("heading", { name: `Welcome, ${name}!` });
+	}
+
+	async expectWelcomeHeadingVisible(name: string) {
+		await expect(this.welcomeHeading(name)).toBeVisible();
 	}
 
 	logoutLink(): Locator {
