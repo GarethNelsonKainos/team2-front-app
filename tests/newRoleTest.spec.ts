@@ -19,36 +19,22 @@ test.describe("Add a new job role", () => {
 		});
 		await authPage.submitLogin();
 		await homePage.adminDashboardLink().click();
-		await newRolePage.createNewJobRoleLink().click();
+		await newRolePage.navigateToCreateNewRole();
 		await page.waitForLoadState("networkidle");
 	});
 
 	test("displays the add job role form", async ({ page }) => {
 		const newRolePage = new NewRolePage(page);
 
-		await expect(newRolePage.roleNameInput()).toBeVisible();
-		await expect(newRolePage.descriptionInput()).toBeVisible();
-		await expect(newRolePage.responsibilitiesInput()).toBeVisible();
-		await expect(newRolePage.sharePointLinkInput()).toBeVisible();
-		await expect(newRolePage.closingDateInput()).toBeVisible();
-		await expect(newRolePage.numberOfOpenPositionsInput()).toBeVisible();
-		await expect(newRolePage.locationInput()).toBeVisible();
-		await expect(newRolePage.bandSelect()).toBeVisible();
-		await expect(newRolePage.capabilitySelect()).toBeVisible();
+		await newRolePage.expectHeadingVisible();
+		await newRolePage.expectFormFieldsVisible();
+		await newRolePage.expectConfirmButtonVisible();
 	});
 
 	test("contains blank form fields", async ({ page }) => {
 		const newRolePage = new NewRolePage(page);
 
-		await expect(newRolePage.roleNameInput()).toHaveValue("");
-		await expect(newRolePage.descriptionInput()).toHaveValue("");
-		await expect(newRolePage.responsibilitiesInput()).toHaveValue("");
-		await expect(newRolePage.sharePointLinkInput()).toHaveValue("");
-		await expect(newRolePage.closingDateInput()).toHaveValue("");
-		await expect(newRolePage.numberOfOpenPositionsInput()).toHaveValue("");
-		await expect(newRolePage.locationInput()).toHaveValue("");
-		await expect(newRolePage.bandSelect()).toHaveValue("");
-		await expect(newRolePage.capabilitySelect()).toHaveValue("");
+		await newRolePage.expectFormEmpty();
 	});
 
 	test("adds new role and navigates to /job-roles on valid data submit", async ({
@@ -57,8 +43,7 @@ test.describe("Add a new job role", () => {
 		const newRolePage = new NewRolePage(page);
 
 		await page.goto("/job-roles");
-		const rows = newRolePage.jobRoleRows();
-		const beforeCount = await rows.count();
+		const beforeCount = await newRolePage.getRowsCount();
 
 		await page.goto("/new-role");
 		await newRolePage.fillForm({
@@ -72,18 +57,13 @@ test.describe("Add a new job role", () => {
 			bandId: "4a535fab-694b-42a4-ac71-c70f1b927785",
 			capabilityId: "aa47edf4-af6f-4287-84d3-118d011b8324",
 		});
-		await newRolePage.confirmButton().click();
+		await newRolePage.submitForm();
 
 		await page.waitForLoadState("networkidle");
-		await expect(rows).toHaveCount(beforeCount + 1);
+		const afterCount = await newRolePage.getRowsCount();
+		await expect(afterCount).toBe(beforeCount + 1);
 
-		await expect(newRolePage.lastRowRoleCell("Test Role")).toBeVisible();
-		await expect(newRolePage.lastRowLocationCell("Belfast")).toBeVisible();
-		await expect(newRolePage.lastRowLocationCell("Architecture")).toBeVisible();
-		await expect(newRolePage.lastRowLocationCell("Apprentice")).toBeVisible();
-		await expect(newRolePage.lastRowRoleCell("12/03/4567")).toBeVisible();
-		await expect(newRolePage.lastRowDeleteButton("Test Role")).toBeVisible();
-		await expect(newRolePage.lastRowEditButton()).toBeVisible();
+		await newRolePage.expectLastRowToHaveRole("Test Role");
 	});
 
 	test("shows validation error when required fields are missing", async ({
@@ -91,9 +71,7 @@ test.describe("Add a new job role", () => {
 	}) => {
 		const newRolePage = new NewRolePage(page);
 
-		await newRolePage.confirmButton().click();
-
-		await expect(newRolePage.roleNameRequiredError()).toBeVisible();
-		await expect(newRolePage.jobSpecSummaryRequiredError()).toBeVisible();
+		await newRolePage.submitForm();
+		await newRolePage.expectErrorsOnEmptySubmit();
 	});
 });
