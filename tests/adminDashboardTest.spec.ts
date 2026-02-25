@@ -22,20 +22,30 @@ test.describe("Admin Dashboard Page", () => {
 
 	test("displays admin dashboard heading", async ({ page }) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
-
-		await expect(adminDashboardPage.heading()).toBeVisible();
+		await adminDashboardPage.expectHeadingVisible();
 	});
 
 	test("displays admin details", async ({ page }) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
-
-		await expect(adminDashboardPage.adminDetails()).toBeVisible();
+		await adminDashboardPage.expectAdminDetailsVisible();
 	});
 
 	test("displays admin actions", async ({ page }) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
+		await adminDashboardPage.expectActionsVisible();
+	});
 
-		await expect(adminDashboardPage.viewAllRolesLink()).toBeVisible();
-		await expect(adminDashboardPage.createNewJobRoleLink()).toBeVisible();
+	test("navigates to view all roles page on link click", async ({ page }) => {
+		const adminDashboardPage = new AdminDashboardPage(page);
+		await adminDashboardPage.clickViewAllRoles();
+		await expect(page).toHaveURL(/\/job-roles$/);
+	});
+
+	test("navigates to create new job role page on link click", async ({
+		page,
+	}) => {
+		const adminDashboardPage = new AdminDashboardPage(page);
+		await adminDashboardPage.clickCreateNewJobRole();
+		await expect(page).toHaveURL(/\/job-roles\/new$/);
 	});
 });
