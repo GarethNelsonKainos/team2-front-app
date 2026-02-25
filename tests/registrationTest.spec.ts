@@ -65,7 +65,9 @@ test.describe("User Authentication", () => {
 					),
 				)
 				.toBe(true);
-			await expect.poll(() => registrationPage.isOnLoginOrRegister()).toBe(true);
+			await expect
+				.poll(() => registrationPage.isOnLoginOrRegister())
+				.toBe(true);
 		});
 
 		await test.step("shows validation error when passwords do not match", async () => {
@@ -85,7 +87,9 @@ test.describe("User Authentication", () => {
 					registrationPage.hasConfirmPasswordError("Passwords do not match"),
 				)
 				.toBe(true);
-			await expect.poll(() => registrationPage.isOnLoginOrRegister()).toBe(true);
+			await expect
+				.poll(() => registrationPage.isOnLoginOrRegister())
+				.toBe(true);
 		});
 
 		await test.step("shows required field validation on blur for empty inputs", async () => {
@@ -93,7 +97,9 @@ test.describe("User Authentication", () => {
 			await registrationPage.blurEmptyRegisterRequiredFields();
 
 			await expect
-				.poll(() => registrationPage.hasFirstNameError("First name is required"))
+				.poll(() =>
+					registrationPage.hasFirstNameError("First name is required"),
+				)
 				.toBe(true);
 			await expect
 				.poll(() => registrationPage.hasEmailError("Email is required"))
@@ -119,7 +125,9 @@ test.describe("User Authentication", () => {
 					),
 				)
 				.toBe(true);
-			await expect.poll(() => registrationPage.isOnLoginOrRegister()).toBe(true);
+			await expect
+				.poll(() => registrationPage.isOnLoginOrRegister())
+				.toBe(true);
 		});
 
 		await test.step("shows an error for invalid login credentials", async () => {
