@@ -3,17 +3,17 @@ import { AuthPage } from "./pages/authPage";
 import { HomePage } from "./pages/homePage";
 import { RegistrationPage } from "./pages/registrationPage";
 
-const userPasswordForTesting = process.env.USER_PASSWORD_FOR_TESTING;
+const userPasswordForTesting = process.env.PLAYWRIGHT_USER_PASSWORD;
 const incorrectUserPasswordForTesting =
-	process.env.INCORRECT_USER_PASSWORD_FOR_TESTING;
+	process.env.PLAYWRIGHT_USER_INCORRECT_PASSWORD;
 const baseUrl = process.env.BASE_URL ?? "http://localhost:3001";
 
 if (!userPasswordForTesting) {
-	throw new Error("USER_PASSWORD_FOR_TESTING is not set");
+	throw new Error("PLAYWRIGHT_USER_PASSWORD is not set");
 }
 
 if (!incorrectUserPasswordForTesting) {
-	throw new Error("INCORRECT_USER_PASSWORD_FOR_TESTING is not set");
+	throw new Error("PLAYWRIGHT_USER_INCORRECT_PASSWORD is not set");
 }
 
 test.describe("User Authentication", () => {
