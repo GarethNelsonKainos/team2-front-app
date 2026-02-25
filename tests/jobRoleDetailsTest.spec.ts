@@ -13,7 +13,7 @@ test.describe("Job Role Details Page", () => {
 
 		// Navigate to job role
 		await page.goto("http://localhost:3001/");
-		await homePage.gotoAllJobroles();
+		await homePage.goToAllJobRoles();
 		await jobRolePage.openJobRole(jobTitle);
 
 		// Verify all details in one flow

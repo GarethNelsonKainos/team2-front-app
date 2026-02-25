@@ -18,7 +18,7 @@ test.describe("Add a new job role", () => {
 			password: process.env.PLAYWRIGHT_ADMIN_PASSWORD || "",
 		});
 		await authPage.submitLogin();
-		await homePage.adminDashboardLink().click();
+		await homePage.gotoAdminDashboard();
 		await newRolePage.navigateToCreateNewRole();
 		await page.waitForLoadState("networkidle");
 	});

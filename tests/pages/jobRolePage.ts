@@ -44,8 +44,14 @@ export class JobRolePage {
 		return this.jobroleLink.click();
 	}
 
-	checkJobRole(jobTitle: string): Promise<boolean> {
+	checkJobRoleVisible(jobTitle: string): Promise<boolean> {
 		return this.jobroleLink.isVisible();
+	}
+
+	checkJobRole(jobTitle: string): Locator {
+		return this.page
+			.getByRole("row", { name: `${jobTitle}` })
+			.getByRole("link");
 	}
 
 	heading(jobTitle: string): Promise<boolean> {

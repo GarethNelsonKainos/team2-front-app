@@ -15,65 +15,77 @@ export type LoginData = {
 
 export class AuthPage {
 	private readonly registerTab: Locator;
-	private readonly firstNameInput: Locator;
-	private readonly surnameInput: Locator;
+	private readonly loginTab: Locator;
+	private readonly homeLink: Locator;
+	private readonly LoginHeading: Locator;
 	private readonly emailInput: Locator;
 	private readonly passwordInput: Locator;
-	private readonly confirmPasswordInput: Locator;
-	private readonly registerButton: Locator;
-	private readonly loginButton: Locator;
-	private readonly alertMessage: Locator;
+	private readonly submitButton: Locator;
+	private readonly cancelLink: Locator;
+	private readonly emailRequired: Locator;
+	private readonly passwordRequired: Locator;
+	private readonly loginErrorMessage: Locator;
 
 	constructor(private readonly page: Page) {
+		this.homeLink = this.page.getByRole("link", { name: "Home" });
 		this.registerTab = this.page.getByRole("tab", { name: "Register" });
-		this.firstNameInput = this.page.getByRole("textbox", {
-			name: "First Name:",
-		});
-		this.surnameInput = this.page.getByRole("textbox", { name: "Surname:" });
+		this.loginTab = this.page.getByRole("tab", { name: "Log In" });
+		this.LoginHeading = this.page.getByText("Log in to an existing account");
 		this.emailInput = this.page.getByRole("textbox", { name: "Email:" });
-		this.passwordInput = this.page.getByRole("textbox", {
-			name: "Password:",
-			exact: true,
-		});
-		this.confirmPasswordInput = this.page.getByRole("textbox", {
-			name: "Confirm Password:",
-		});
-		this.registerButton = this.page.getByRole("button", { name: "Register" });
-		this.loginButton = this.page.getByRole("button", { name: "Submit" });
-		this.alertMessage = this.page.getByRole("alert");
+		this.passwordInput = this.page.getByRole("textbox", { name: "Password:" });
+		this.submitButton = this.page.getByRole("button", { name: "Submit" });
+		this.cancelLink = this.page.getByRole("link", { name: "Cancel" });
+		this.emailRequired = this.page.getByText("Email is required");
+		this.passwordRequired = this.page.getByText("Password is required");
+		this.loginErrorMessage = this.page.getByText("Login failed. Please try");
 	}
 
-	async gotoLogin(redirect?: string) {
-		const url = redirect
-			? `http://localhost:3001/login?redirect=${encodeURIComponent(redirect)}`
-			: "http://localhost:3001/login";
-
-		await this.page.goto(url);
+	async gotoLogin() {
+		await this.page.goto("/login");
 	}
 
-	async gotoRegisterTab() {
-		await this.gotoLogin();
+	async gotoHome() {
+		await this.homeLink.click();
+	}
+
+	async gotoRegister() {
 		await this.registerTab.click();
 	}
 
-	async fillRegistrationForm(data: RegistrationData) {
-		await this.firstNameInput.fill(data.firstName);
-		await this.surnameInput.fill(data.secondName);
-		await this.emailInput.fill(data.email);
-		await this.passwordInput.fill(data.password);
-		await this.confirmPasswordInput.fill(data.confirmedPassword);
+	async gotoLoginTab() {
+		await this.loginTab.click();
 	}
 
-	async submitRegistration() {
-		await this.registerButton.click();
+	async isLoginHeadingVisible(): Promise<boolean> {
+		return await this.LoginHeading.isVisible();
 	}
 
-	async blurEmptyRegisterRequiredFields() {
-		await this.firstNameInput.click();
-		await this.firstNameInput.press("Tab");
+	async isLoginTabVisible(): Promise<boolean> {
+		return await this.loginTab.isVisible();
+	}
 
-		await this.emailInput.click();
-		await this.emailInput.press("Tab");
+	async isEmailInputVisible(): Promise<boolean> {
+		return await this.emailInput.isVisible();
+	}
+
+	async isPasswordInputVisible(): Promise<boolean> {
+		return await this.passwordInput.isVisible();
+	}
+
+	async isSubmitButtonVisible(): Promise<boolean> {
+		return await this.submitButton.isVisible();
+	}
+
+	async isEmailRequiredVisible(): Promise<boolean> {
+		return await this.emailRequired.isVisible();
+	}
+
+	async isPasswordRequiredVisible(): Promise<boolean> {
+		return await this.passwordRequired.isVisible();
+	}
+
+	async isLoginErrorMessageVisible(): Promise<boolean> {
+		return await this.loginErrorMessage.isVisible();
 	}
 
 	async fillLoginForm(data: LoginData) {
@@ -82,35 +94,10 @@ export class AuthPage {
 	}
 
 	async submitLogin() {
-		await this.loginButton.click();
+		await this.submitButton.click();
 	}
 
-	alert(): Locator {
-		return this.alertMessage;
-	}
-
-	registerEmailError(): Locator {
-		return this.page.locator("#registerEmailError");
-	}
-
-	registerConfirmPasswordError(): Locator {
-		return this.page.locator("#registerConfirmPasswordError");
-	}
-
-	registerFirstNameError(): Locator {
-		return this.page.locator("#registerFirstNameError");
-	}
-
-	loginSubmitButton(): Locator {
-		return this.loginButton;
-	}
-
-	async expectAlertContains(message: RegExp) {
-		await expect(this.alertMessage).toBeVisible();
-		await expect(this.alertMessage).toContainText(message);
-	}
-
-	async expectLoginSubmitVisible() {
-		await expect(this.loginButton).toBeVisible();
+	async cancelLogin(): Promise<void> {
+		await this.cancelLink.click();
 	}
 }

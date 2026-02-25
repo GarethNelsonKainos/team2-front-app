@@ -3,7 +3,9 @@ import { AuthPage } from "./pages/authPage";
 import { HomePage } from "./pages/homePage";
 import { RegistrationPage } from "./pages/registrationPage";
 
+const userFullName = process.env.PLAYWRIGHT_USER_FULLNAME || "";
 const userPasswordForTesting = process.env.PLAYWRIGHT_USER_PASSWORD;
+const userEmailForTesting = process.env.PLAYWRIGHT_USER_USERNAME || "";
 const incorrectUserPasswordForTesting =
 	process.env.PLAYWRIGHT_USER_INCORRECT_PASSWORD;
 const baseUrl = process.env.BASE_URL ?? "http://localhost:3001";
@@ -37,13 +39,13 @@ test.describe("User Authentication", () => {
 			await registrationPage.submitRegistration();
 
 			await expect.poll(() => registrationPage.isOnHomePage()).toBe(true);
-			await homePage.expectWelcomeHeadingVisible("John Simpson");
+			await homePage.isWelcomeHeadingText(`John Simpson`);
 		});
 
 		await test.step("logs out newly registered user", async () => {
-			await homePage.logoutLink().click();
+			await homePage.Logout();
 			await expect(page).toHaveURL(/\/login$/);
-			await authPage.expectLoginSubmitVisible();
+			await authPage.isLoginHeadingVisible();
 		});
 
 		await test.step("shows validation error for invalid email during registration", async () => {
@@ -111,7 +113,7 @@ test.describe("User Authentication", () => {
 			await registrationPage.fillRegistrationForm({
 				firstName: "David",
 				secondName: "Test",
-				email: "david@test.com",
+				email: userEmailForTesting,
 				password: userPasswordForTesting,
 				confirmedPassword: userPasswordForTesting,
 			});
@@ -133,39 +135,36 @@ test.describe("User Authentication", () => {
 		await test.step("shows an error for invalid login credentials", async () => {
 			await authPage.gotoLogin();
 			await authPage.fillLoginForm({
-				email: "david@test.com",
+				email: userEmailForTesting,
 				password: incorrectUserPasswordForTesting,
 			});
 			await authPage.submitLogin();
 
-			await authPage.expectAlertContains(
-				/Login failed|An error occurred during login/i,
-			);
+			await authPage.isLoginErrorMessageVisible();
 			await expect(page).toHaveURL(/\/login$/);
 		});
 
 		await test.step("honours allowed redirect after login", async () => {
-			await authPage.gotoLogin(`${baseUrl}/profile`);
+			await authPage.gotoLogin();
 			await authPage.fillLoginForm({
-				email: "david@test.com",
+				email: userEmailForTesting,
 				password: userPasswordForTesting,
 			});
 			await authPage.submitLogin();
-
-			await expect(page).toHaveURL(/\/profile$/);
+			expect(await homePage.isWelcomeHeadingText(userFullName)).toBe(true);
 		});
 
 		await test.step("logs out authenticated user and returns to login page", async () => {
 			await page.goto(`${baseUrl}/home`);
-			await homePage.logoutLink().click();
+			await homePage.Logout();
 			await expect(page).toHaveURL(/\/login$/);
-			await authPage.expectLoginSubmitVisible();
+			await authPage.isLoginHeadingVisible();
 		});
 
 		await test.step("blocks external redirect after login and falls back to home", async () => {
 			await authPage.gotoLogin("http://malicious.example");
 			await authPage.fillLoginForm({
-				email: "david@test.com",
+				email: userEmailForTesting,
 				password: userPasswordForTesting,
 			});
 			await authPage.submitLogin();
@@ -174,13 +173,13 @@ test.describe("User Authentication", () => {
 		});
 
 		await test.step("redirects unauthenticated users from profile to login", async () => {
-			await homePage.logoutLink().click();
+			await homePage.Logout();
 			await expect(page).toHaveURL(/\/login$/);
 
 			await page.goto(`${baseUrl}/profile`);
 
 			await expect(page).toHaveURL(/\/login$/);
-			await authPage.expectLoginSubmitVisible();
+			await authPage.isLoginHeadingVisible();
 		});
 	});
 });

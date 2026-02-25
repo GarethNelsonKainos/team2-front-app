@@ -17,7 +17,7 @@ test.describe("Admin Dashboard Page", () => {
 			password: process.env.PLAYWRIGHT_ADMIN_PASSWORD || "",
 		});
 		await authPage.submitLogin();
-		await homePage.adminDashboardLink().click();
+		await homePage.gotoAdminDashboard();
 	});
 
 	test("displays admin dashboard heading", async ({ page }) => {
