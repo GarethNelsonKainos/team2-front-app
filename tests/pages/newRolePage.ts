@@ -64,9 +64,7 @@ export class NewRolePage {
 	}
 
 	lastRowRoleCell(name: string): Locator {
-		return this.jobRoleRows()
-			.last()
-			.getByRole("cell", { name, exact: true });
+		return this.jobRoleRows().last().getByRole("cell", { name, exact: true });
 	}
 
 	lastRowLocationCell(name: string): Locator {
