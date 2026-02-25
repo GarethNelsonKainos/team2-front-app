@@ -3,7 +3,7 @@ import { HomePage } from "./pages/homePage";
 import { JobRolePage } from "./pages/jobRolePage";
 
 test.describe("Job Role Details Page", () => {
-	const jobTitle = 'Software Engineer';	
+	const jobTitle = "Software Engineer";
 	let homePage: HomePage;
 	let jobRolePage: JobRolePage;
 	test.beforeEach(async ({ page }) => {
@@ -16,9 +16,7 @@ test.describe("Job Role Details Page", () => {
 	});
 
 	test("displays job title", async ({ page }) => {
-		await expect(
-			jobRolePage.heading(jobTitle),
-		).toBeVisible();
+		await expect(jobRolePage.heading(jobTitle)).toBeVisible();
 	});
 
 	test("displays job description", async ({ page }) => {

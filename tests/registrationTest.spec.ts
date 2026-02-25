@@ -4,7 +4,8 @@ import { HomePage } from "./pages/homePage";
 import { RegistrationPage } from "./pages/registrationPage";
 
 const userPasswordForTesting = process.env.USER_PASSWORD_FOR_TESTING;
-const incorrectUserPasswordForTesting = process.env.INCORRECT_USER_PASSWORD_FOR_TESTING;
+const incorrectUserPasswordForTesting =
+	process.env.INCORRECT_USER_PASSWORD_FOR_TESTING;
 
 if (!userPasswordForTesting) {
 	throw new Error("USER_PASSWORD_FOR_TESTING is not set");
