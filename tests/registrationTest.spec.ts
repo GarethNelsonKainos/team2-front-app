@@ -9,11 +9,11 @@ const incorrectUserPasswordForTesting =
 const baseUrl = process.env.BASE_URL ?? "http://localhost:3001";
 
 if (!userPasswordForTesting) {
-	throw new Error("USER_PASSWORD_FOR_TESTING is not set");
+	throw new Error("PLAYWRIGHT_USER_PASSWORD is not set");
 }
 
 if (!incorrectUserPasswordForTesting) {
-	throw new Error("INCORRECT_USER_PASSWORD_FOR_TESTING is not set");
+	throw new Error("PLAYWRIGHT_USER_INCORRECT_PASSWORD is not set");
 }
 
 test.describe("User Authentication", () => {

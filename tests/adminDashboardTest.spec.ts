@@ -46,6 +46,6 @@ test.describe("Admin Dashboard Page", () => {
 	}) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
 		await adminDashboardPage.clickCreateNewJobRole();
-		await expect(page).toHaveURL(/\/job-roles\/new$/);
+		await expect(page).toHaveURL(/\/new-role/);
 	});
 });
