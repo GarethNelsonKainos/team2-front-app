@@ -1,22 +1,30 @@
 import { test, expect } from "@playwright/test";
 import { AuthPage } from "./pages/authPage";
 import { HomePage } from "./pages/homePage";
+import { RegistrationPage } from "./pages/registrationPage";
+
+const userPasswordForTesting = process.env.USER_PASSWORD_FOR_TESTING;
+const incorrectUserPasswordForTesting = process.env.INCORRECT_USER_PASSWORD_FOR_TESTING;
+
+if (!userPasswordForTesting) {
+	throw new Error("USER_PASSWORD_FOR_TESTING is not set");
+}
 
 test.describe("User Authentication", () => {
 	test("registers a new user successfully", async ({ page }) => {
 		const uniqueEmail = `jsimpson_${Date.now()}@gmail.com`;
-		const authPage = new AuthPage(page);
+		const registrationPage = new RegistrationPage(page);
 		const homePage = new HomePage(page);
 
-		await authPage.gotoRegisterTab();
-		await authPage.fillRegistrationForm({
+		await registrationPage.gotoRegisterTab();
+		await registrationPage.fillRegistrationForm({
 			firstName: "John",
 			secondName: "Simpson",
 			email: uniqueEmail,
-			password: "Password123!",
-			confirmedPassword: "Password123!",
+			password: userPasswordForTesting,
+			confirmedPassword: userPasswordForTesting,
 		});
-		await authPage.submitRegistration();
+		await registrationPage.submitRegistration();
 
 		await expect(page).toHaveURL(/\/home$/);
 		await expect(homePage.welcomeHeading("John Simpson")).toBeVisible();
@@ -25,21 +33,21 @@ test.describe("User Authentication", () => {
 	test("shows validation error for invalid email during registration", async ({
 		page,
 	}) => {
-		const authPage = new AuthPage(page);
+		const registrationPage = new RegistrationPage(page);
 
-		await authPage.gotoRegisterTab();
-		await authPage.fillRegistrationForm({
+		await registrationPage.gotoRegisterTab();
+		await registrationPage.fillRegistrationForm({
 			firstName: "John",
 			secondName: "Simpson",
 			email: "not-an-email",
-			password: "Password123!",
-			confirmedPassword: "Password123!",
+			password: userPasswordForTesting,
+			confirmedPassword: userPasswordForTesting,
 		});
 
-		await authPage.submitRegistration();
+		await registrationPage.submitRegistration();
 
-		await expect(authPage.registerEmailError()).toBeVisible();
-		await expect(authPage.registerEmailError()).toHaveText(
+		await expect(registrationPage.registerEmailError()).toBeVisible();
+		await expect(registrationPage.registerEmailError()).toHaveText(
 			"Must be a valid email address (max 254 characters)",
 		);
 		await expect(page).toHaveURL(/\/(login|register)$/);
@@ -48,21 +56,21 @@ test.describe("User Authentication", () => {
 	test("shows validation error when passwords do not match", async ({
 		page,
 	}) => {
-		const authPage = new AuthPage(page);
+		const registrationPage = new RegistrationPage(page);
 
-		await authPage.gotoRegisterTab();
-		await authPage.fillRegistrationForm({
+		await registrationPage.gotoRegisterTab();
+		await registrationPage.fillRegistrationForm({
 			firstName: "John",
 			secondName: "Simpson",
 			email: `mismatch_${Date.now()}@gmail.com`,
-			password: "Password123!",
-			confirmedPassword: "Different123!",
+			password: userPasswordForTesting,
+			confirmedPassword: incorrectUserPasswordForTesting,
 		});
 
-		await authPage.submitRegistration();
+		await registrationPage.submitRegistration();
 
-		await expect(authPage.registerConfirmPasswordError()).toBeVisible();
-		await expect(authPage.registerConfirmPasswordError()).toHaveText(
+		await expect(registrationPage.registerConfirmPasswordError()).toBeVisible();
+		await expect(registrationPage.registerConfirmPasswordError()).toHaveText(
 			"Passwords do not match",
 		);
 		await expect(page).toHaveURL(/\/(login|register)$/);
@@ -71,26 +79,28 @@ test.describe("User Authentication", () => {
 	test("shows required field validation on blur for empty inputs", async ({
 		page,
 	}) => {
-		const authPage = new AuthPage(page);
+		const registrationPage = new RegistrationPage(page);
 
-		await authPage.gotoRegisterTab();
-		await authPage.blurEmptyRegisterRequiredFields();
+		await registrationPage.gotoRegisterTab();
+		await registrationPage.blurEmptyRegisterRequiredFields();
 
-		await expect(authPage.registerFirstNameError()).toBeVisible();
-		await expect(authPage.registerFirstNameError()).toHaveText(
+		await expect(registrationPage.registerFirstNameError()).toBeVisible();
+		await expect(registrationPage.registerFirstNameError()).toHaveText(
 			"First name is required",
 		);
-		await expect(authPage.registerEmailError()).toBeVisible();
-		await expect(authPage.registerEmailError()).toHaveText("Email is required");
+		await expect(registrationPage.registerEmailError()).toBeVisible();
+		await expect(registrationPage.registerEmailError()).toHaveText(
+			"Email is required",
+		);
 	});
 
 	test("shows an error when trying to register an already registered user", async ({
 		page,
 	}) => {
-		const authPage = new AuthPage(page);
+		const registrationPage = new RegistrationPage(page);
 
-		await authPage.gotoRegisterTab();
-		await authPage.fillRegistrationForm({
+		await registrationPage.gotoRegisterTab();
+		await registrationPage.fillRegistrationForm({
 			firstName: "David",
 			secondName: "Test",
 			email: "david@test.com",
@@ -98,10 +108,10 @@ test.describe("User Authentication", () => {
 			confirmedPassword: "Password123!",
 		});
 
-		await authPage.submitRegistration();
+		await registrationPage.submitRegistration();
 
-		await expect(authPage.alert()).toBeVisible();
-		await expect(authPage.alert()).toContainText(
+		await expect(registrationPage.alert()).toBeVisible();
+		await expect(registrationPage.alert()).toContainText(
 			/An error occurred during registration|Registration failed/i,
 		);
 		await expect(page).toHaveURL(/\/(login|register)$/);
