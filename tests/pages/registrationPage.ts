@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
 
 export type RegistrationData = {
 	firstName: string;
@@ -69,31 +69,51 @@ export class RegistrationPage {
 		await this.emailInput.press("Tab");
 	}
 
-	async expectEmailError(message: string) {
-		await expect(this.registerEmailError).toBeVisible();
-		await expect(this.registerEmailError).toHaveText(message);
+	private static normalizeText(text: string | null): string {
+		return (text ?? "").trim();
 	}
 
-	async expectConfirmPasswordError(message: string) {
-		await expect(this.registerConfirmPasswordError).toBeVisible();
-		await expect(this.registerConfirmPasswordError).toHaveText(message);
+	private async isVisibleWithExactText(
+		locator: Locator,
+		message: string,
+	): Promise<boolean> {
+		if (!(await locator.isVisible())) {
+			return false;
+		}
+
+		const text = await locator.textContent();
+		return RegistrationPage.normalizeText(text) === message;
 	}
 
-	async expectFirstNameError(message: string) {
-		await expect(this.registerFirstNameError).toBeVisible();
-		await expect(this.registerFirstNameError).toHaveText(message);
+	async hasEmailError(message: string): Promise<boolean> {
+		return this.isVisibleWithExactText(this.registerEmailError, message);
 	}
 
-	async expectRegistrationAlertContains(message: RegExp) {
-		await expect(this.registrationAlert).toBeVisible();
-		await expect(this.registrationAlert).toContainText(message);
+	async hasConfirmPasswordError(message: string): Promise<boolean> {
+		return this.isVisibleWithExactText(
+			this.registerConfirmPasswordError,
+			message,
+		);
 	}
 
-	async expectToBeOnHomePage() {
-		await expect(this.page).toHaveURL(/\/home$/);
+	async hasFirstNameError(message: string): Promise<boolean> {
+		return this.isVisibleWithExactText(this.registerFirstNameError, message);
 	}
 
-	async expectToStayOnLoginOrRegister() {
-		await expect(this.page).toHaveURL(/\/(login|register)$/);
+	async hasRegistrationAlertContaining(message: RegExp): Promise<boolean> {
+		if (!(await this.registrationAlert.isVisible())) {
+			return false;
+		}
+
+		const alertText = await this.registrationAlert.textContent();
+		return message.test(RegistrationPage.normalizeText(alertText));
+	}
+
+	async isOnHomePage(): Promise<boolean> {
+		return /\/home$/.test(this.page.url());
+	}
+
+	async isOnLoginOrRegister(): Promise<boolean> {
+		return /\/(login|register)$/.test(this.page.url());
 	}
 }
