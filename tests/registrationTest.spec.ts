@@ -6,6 +6,7 @@ import { RegistrationPage } from "./pages/registrationPage";
 const userPasswordForTesting = process.env.USER_PASSWORD_FOR_TESTING;
 const incorrectUserPasswordForTesting =
 	process.env.INCORRECT_USER_PASSWORD_FOR_TESTING;
+const baseUrl = process.env.BASE_URL ?? "http://localhost:3001";
 
 if (!userPasswordForTesting) {
 	throw new Error("USER_PASSWORD_FOR_TESTING is not set");
@@ -109,8 +110,8 @@ test.describe("User Authentication", () => {
 			firstName: "David",
 			secondName: "Test",
 			email: "david@test.com",
-			password: "Password123!",
-			confirmedPassword: "Password123!",
+			password: userPasswordForTesting,
+			confirmedPassword: userPasswordForTesting,
 		});
 
 		await registrationPage.submitRegistration();
@@ -128,7 +129,7 @@ test.describe("User Authentication", () => {
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
 			email: "david@test.com",
-			password: "WrongPassword123!",
+			password: incorrectUserPasswordForTesting,
 		});
 
 		await authPage.submitLogin();
@@ -143,10 +144,10 @@ test.describe("User Authentication", () => {
 	test("honours allowed redirect after login", async ({ page }) => {
 		const authPage = new AuthPage(page);
 
-		await authPage.gotoLogin("http://localhost:3001/profile");
+		await authPage.gotoLogin(`${baseUrl}/profile`);
 		await authPage.fillLoginForm({
 			email: "david@test.com",
-			password: "Password123!",
+			password: userPasswordForTesting,
 		});
 
 		await authPage.submitLogin();
@@ -162,7 +163,7 @@ test.describe("User Authentication", () => {
 		await authPage.gotoLogin("http://malicious.example");
 		await authPage.fillLoginForm({
 			email: "david@test.com",
-			password: "Password123!",
+			password: userPasswordForTesting,
 		});
 
 		await authPage.submitLogin();
@@ -179,7 +180,7 @@ test.describe("User Authentication", () => {
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
 			email: "david@test.com",
-			password: "Password123!",
+			password: userPasswordForTesting,
 		});
 		await authPage.submitLogin();
 		await expect(page).toHaveURL(/\/home$/);
@@ -195,7 +196,7 @@ test.describe("User Authentication", () => {
 	}) => {
 		const authPage = new AuthPage(page);
 
-		await page.goto("http://localhost:3001/profile");
+		await page.goto(`${baseUrl}/profile`);
 
 		await expect(page).toHaveURL(/\/login$/);
 		await expect(authPage.loginSubmitButton()).toBeVisible();
