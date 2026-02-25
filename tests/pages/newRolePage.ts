@@ -189,7 +189,7 @@ export class NewRolePage {
 		await this.confirmButton().click();
 	}
 
-    async navigateToCreateNewRole() {
-        await this.createNewJobRoleLink().click();
-    }
+	async navigateToCreateNewRole() {
+		await this.createNewJobRoleLink().click();
+	}
 }
