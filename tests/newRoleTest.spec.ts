@@ -26,12 +26,8 @@ test.describe("Add a new job role", () => {
 	test("displays the add job role form", async ({ page }) => {
 		const newRolePage = new NewRolePage(page);
 
-		await expect
-			.poll(() => newRolePage.expectHeadingVisible())
-			.toBe(true);
-		await expect
-			.poll(() => newRolePage.expectFormFieldsVisible())
-			.toBe(true);
+		await expect.poll(() => newRolePage.expectHeadingVisible()).toBe(true);
+		await expect.poll(() => newRolePage.expectFormFieldsVisible()).toBe(true);
 		await expect
 			.poll(() => newRolePage.expectConfirmButtonVisible())
 			.toBe(true);
@@ -40,9 +36,7 @@ test.describe("Add a new job role", () => {
 	test("contains blank form fields", async ({ page }) => {
 		const newRolePage = new NewRolePage(page);
 
-		await expect
-			.poll(() => newRolePage.expectFormEmpty())
-			.toBe(true);
+		await expect.poll(() => newRolePage.expectFormEmpty()).toBe(true);
 	});
 
 	test("adds new role and navigates to /job-roles on valid data submit", async ({
@@ -82,8 +76,6 @@ test.describe("Add a new job role", () => {
 		const newRolePage = new NewRolePage(page);
 
 		await newRolePage.submitForm();
-		await expect
-			.poll(() => newRolePage.expectErrorsOnEmptySubmit())
-			.toBe(true);
+		await expect.poll(() => newRolePage.expectErrorsOnEmptySubmit()).toBe(true);
 	});
 });
