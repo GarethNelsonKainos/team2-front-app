@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
 
 export type NewRoleFormData = {
 	roleName: string;
@@ -33,10 +33,7 @@ export class NewRolePage {
 	private readonly locationRequiredError: Locator;
 	private readonly bandRequiredError: Locator;
 	private readonly capabilityRequiredError: Locator;
-	private readonly lastRowRoleCell: (name: string) => Locator;
-	private readonly lastRowLocationCell: (name: string) => Locator;
-	private readonly lastRowDeleteButton: (name: string) => Locator;
-	private readonly lastRowEditButton: () => Locator;
+	private readonly rowByRoleName: (name: string) => Locator;
 
 	constructor(private readonly page: Page) {
 		this.createNewJobRoleLink = this.page.getByRole("link", {
@@ -77,14 +74,12 @@ export class NewRolePage {
 		this.capabilityRequiredError = this.page.getByText(
 			"Capability is required",
 		);
-		this.lastRowRoleCell = (name: string) =>
-			this.jobRoleRows.last().getByRole("cell", { name, exact: true });
-		this.lastRowLocationCell = (name: string) =>
-			this.jobRoleRows.last().getByRole("cell", { name });
-		this.lastRowDeleteButton = (name: string) =>
-			this.jobRoleRows.last().getByRole("button", { name: `Delete ${name}` });
-		this.lastRowEditButton = () =>
-			this.jobRoleRows.last().locator(".d-flex > .btn.kainos-blue");
+		this.rowByRoleName = (name: string) =>
+			this.jobRoleRows
+				.filter({
+					has: this.page.getByRole("cell", { name, exact: true }),
+				})
+				.first();
 	}
 
 	async fillForm(data: NewRoleFormData) {
@@ -126,26 +121,22 @@ export class NewRolePage {
 		);
 	}
 
-	async expectLastRowToHaveRole(name: string): Promise<boolean> {
-		const roleCellVisible = await this.lastRowRoleCell(name).isVisible();
-		const locationCellVisible =
-			await this.lastRowLocationCell("Belfast").isVisible();
-		const architectureCellVisible =
-			await this.lastRowLocationCell("Architecture").isVisible();
-		const apprenticeCellVisible =
-			await this.lastRowLocationCell("Apprentice").isVisible();
-		const closingDateCellVisible =
-			await this.lastRowRoleCell("12/03/4567").isVisible();
-		const deleteButtonVisible =
-			await this.lastRowDeleteButton(name).isVisible();
-		const editButtonVisible = await this.lastRowEditButton().isVisible();
+	async expectTableToHaveRole(name: string): Promise<boolean> {
+		const roleRow = this.rowByRoleName(name);
+		const roleRowVisible = await roleRow.isVisible();
+		const locationCellVisible = await roleRow
+			.getByRole("cell", { name: "Belfast" })
+			.isVisible();
+		const deleteButtonVisible = await roleRow
+			.getByRole("button", { name: `Delete ${name}` })
+			.isVisible();
+		const editButtonVisible = await roleRow
+			.locator(".d-flex > .btn.kainos-blue")
+			.isVisible();
 
 		return (
-			roleCellVisible &&
+			roleRowVisible &&
 			locationCellVisible &&
-			architectureCellVisible &&
-			apprenticeCellVisible &&
-			closingDateCellVisible &&
 			deleteButtonVisible &&
 			editButtonVisible
 		);

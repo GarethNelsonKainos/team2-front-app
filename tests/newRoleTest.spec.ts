@@ -54,7 +54,7 @@ test.describe("Add a new job role", () => {
 
 			await page.waitForLoadState("networkidle");
 			expect(page.url()).toMatch(/\/job-roles$/);
-			expect(await newRolePage.expectLastRowToHaveRole(uniqueRole)).toBe(true);
+			expect(await newRolePage.expectTableToHaveRole(uniqueRole)).toBe(true);
 		});
 	});
 });
