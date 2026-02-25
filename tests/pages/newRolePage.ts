@@ -13,57 +13,79 @@ export type NewRoleFormData = {
 };
 
 export class NewRolePage {
-    private readonly createNewJobRoleLink: Locator;
-    private readonly roleNameInput: Locator;
-    private readonly descriptionInput: Locator;
-    private readonly responsibilitiesInput: Locator;
-    private readonly sharePointLinkInput: Locator;
-    private readonly closingDateInput: Locator;
-    private readonly numberOfOpenPositionsInput: Locator;
-    private readonly locationInput: Locator;
-    private readonly bandSelect: Locator;
-    private readonly capabilitySelect: Locator;
-    private readonly confirmButton: Locator;
-    private readonly jobRoleRows: Locator;
-    private readonly roleNameRequiredError: Locator;
-    private readonly jobSpecSummaryRequiredError: Locator;
-    private readonly sharepointLinkRequiredError: Locator;
-    private readonly closingDateRequiredError: Locator;
-    private readonly numberOfOpenPositionsRequiredError: Locator;
-    private readonly locationRequiredError: Locator;
-    private readonly bandRequiredError: Locator;
-    private readonly capabilityRequiredError: Locator;
-    private readonly lastRowRoleCell: (name: string) => Locator;
-    private readonly lastRowLocationCell: (name: string) => Locator;
-    private readonly lastRowDeleteButton: (name: string) => Locator;
-    private readonly lastRowEditButton: () => Locator;
+	private readonly createNewJobRoleLink: Locator;
+	private readonly roleNameInput: Locator;
+	private readonly descriptionInput: Locator;
+	private readonly responsibilitiesInput: Locator;
+	private readonly sharePointLinkInput: Locator;
+	private readonly closingDateInput: Locator;
+	private readonly numberOfOpenPositionsInput: Locator;
+	private readonly locationInput: Locator;
+	private readonly bandSelect: Locator;
+	private readonly capabilitySelect: Locator;
+	private readonly confirmButton: Locator;
+	private readonly jobRoleRows: Locator;
+	private readonly roleNameRequiredError: Locator;
+	private readonly jobSpecSummaryRequiredError: Locator;
+	private readonly sharepointLinkRequiredError: Locator;
+	private readonly closingDateRequiredError: Locator;
+	private readonly numberOfOpenPositionsRequiredError: Locator;
+	private readonly locationRequiredError: Locator;
+	private readonly bandRequiredError: Locator;
+	private readonly capabilityRequiredError: Locator;
+	private readonly lastRowRoleCell: (name: string) => Locator;
+	private readonly lastRowLocationCell: (name: string) => Locator;
+	private readonly lastRowDeleteButton: (name: string) => Locator;
+	private readonly lastRowEditButton: () => Locator;
 
 	constructor(private readonly page: Page) {
-        this.createNewJobRoleLink = this.page.getByRole("link", { name: "Create New Job Role" });
-        this.roleNameInput = this.page.getByRole("textbox", { name: "Job role name" });
-        this.descriptionInput = this.page.locator("#description");
-        this.responsibilitiesInput = this.page.locator("#responsibilities");
-        this.sharePointLinkInput = this.page.getByRole("textbox", { name: "SharePoint link" });
-        this.closingDateInput = this.page.locator("#closingDate");
-        this.numberOfOpenPositionsInput = this.page.locator("#numberOfOpenPositions");
-        this.locationInput = this.page.locator("#location");
-        this.bandSelect = this.page.locator("#bandId");
-        this.capabilitySelect = this.page.locator("#capabilityId");
-        this.confirmButton = this.page.getByRole("button", { name: "Confirm" });
-        this.jobRoleRows = this.page.locator("table tbody tr");
-        this.roleNameRequiredError = this.page.getByText("Role name is required");
-        this.jobSpecSummaryRequiredError = this.page.getByText("Job spec summary is required");
-        this.sharepointLinkRequiredError = this.page.getByText("SharePoint link is required");
-        this.closingDateRequiredError = this.page.getByText("Closing date is required");
-        this.numberOfOpenPositionsRequiredError = this.page.getByText("Number of open positions is required");
-        this.locationRequiredError = this.page.getByText("Location is required");
-        this.bandRequiredError = this.page.getByText("Band is required");
-        this.capabilityRequiredError = this.page.getByText("Capability is required");
-        this.lastRowRoleCell = (name: string) => this.jobRoleRows.last().getByRole("cell", { name, exact: true });
-        this.lastRowLocationCell = (name: string) => this.jobRoleRows.last().getByRole("cell", { name });
-        this.lastRowDeleteButton = (name: string) => this.jobRoleRows.last().getByRole("button", { name: `Delete ${name}` });
-        this.lastRowEditButton = () => this.jobRoleRows.last().locator(".d-flex > .btn.kainos-blue");
-    }
+		this.createNewJobRoleLink = this.page.getByRole("link", {
+			name: "Create New Job Role",
+		});
+		this.roleNameInput = this.page.getByRole("textbox", {
+			name: "Job role name",
+		});
+		this.descriptionInput = this.page.locator("#description");
+		this.responsibilitiesInput = this.page.locator("#responsibilities");
+		this.sharePointLinkInput = this.page.getByRole("textbox", {
+			name: "SharePoint link",
+		});
+		this.closingDateInput = this.page.locator("#closingDate");
+		this.numberOfOpenPositionsInput = this.page.locator(
+			"#numberOfOpenPositions",
+		);
+		this.locationInput = this.page.locator("#location");
+		this.bandSelect = this.page.locator("#bandId");
+		this.capabilitySelect = this.page.locator("#capabilityId");
+		this.confirmButton = this.page.getByRole("button", { name: "Confirm" });
+		this.jobRoleRows = this.page.locator("table tbody tr");
+		this.roleNameRequiredError = this.page.getByText("Role name is required");
+		this.jobSpecSummaryRequiredError = this.page.getByText(
+			"Job spec summary is required",
+		);
+		this.sharepointLinkRequiredError = this.page.getByText(
+			"SharePoint link is required",
+		);
+		this.closingDateRequiredError = this.page.getByText(
+			"Closing date is required",
+		);
+		this.numberOfOpenPositionsRequiredError = this.page.getByText(
+			"Number of open positions is required",
+		);
+		this.locationRequiredError = this.page.getByText("Location is required");
+		this.bandRequiredError = this.page.getByText("Band is required");
+		this.capabilityRequiredError = this.page.getByText(
+			"Capability is required",
+		);
+		this.lastRowRoleCell = (name: string) =>
+			this.jobRoleRows.last().getByRole("cell", { name, exact: true });
+		this.lastRowLocationCell = (name: string) =>
+			this.jobRoleRows.last().getByRole("cell", { name });
+		this.lastRowDeleteButton = (name: string) =>
+			this.jobRoleRows.last().getByRole("button", { name: `Delete ${name}` });
+		this.lastRowEditButton = () =>
+			this.jobRoleRows.last().locator(".d-flex > .btn.kainos-blue");
+	}
 
 	async fillForm(data: NewRoleFormData) {
 		await this.roleNameInput.fill(data.roleName);

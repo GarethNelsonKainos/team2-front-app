@@ -1,41 +1,50 @@
 import type { Locator, Page } from "@playwright/test";
 
 export class JobRolePage {
-    readonly jobRoleName: string;
+	readonly jobRoleName: string;
 
-    readonly jobroleLink: Locator;
-    readonly jobroleHeading: Locator;
-    readonly jobroleDescription: Locator;
-    readonly jobroleResponsibilities: Locator
-    readonly jobroleClosing: Locator;
-    readonly jobroleStatus: Locator;
-    readonly jobrolePositions: Locator;
-    readonly jobroleLocation: Locator;
-    readonly jobroleBand: Locator;
-    readonly jobroleCapability: Locator;
-    readonly backLink: Locator;
+	readonly jobroleLink: Locator;
+	readonly jobroleHeading: Locator;
+	readonly jobroleDescription: Locator;
+	readonly jobroleResponsibilities: Locator;
+	readonly jobroleClosing: Locator;
+	readonly jobroleStatus: Locator;
+	readonly jobrolePositions: Locator;
+	readonly jobroleLocation: Locator;
+	readonly jobroleBand: Locator;
+	readonly jobroleCapability: Locator;
+	readonly backLink: Locator;
 
 	constructor(private readonly page: Page) {
-        this.jobRoleName = "Software Engineer";
+		this.jobRoleName = "Software Engineer";
 
-        this.jobroleLink = this.page.getByRole("row", { name: `${this.jobRoleName}` }).getByRole("link");
-        this.jobroleHeading = this.page.getByRole("heading", { name: this.jobRoleName, exact: true });
-        this.jobroleDescription = this.page.getByRole("paragraph").getByText(new RegExp(`${this.jobRoleName}`));
-        this.jobroleResponsibilities = this.page.getByText("Design, develop, and maintain");
-        this.jobroleClosing = this.page.getByText(/Closing/);
-        this.jobroleStatus = this.page.getByText(/Status/);
-        this.jobrolePositions = this.page.getByText(/Positions/);
-        this.jobroleLocation = this.page.getByText(/Location/);
-        this.jobroleBand = this.page.getByText(/Band/);
-        this.jobroleCapability = this.page.getByText(/Capability/);
-        this.backLink = this.page.getByRole("link", { name: "Back" });
-    }
+		this.jobroleLink = this.page
+			.getByRole("row", { name: `${this.jobRoleName}` })
+			.getByRole("link");
+		this.jobroleHeading = this.page.getByRole("heading", {
+			name: this.jobRoleName,
+			exact: true,
+		});
+		this.jobroleDescription = this.page
+			.getByRole("paragraph")
+			.getByText(new RegExp(`${this.jobRoleName}`));
+		this.jobroleResponsibilities = this.page.getByText(
+			"Design, develop, and maintain",
+		);
+		this.jobroleClosing = this.page.getByText(/Closing/);
+		this.jobroleStatus = this.page.getByText(/Status/);
+		this.jobrolePositions = this.page.getByText(/Positions/);
+		this.jobroleLocation = this.page.getByText(/Location/);
+		this.jobroleBand = this.page.getByText(/Band/);
+		this.jobroleCapability = this.page.getByText(/Capability/);
+		this.backLink = this.page.getByRole("link", { name: "Back" });
+	}
 
 	openJobRole(jobTitle: string): Promise<void> {
 		return this.jobroleLink.click();
 	}
 
-	checkJobRole(jobTitle: string,): Promise<boolean> {
+	checkJobRole(jobTitle: string): Promise<boolean> {
 		return this.jobroleLink.isVisible();
 	}
 
