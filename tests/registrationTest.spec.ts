@@ -10,10 +10,8 @@ const incorrectUserPasswordForTesting =
 	process.env.PLAYWRIGHT_USER_INCORRECT_PASSWORD || "";
 const baseUrl = process.env.BASE_URL ?? "http://localhost:3001";
 
-
 test.describe("User Authentication", () => {
 	test("user authentication end-to-end journey", async ({ page }) => {
-
 		const uniqueEmail = `jsimpson_${Date.now()}@gmail.com`;
 		const registrationPage = new RegistrationPage(page);
 		const authPage = new AuthPage(page);

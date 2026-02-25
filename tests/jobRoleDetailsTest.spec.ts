@@ -3,7 +3,6 @@ import { HomePage } from "./pages/homePage";
 import { JobRolePage } from "./pages/jobRolePage";
 
 test.describe("Job Role Details Page", () => {
-
 	test("displays complete job role details and can navigate back", async ({
 		page,
 	}) => {
