@@ -1,40 +1,45 @@
 import { test, expect } from "@playwright/test";
+import { HomePage } from "./pages/homePage";
+import { JobRolePage } from "./pages/jobRolePage";
 
 test.describe("Job Role Details Page", () => {
+	const jobTitle = 'Software Engineer';	
+	let homePage: HomePage;
+	let jobRolePage: JobRolePage;
 	test.beforeEach(async ({ page }) => {
 		await page.goto("http://localhost:3001/");
-		await page.getByRole("link", { name: "View All Roles" }).click();
-		await page.getByRole("cell", { name: "Software Engineer" }).click();
-		await page
-			.getByRole("row", { name: "Software Engineer Belfast" })
-			.getByRole("link")
-			.click();
+		//locator
+		homePage = new HomePage(page);
+		jobRolePage = new JobRolePage(page);
+		await homePage.gotoAllJobroles();
+		await jobRolePage.openJobRole(jobTitle);
 	});
 
 	test("displays job title", async ({ page }) => {
 		await expect(
-			page.getByRole("heading", { name: "Software Engineer" }),
+			jobRolePage.heading(jobTitle),
 		).toBeVisible();
 	});
 
 	test("displays job description", async ({ page }) => {
-		await expect(page.getByText(/As a Software Engineer at/)).toBeVisible();
-		await expect(page.getByText(/Design, develop, and maintain/)).toBeVisible();
+		await expect(jobRolePage.description(jobTitle)).toBeVisible();
+		await expect(jobRolePage.responsibilities()).toBeVisible();
 	});
 
 	test("displays job metadata", async ({ page }) => {
-		await expect(page.getByText("01/03/2026")).toHaveText("01/03/2026");
-		await expect(page.getByText("Status Open")).toBeVisible();
+		await expect(jobRolePage.closing()).toBeVisible();
+		await expect(jobRolePage.status()).toBeVisible();
 	});
 
 	test("displays job specifications", async ({ page }) => {
-		await expect(page.getByText("Positions 1")).toBeVisible();
-		await expect(page.getByText("Location Belfast")).toBeVisible();
-		await expect(page.getByText("Band Apprentice")).toBeVisible();
+		await expect(jobRolePage.positions()).toBeVisible();
+		await expect(jobRolePage.location()).toBeVisible();
+		await expect(jobRolePage.band()).toBeVisible();
+		await expect(jobRolePage.capability()).toBeVisible();
 	});
 
 	test("can navigate back to roles list", async ({ page }) => {
-		await page.getByRole("link", { name: "Back" }).click();
+		await jobRolePage.goBack();
 		await page.waitForURL(/\/job-roles/);
 	});
 });

@@ -14,4 +14,8 @@ export class HomePage {
 	adminDashboardLink(): Locator {
 		return this.page.getByRole("link", { name: "Admin Dashboard" });
 	}
+
+	gotoAllJobroles(): Promise<void> {
+		return this.page.getByRole("link", { name: "View All Roles" }).click();
+	}
 }
