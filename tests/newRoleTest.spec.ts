@@ -56,8 +56,8 @@ test.describe("Add a new job role", () => {
 			closingDate: "4567-03-12",
 			numberOfOpenPositions: "5",
 			location: "Belfast",
-			bandId: "4a535fab-694b-42a4-ac71-c70f1b927785",
-			capabilityId: "aa47edf4-af6f-4287-84d3-118d011b8324",
+			bandId: process.env.PLAYWRIGHT_BAND_ID || "",
+			capabilityId: process.env.PLAYWRIGHT_CAPABILITY_ID || "",
 		});
 		await newRolePage.submitForm();
 
