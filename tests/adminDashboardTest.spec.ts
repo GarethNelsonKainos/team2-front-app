@@ -13,8 +13,8 @@ test.describe("Admin Dashboard Page", () => {
 
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
-			email: process.env.PLAYWRIGHT_ADMIN_USERNAME || "admin@test.com",
-			password: process.env.PLAYWRIGHT_ADMIN_PASSWORD || "Password123!",
+			email: process.env.PLAYWRIGHT_ADMIN_USERNAME || "",
+			password: process.env.PLAYWRIGHT_ADMIN_PASSWORD || "",
 		});
 		await authPage.submitLogin();
 		await homePage.adminDashboardLink().click();
