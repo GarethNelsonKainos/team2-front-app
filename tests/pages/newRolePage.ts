@@ -13,128 +13,80 @@ export type NewRoleFormData = {
 };
 
 export class NewRolePage {
-	constructor(private readonly page: Page) {}
+    private readonly createNewJobRoleLink: Locator;
+    private readonly roleNameInput: Locator;
+    private readonly descriptionInput: Locator;
+    private readonly responsibilitiesInput: Locator;
+    private readonly sharePointLinkInput: Locator;
+    private readonly closingDateInput: Locator;
+    private readonly numberOfOpenPositionsInput: Locator;
+    private readonly locationInput: Locator;
+    private readonly bandSelect: Locator;
+    private readonly capabilitySelect: Locator;
+    private readonly confirmButton: Locator;
+    private readonly jobRoleRows: Locator;
+    private readonly roleNameRequiredError: Locator;
+    private readonly jobSpecSummaryRequiredError: Locator;
+    private readonly sharepointLinkRequiredError: Locator;
+    private readonly closingDateRequiredError: Locator;
+    private readonly numberOfOpenPositionsRequiredError: Locator;
+    private readonly locationRequiredError: Locator;
+    private readonly bandRequiredError: Locator;
+    private readonly capabilityRequiredError: Locator;
+    private readonly lastRowRoleCell: (name: string) => Locator;
+    private readonly lastRowLocationCell: (name: string) => Locator;
+    private readonly lastRowDeleteButton: (name: string) => Locator;
+    private readonly lastRowEditButton: () => Locator;
 
-	private createNewJobRoleLink(): Locator {
-		return this.page.getByRole("link", { name: "Create New Job Role" });
-	}
-
-	private roleNameInput(): Locator {
-		return this.page.getByRole("textbox", { name: "Job role name" });
-	}
-
-	private descriptionInput(): Locator {
-		return this.page.locator("#description");
-	}
-
-	private responsibilitiesInput(): Locator {
-		return this.page.locator("#responsibilities");
-	}
-
-	private sharePointLinkInput(): Locator {
-		return this.page.getByRole("textbox", { name: "SharePoint link" });
-	}
-
-	private closingDateInput(): Locator {
-		return this.page.locator("#closingDate");
-	}
-
-	private numberOfOpenPositionsInput(): Locator {
-		return this.page.locator("#numberOfOpenPositions");
-	}
-
-	private locationInput(): Locator {
-		return this.page.locator("#location");
-	}
-
-	private bandSelect(): Locator {
-		return this.page.locator("#bandId");
-	}
-
-	private capabilitySelect(): Locator {
-		return this.page.locator("#capabilityId");
-	}
-
-	private confirmButton(): Locator {
-		return this.page.getByRole("button", { name: "Confirm" });
-	}
-
-	private jobRoleRows(): Locator {
-		return this.page.locator("table tbody tr");
-	}
-
-	private lastRowRoleCell(name: string): Locator {
-		return this.jobRoleRows().last().getByRole("cell", { name, exact: true });
-	}
-
-	private lastRowLocationCell(name: string): Locator {
-		return this.jobRoleRows().last().getByRole("cell", { name });
-	}
-
-	private lastRowDeleteButton(name: string): Locator {
-		return this.jobRoleRows()
-			.last()
-			.getByRole("button", { name: `Delete ${name}` });
-	}
-
-	private lastRowEditButton(): Locator {
-		return this.jobRoleRows().last().locator(".d-flex > .btn.kainos-blue");
-	}
-
-	private roleNameRequiredError(): Locator {
-		return this.page.getByText("Role name is required");
-	}
-
-	private jobSpecSummaryRequiredError(): Locator {
-		return this.page.getByText("Job spec summary is required");
-	}
-
-	private sharepointLinkRequiredError(): Locator {
-		return this.page.getByText("SharePoint link is required");
-	}
-
-	private closingDateRequiredError(): Locator {
-		return this.page.getByText("Closing date is required");
-	}
-
-	private numberOfOpenPositionsRequiredError(): Locator {
-		return this.page.getByText("Number of open positions is required");
-	}
-
-	private locationRequiredError(): Locator {
-		return this.page.getByText("Location is required");
-	}
-
-	private bandRequiredError(): Locator {
-		return this.page.getByText("Band is required");
-	}
-
-	private capabilityRequiredError(): Locator {
-		return this.page.getByText("Capability is required");
-	}
+	constructor(private readonly page: Page) {
+        this.createNewJobRoleLink = this.page.getByRole("link", { name: "Create New Job Role" });
+        this.roleNameInput = this.page.getByRole("textbox", { name: "Job role name" });
+        this.descriptionInput = this.page.locator("#description");
+        this.responsibilitiesInput = this.page.locator("#responsibilities");
+        this.sharePointLinkInput = this.page.getByRole("textbox", { name: "SharePoint link" });
+        this.closingDateInput = this.page.locator("#closingDate");
+        this.numberOfOpenPositionsInput = this.page.locator("#numberOfOpenPositions");
+        this.locationInput = this.page.locator("#location");
+        this.bandSelect = this.page.locator("#bandId");
+        this.capabilitySelect = this.page.locator("#capabilityId");
+        this.confirmButton = this.page.getByRole("button", { name: "Confirm" });
+        this.jobRoleRows = this.page.locator("table tbody tr");
+        this.roleNameRequiredError = this.page.getByText("Role name is required");
+        this.jobSpecSummaryRequiredError = this.page.getByText("Job spec summary is required");
+        this.sharepointLinkRequiredError = this.page.getByText("SharePoint link is required");
+        this.closingDateRequiredError = this.page.getByText("Closing date is required");
+        this.numberOfOpenPositionsRequiredError = this.page.getByText("Number of open positions is required");
+        this.locationRequiredError = this.page.getByText("Location is required");
+        this.bandRequiredError = this.page.getByText("Band is required");
+        this.capabilityRequiredError = this.page.getByText("Capability is required");
+        this.lastRowRoleCell = (name: string) => this.jobRoleRows.last().getByRole("cell", { name, exact: true });
+        this.lastRowLocationCell = (name: string) => this.jobRoleRows.last().getByRole("cell", { name });
+        this.lastRowDeleteButton = (name: string) => this.jobRoleRows.last().getByRole("button", { name: `Delete ${name}` });
+        this.lastRowEditButton = () => this.jobRoleRows.last().locator(".d-flex > .btn.kainos-blue");
+    }
 
 	async fillForm(data: NewRoleFormData) {
-		await this.roleNameInput().fill(data.roleName);
-		await this.descriptionInput().fill(data.description);
-		await this.responsibilitiesInput().fill(data.responsibilities);
-		await this.sharePointLinkInput().fill(data.sharePointLink);
-		await this.closingDateInput().fill(data.closingDate);
-		await this.numberOfOpenPositionsInput().fill(data.numberOfOpenPositions);
-		await this.locationInput().fill(data.location);
-		await this.bandSelect().selectOption(data.bandId);
-		await this.capabilitySelect().selectOption(data.capabilityId);
+		await this.roleNameInput.fill(data.roleName);
+		await this.descriptionInput.fill(data.description);
+		await this.responsibilitiesInput.fill(data.responsibilities);
+		await this.sharePointLinkInput.fill(data.sharePointLink);
+		await this.closingDateInput.fill(data.closingDate);
+		await this.numberOfOpenPositionsInput.fill(data.numberOfOpenPositions);
+		await this.locationInput.fill(data.location);
+		await this.bandSelect.selectOption(data.bandId);
+		await this.capabilitySelect.selectOption(data.capabilityId);
 	}
 
 	async expectFormEmpty() {
-		await expect(this.roleNameInput()).toHaveValue("");
-		await expect(this.descriptionInput()).toHaveValue("");
-		await expect(this.responsibilitiesInput()).toHaveValue("");
-		await expect(this.sharePointLinkInput()).toHaveValue("");
-		await expect(this.closingDateInput()).toHaveValue("");
-		await expect(this.numberOfOpenPositionsInput()).toHaveValue("");
-		await expect(this.locationInput()).toHaveValue("");
-		await expect(this.bandSelect()).toHaveValue("");
-		await expect(this.capabilitySelect()).toHaveValue("");
+		await expect(this.roleNameInput).toHaveValue("");
+		await expect(this.descriptionInput).toHaveValue("");
+		await expect(this.responsibilitiesInput).toHaveValue("");
+		await expect(this.sharePointLinkInput).toHaveValue("");
+		await expect(this.closingDateInput).toHaveValue("");
+		await expect(this.numberOfOpenPositionsInput).toHaveValue("");
+		await expect(this.locationInput).toHaveValue("");
+		await expect(this.bandSelect).toHaveValue("");
+		await expect(this.capabilitySelect).toHaveValue("");
 	}
 
 	async expectLastRowToHaveRole(name: string) {
@@ -148,15 +100,15 @@ export class NewRolePage {
 	}
 
 	async expectErrorsOnEmptySubmit() {
-		await this.confirmButton().click();
-		await expect(this.roleNameRequiredError()).toBeVisible();
-		await expect(this.jobSpecSummaryRequiredError()).toBeVisible();
-		await expect(this.sharepointLinkRequiredError()).toBeVisible();
-		await expect(this.closingDateRequiredError()).toBeVisible();
-		await expect(this.numberOfOpenPositionsRequiredError()).toBeVisible();
-		await expect(this.locationRequiredError()).toBeVisible();
-		await expect(this.bandRequiredError()).toBeVisible();
-		await expect(this.capabilityRequiredError()).toBeVisible();
+		await this.confirmButton.click();
+		await expect(this.roleNameRequiredError).toBeVisible();
+		await expect(this.jobSpecSummaryRequiredError).toBeVisible();
+		await expect(this.sharepointLinkRequiredError).toBeVisible();
+		await expect(this.closingDateRequiredError).toBeVisible();
+		await expect(this.numberOfOpenPositionsRequiredError).toBeVisible();
+		await expect(this.locationRequiredError).toBeVisible();
+		await expect(this.bandRequiredError).toBeVisible();
+		await expect(this.capabilityRequiredError).toBeVisible();
 	}
 
 	async expectHeadingVisible() {
@@ -166,30 +118,30 @@ export class NewRolePage {
 	}
 
 	async expectFormFieldsVisible() {
-		await expect(this.roleNameInput()).toBeVisible();
-		await expect(this.descriptionInput()).toBeVisible();
-		await expect(this.responsibilitiesInput()).toBeVisible();
-		await expect(this.sharePointLinkInput()).toBeVisible();
-		await expect(this.closingDateInput()).toBeVisible();
-		await expect(this.numberOfOpenPositionsInput()).toBeVisible();
-		await expect(this.locationInput()).toBeVisible();
-		await expect(this.bandSelect()).toBeVisible();
-		await expect(this.capabilitySelect()).toBeVisible();
+		await expect(this.roleNameInput).toBeVisible();
+		await expect(this.descriptionInput).toBeVisible();
+		await expect(this.responsibilitiesInput).toBeVisible();
+		await expect(this.sharePointLinkInput).toBeVisible();
+		await expect(this.closingDateInput).toBeVisible();
+		await expect(this.numberOfOpenPositionsInput).toBeVisible();
+		await expect(this.locationInput).toBeVisible();
+		await expect(this.bandSelect).toBeVisible();
+		await expect(this.capabilitySelect).toBeVisible();
 	}
 
 	async expectConfirmButtonVisible() {
-		await expect(this.confirmButton()).toBeVisible();
+		await expect(this.confirmButton).toBeVisible();
 	}
 
 	async getRowsCount() {
-		return this.jobRoleRows().count();
+		return this.jobRoleRows.count();
 	}
 
 	async submitForm() {
-		await this.confirmButton().click();
+		await this.confirmButton.click();
 	}
 
 	async navigateToCreateNewRole() {
-		await this.createNewJobRoleLink().click();
+		await this.createNewJobRoleLink.click();
 	}
 }
