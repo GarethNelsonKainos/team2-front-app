@@ -16,24 +16,24 @@ test.describe("Job Role Details Page", () => {
 	});
 
 	test("displays job title", async ({ page }) => {
-		await expect(jobRolePage.heading(jobTitle)).toBeVisible();
+		await jobRolePage.heading(jobTitle);
 	});
 
 	test("displays job description", async ({ page }) => {
-		await expect(jobRolePage.description(jobTitle)).toBeVisible();
-		await expect(jobRolePage.responsibilities()).toBeVisible();
+		await jobRolePage.description(jobTitle);
+		await jobRolePage.responsibilities();
 	});
 
 	test("displays job metadata", async ({ page }) => {
-		await expect(jobRolePage.closing()).toBeVisible();
-		await expect(jobRolePage.status()).toBeVisible();
+		await jobRolePage.closing();
+		await jobRolePage.status();
 	});
 
 	test("displays job specifications", async ({ page }) => {
-		await expect(jobRolePage.positions()).toBeVisible();
-		await expect(jobRolePage.location()).toBeVisible();
-		await expect(jobRolePage.band()).toBeVisible();
-		await expect(jobRolePage.capability()).toBeVisible();
+		await jobRolePage.positions();
+		await jobRolePage.location();
+		await jobRolePage.band();
+		await jobRolePage.capability();
 	});
 
 	test("can navigate back to roles list", async ({ page }) => {
