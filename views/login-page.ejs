@@ -64,8 +64,8 @@
                                 <button type="submit" class="btn kainos-blue">Submit</button>
                                 <a href="/" class="btn btn-outline-secondary">Cancel</a>
                             </div>
-                            <% if (redirect) { %>
-                                <input type="hidden" name="redirect" value="<%= redirect %>">
+                            <% if (redirectTo) { %>
+                                <input type="hidden" name="redirect" value="<%= redirectTo %>">
                             <% } %>
                         </form>
                     </div>
@@ -98,8 +98,8 @@
                                     placeholder="Email" required data-bs-toggle="tooltip" data-bs-placement="bottom">
                                 <div class="invalid-feedback d-none" id="registerEmailError"></div>
                             </div>
-                            <% if (redirect) { %>
-                                <input type="hidden" name="redirect" value="<%= redirect %>">
+                            <% if (redirectTo) { %>
+                                <input type="hidden" name="redirect" value="<%= redirectTo %>">
                             <% } %>
                             <div class="row mb-3">
                                 <div class="col-md-6">
