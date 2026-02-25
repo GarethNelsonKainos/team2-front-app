@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { AuthPage } from "./pages/authPage";
 import { HomePage } from "./pages/homePage";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env" });
 
 test.describe("Admin Dashboard Page", () => {
 	test.beforeEach(async ({ page }) => {
@@ -9,8 +12,8 @@ test.describe("Admin Dashboard Page", () => {
 
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
-			email: "nick@test.com",
-			password: "kHuRi8+w_@3)+k5",
+			email: process.env.PLAYWRIGHT_ADMIN_USERNAME || "admin@test.com",
+			password: process.env.PLAYWRIGHT_ADMIN_PASSWORD || "Password123!",
 		});
 		await authPage.submitLogin();
 		await homePage.adminDashboardLink().click();

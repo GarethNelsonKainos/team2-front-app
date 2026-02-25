@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { AuthPage } from "./pages/authPage";
 import { HomePage } from "./pages/homePage";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env" });
 
 test.describe("Add a new job role", () => {
 	test.beforeEach(async ({ page }) => {
@@ -9,8 +12,8 @@ test.describe("Add a new job role", () => {
 
 		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
-			email: "nick@test.com",
-			password: "kHuRi8+w_@3)+k5",
+			email: process.env.PLAYWRIGHT_ADMIN_USERNAME || "admin@test.com",
+			password: process.env.PLAYWRIGHT_ADMIN_PASSWORD || "Password123!",
 		});
 		await authPage.submitLogin();
 		await homePage.adminDashboardLink().click();
@@ -53,11 +56,11 @@ test.describe("Add a new job role", () => {
 	test("adds new role and navigates to /job-roles on valid data submit", async ({
 		page,
 	}) => {
-		await page.goto("http://localhost:3001/job-roles");
+		await page.goto("/job-roles");
 		const rows = page.locator("table tbody tr");
 		const beforeCount = await rows.count();
 
-		await page.goto("http://localhost:3001/new-role");
+		await page.goto("/new-role");
 		await page
 			.getByRole("textbox", { name: "Job role name" })
 			.fill("Test Role");
@@ -91,7 +94,9 @@ test.describe("Add a new job role", () => {
 		await expect(
 			lastRow.getByRole("cell", { name: "Apprentice" }),
 		).toBeVisible();
-		await expect(lastRow.getByRole("cell", { name: "/03/4567" })).toBeVisible();
+		await expect(
+			lastRow.getByRole("cell", { name: "12/03/4567", exact: true }),
+		).toBeVisible();
 		await expect(
 			lastRow.getByRole("button", { name: "Delete Test Role" }),
 		).toBeVisible();
