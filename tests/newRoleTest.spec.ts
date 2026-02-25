@@ -23,59 +23,38 @@ test.describe("Add a new job role", () => {
 		await page.waitForLoadState("networkidle");
 	});
 
-	test("displays the add job role form", async ({ page }) => {
+	test("admin can add a new job role", async ({ page }) => {
 		const newRolePage = new NewRolePage(page);
+		const uniqueRole = `Test Role ${Date.now()}`;
 
-		await expect.poll(() => newRolePage.expectHeadingVisible()).toBe(true);
-		await expect.poll(() => newRolePage.expectFormFieldsVisible()).toBe(true);
-		await expect
-			.poll(() => newRolePage.expectConfirmButtonVisible())
-			.toBe(true);
-	});
-
-	test("contains blank form fields", async ({ page }) => {
-		const newRolePage = new NewRolePage(page);
-
-		await expect.poll(() => newRolePage.expectFormEmpty()).toBe(true);
-	});
-
-	test("adds new role and navigates to /job-roles on valid data submit", async ({
-		page,
-	}) => {
-		const newRolePage = new NewRolePage(page);
-
-		await page.goto("/job-roles");
-		const beforeCount = await newRolePage.getRowsCount();
-
-		await page.goto("/new-role");
-		await newRolePage.fillForm({
-			roleName: "Test Role",
-			description: "Test Description",
-			responsibilities: "Test Responsibilities",
-			sharePointLink: "https://example.sharepoint.com",
-			closingDate: "4567-03-12",
-			numberOfOpenPositions: "5",
-			location: "Belfast",
-			bandId: process.env.PLAYWRIGHT_BAND_ID || "",
-			capabilityId: process.env.PLAYWRIGHT_CAPABILITY_ID || "",
+		await test.step("form is visible and empty", async () => {
+			expect.soft(await newRolePage.expectHeadingVisible()).toBe(true);
+			expect.soft(await newRolePage.expectFormFieldsVisible()).toBe(true);
+			expect.soft(await newRolePage.expectConfirmButtonVisible()).toBe(true);
+			expect.soft(await newRolePage.expectFormEmpty()).toBe(true);
 		});
-		await newRolePage.submitForm();
 
-		await page.waitForLoadState("networkidle");
-		const afterCount = await newRolePage.getRowsCount();
-		await expect(afterCount).toBe(beforeCount + 1);
+		await test.step("submit with invalid data shows validation errors", async () => {
+			expect(await newRolePage.expectErrorsOnEmptySubmit()).toBe(true);
+		});
 
-		await expect
-			.poll(() => newRolePage.expectLastRowToHaveRole("Test Role"))
-			.toBe(true);
-	});
+		await test.step("submit with valid data adds new role and navigates to /job-roles", async () => {
+			await newRolePage.fillForm({
+				roleName: uniqueRole,
+				description: "Test Description",
+				responsibilities: "Test Responsibilities",
+				sharePointLink: "https://example.sharepoint.com",
+				closingDate: "4567-03-12",
+				numberOfOpenPositions: "5",
+				location: "Belfast",
+				bandId: process.env.PLAYWRIGHT_BAND_ID || "",
+				capabilityId: process.env.PLAYWRIGHT_CAPABILITY_ID || "",
+			});
+			await newRolePage.submitForm();
 
-	test("shows validation error when required fields are missing", async ({
-		page,
-	}) => {
-		const newRolePage = new NewRolePage(page);
-
-		await newRolePage.submitForm();
-		await expect.poll(() => newRolePage.expectErrorsOnEmptySubmit()).toBe(true);
+			await page.waitForLoadState("networkidle");
+			expect(page.url()).toMatch(/\/job-roles$/);
+			expect(await newRolePage.expectLastRowToHaveRole(uniqueRole)).toBe(true);
+		});
 	});
 });
