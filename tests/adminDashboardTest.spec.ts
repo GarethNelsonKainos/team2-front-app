@@ -22,17 +22,23 @@ test.describe("Admin Dashboard Page", () => {
 
 	test("displays admin dashboard heading", async ({ page }) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
-		await adminDashboardPage.expectHeadingVisible();
+		await expect
+			.poll(() => adminDashboardPage.expectHeadingVisible())
+			.toBe(true);
 	});
 
 	test("displays admin details", async ({ page }) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
-		await adminDashboardPage.expectAdminDetailsVisible();
+		await expect
+			.poll(() => adminDashboardPage.expectAdminDetailsVisible())
+			.toBe(true);
 	});
 
 	test("displays admin actions", async ({ page }) => {
 		const adminDashboardPage = new AdminDashboardPage(page);
-		await adminDashboardPage.expectActionsVisible();
+		await expect
+			.poll(() => adminDashboardPage.expectActionsVisible())
+			.toBe(true);
 	});
 
 	test("navigates to view all roles page on link click", async ({ page }) => {

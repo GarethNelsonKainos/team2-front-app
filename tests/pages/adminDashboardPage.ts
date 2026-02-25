@@ -22,17 +22,18 @@ export class AdminDashboardPage {
 			.nth(2);
 	}
 
-	async expectHeadingVisible(): Promise<void> {
-		await expect(this.heading).toBeVisible();
+	async expectHeadingVisible(): Promise<boolean> {
+		return this.heading.isVisible();
 	}
 
-	async expectAdminDetailsVisible(): Promise<void> {
-		await expect(this.adminDetails).toBeVisible();
+	async expectAdminDetailsVisible(): Promise<boolean> {
+		return this.adminDetails.isVisible();
 	}
 
-	async expectActionsVisible(): Promise<void> {
-		await expect(this.viewAllRolesLink).toBeVisible();
-		await expect(this.createNewJobRoleLink).toBeVisible();
+	async expectActionsVisible(): Promise<boolean> {
+		const viewAllRolesVisible = await this.viewAllRolesLink.isVisible();
+		const createNewJobRoleVisible = await this.createNewJobRoleLink.isVisible();
+		return viewAllRolesVisible && createNewJobRoleVisible;
 	}
 
 	async clickViewAllRoles(): Promise<void> {

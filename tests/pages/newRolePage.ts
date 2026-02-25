@@ -99,60 +99,111 @@ export class NewRolePage {
 		await this.capabilitySelect.selectOption(data.capabilityId);
 	}
 
-	async expectFormEmpty() {
-		await expect(this.roleNameInput).toHaveValue("");
-		await expect(this.descriptionInput).toHaveValue("");
-		await expect(this.responsibilitiesInput).toHaveValue("");
-		await expect(this.sharePointLinkInput).toHaveValue("");
-		await expect(this.closingDateInput).toHaveValue("");
-		await expect(this.numberOfOpenPositionsInput).toHaveValue("");
-		await expect(this.locationInput).toHaveValue("");
-		await expect(this.bandSelect).toHaveValue("");
-		await expect(this.capabilitySelect).toHaveValue("");
+	async expectFormEmpty(): Promise<boolean> {
+		const roleNameEmpty = (await this.roleNameInput.inputValue()) === "";
+		const descriptionEmpty = (await this.descriptionInput.inputValue()) === "";
+		const responsibilitiesEmpty =
+			(await this.responsibilitiesInput.inputValue()) === "";
+		const sharePointLinkEmpty =
+			(await this.sharePointLinkInput.inputValue()) === "";
+		const closingDateEmpty = (await this.closingDateInput.inputValue()) === "";
+		const numberOfOpenPositionsEmpty =
+			(await this.numberOfOpenPositionsInput.inputValue()) === "";
+		const locationEmpty = (await this.locationInput.inputValue()) === "";
+		const bandEmpty = (await this.bandSelect.inputValue()) === "";
+		const capabilityEmpty = (await this.capabilitySelect.inputValue()) === "";
+
+		return (
+			roleNameEmpty &&
+			descriptionEmpty &&
+			responsibilitiesEmpty &&
+			sharePointLinkEmpty &&
+			closingDateEmpty &&
+			numberOfOpenPositionsEmpty &&
+			locationEmpty &&
+			bandEmpty &&
+			capabilityEmpty
+		);
 	}
 
-	async expectLastRowToHaveRole(name: string) {
-		await expect(this.lastRowRoleCell(name)).toBeVisible();
-		await expect(this.lastRowLocationCell("Belfast")).toBeVisible();
-		await expect(this.lastRowLocationCell("Architecture")).toBeVisible();
-		await expect(this.lastRowLocationCell("Apprentice")).toBeVisible();
-		await expect(this.lastRowRoleCell("12/03/4567")).toBeVisible();
-		await expect(this.lastRowDeleteButton(name)).toBeVisible();
-		await expect(this.lastRowEditButton()).toBeVisible();
+	async expectLastRowToHaveRole(name: string): Promise<boolean> {
+		const roleCellVisible = await this.lastRowRoleCell(name).isVisible();
+		const locationCellVisible =
+			await this.lastRowLocationCell("Belfast").isVisible();
+		const architectureCellVisible =
+			await this.lastRowLocationCell("Architecture").isVisible();
+		const apprenticeCellVisible =
+			await this.lastRowLocationCell("Apprentice").isVisible();
+		const closingDateCellVisible =
+			await this.lastRowRoleCell("12/03/4567").isVisible();
+		const deleteButtonVisible =
+			await this.lastRowDeleteButton(name).isVisible();
+		const editButtonVisible = await this.lastRowEditButton().isVisible();
+
+		return (
+			roleCellVisible &&
+			locationCellVisible &&
+			architectureCellVisible &&
+			apprenticeCellVisible &&
+			closingDateCellVisible &&
+			deleteButtonVisible &&
+			editButtonVisible
+		);
 	}
 
-	async expectErrorsOnEmptySubmit() {
+	async expectErrorsOnEmptySubmit(): Promise<boolean> {
 		await this.confirmButton.click();
-		await expect(this.roleNameRequiredError).toBeVisible();
-		await expect(this.jobSpecSummaryRequiredError).toBeVisible();
-		await expect(this.sharepointLinkRequiredError).toBeVisible();
-		await expect(this.closingDateRequiredError).toBeVisible();
-		await expect(this.numberOfOpenPositionsRequiredError).toBeVisible();
-		await expect(this.locationRequiredError).toBeVisible();
-		await expect(this.bandRequiredError).toBeVisible();
-		await expect(this.capabilityRequiredError).toBeVisible();
+        const roleNameErrorVisible = await this.roleNameRequiredError.isVisible();
+        const jobSpecSummaryErrorVisible = await this.jobSpecSummaryRequiredError.isVisible();
+        const sharepointLinkErrorVisible = await this.sharepointLinkRequiredError.isVisible();
+        const closingDateErrorVisible = await this.closingDateRequiredError.isVisible();
+        const numberOfOpenPositionsErrorVisible = await this.numberOfOpenPositionsRequiredError.isVisible();
+        const locationErrorVisible = await this.locationRequiredError.isVisible();
+        const bandErrorVisible = await this.bandRequiredError.isVisible();
+        const capabilityErrorVisible = await this.capabilityRequiredError.isVisible();
+
+        return (
+            roleNameErrorVisible &&
+            jobSpecSummaryErrorVisible &&
+            sharepointLinkErrorVisible &&
+            closingDateErrorVisible &&
+            numberOfOpenPositionsErrorVisible &&
+            locationErrorVisible &&
+            bandErrorVisible &&
+            capabilityErrorVisible
+        );
 	}
 
-	async expectHeadingVisible() {
-		await expect(
-			this.page.getByRole("heading", { name: "Add New Role" }),
-		).toBeVisible();
+	async expectHeadingVisible(): Promise<boolean> {
+        return this.page.getByRole('heading', { name: 'Add New Role' }).isVisible();
 	}
 
-	async expectFormFieldsVisible() {
-		await expect(this.roleNameInput).toBeVisible();
-		await expect(this.descriptionInput).toBeVisible();
-		await expect(this.responsibilitiesInput).toBeVisible();
-		await expect(this.sharePointLinkInput).toBeVisible();
-		await expect(this.closingDateInput).toBeVisible();
-		await expect(this.numberOfOpenPositionsInput).toBeVisible();
-		await expect(this.locationInput).toBeVisible();
-		await expect(this.bandSelect).toBeVisible();
-		await expect(this.capabilitySelect).toBeVisible();
+	async expectFormFieldsVisible(): Promise<boolean> {
+        const roleNameVisible = await this.roleNameInput.isVisible();
+        const descriptionVisible = await this.descriptionInput.isVisible();
+        const responsibilitiesVisible = await this.responsibilitiesInput.isVisible();
+        const sharePointLinkVisible = await this.sharePointLinkInput.isVisible();
+        const closingDateVisible = await this.closingDateInput.isVisible();
+        const numberOfOpenPositionsVisible = await this.numberOfOpenPositionsInput.isVisible();
+        const locationVisible = await this.locationInput.isVisible();
+        const bandSelectVisible = await this.bandSelect.isVisible();
+        const capabilitySelectVisible = await this.capabilitySelect.isVisible();
+
+        return (
+            roleNameVisible &&
+            descriptionVisible &&
+            responsibilitiesVisible &&
+            sharePointLinkVisible &&
+            closingDateVisible &&
+            numberOfOpenPositionsVisible &&
+            locationVisible &&
+            bandSelectVisible &&
+            capabilitySelectVisible
+        );
 	}
 
-	async expectConfirmButtonVisible() {
-		await expect(this.confirmButton).toBeVisible();
+	async expectConfirmButtonVisible():Promise<boolean> {
+		return this.confirmButton.isVisible();
 	}
 
 	async getRowsCount() {

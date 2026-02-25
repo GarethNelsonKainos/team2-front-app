@@ -26,15 +26,23 @@ test.describe("Add a new job role", () => {
 	test("displays the add job role form", async ({ page }) => {
 		const newRolePage = new NewRolePage(page);
 
-		await newRolePage.expectHeadingVisible();
-		await newRolePage.expectFormFieldsVisible();
-		await newRolePage.expectConfirmButtonVisible();
+		await expect
+			.poll(() => newRolePage.expectHeadingVisible())
+			.toBe(true);
+		await expect
+			.poll(() => newRolePage.expectFormFieldsVisible())
+			.toBe(true);
+		await expect
+			.poll(() => newRolePage.expectConfirmButtonVisible())
+			.toBe(true);
 	});
 
 	test("contains blank form fields", async ({ page }) => {
 		const newRolePage = new NewRolePage(page);
 
-		await newRolePage.expectFormEmpty();
+		await expect
+			.poll(() => newRolePage.expectFormEmpty())
+			.toBe(true);
 	});
 
 	test("adds new role and navigates to /job-roles on valid data submit", async ({
@@ -63,7 +71,9 @@ test.describe("Add a new job role", () => {
 		const afterCount = await newRolePage.getRowsCount();
 		await expect(afterCount).toBe(beforeCount + 1);
 
-		await newRolePage.expectLastRowToHaveRole("Test Role");
+		await expect
+			.poll(() => newRolePage.expectLastRowToHaveRole("Test Role"))
+			.toBe(true);
 	});
 
 	test("shows validation error when required fields are missing", async ({
@@ -72,6 +82,8 @@ test.describe("Add a new job role", () => {
 		const newRolePage = new NewRolePage(page);
 
 		await newRolePage.submitForm();
-		await newRolePage.expectErrorsOnEmptySubmit();
+		await expect
+			.poll(() => newRolePage.expectErrorsOnEmptySubmit())
+			.toBe(true);
 	});
 });
