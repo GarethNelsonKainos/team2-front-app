@@ -40,11 +40,11 @@ export class JobRolePage {
 		this.backLink = this.page.getByRole("link", { name: "Back" });
 	}
 
-	openJobRole(jobTitle: string): Promise<void> {
+	openJobRole(): Promise<void> {
 		return this.jobroleLink.click();
 	}
 
-	checkJobRoleVisible(jobTitle: string): Promise<boolean> {
+	checkJobRoleVisible(): Promise<boolean> {
 		return this.jobroleLink.isVisible();
 	}
 
@@ -54,11 +54,11 @@ export class JobRolePage {
 			.getByRole("link");
 	}
 
-	heading(jobTitle: string): Promise<boolean> {
+	heading(): Promise<boolean> {
 		return this.jobroleHeading.isVisible();
 	}
 
-	description(jobTitle: string): Promise<boolean> {
+	description(): Promise<boolean> {
 		return this.jobroleDescription.isVisible();
 	}
 
