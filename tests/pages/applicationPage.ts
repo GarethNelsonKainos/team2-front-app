@@ -11,7 +11,7 @@ export class ApplicationPage {
 	constructor(private readonly page: Page) {
 		this.myRecentApplications = this.page.getByText("My Recent Applications");
 		this.applyNowLink = this.page.getByRole("link", { name: "Apply Now" });
-		this.chooseFileInput = this.page.getByLabel("Choose file to upload");
+		this.chooseFileInput = this.page.locator("#cv");
 		this.submitButton = this.page.getByRole("button", { name: "Submit" });
 		this.applicationSubmittedText = this.page.getByText(
 			"Application submitted",

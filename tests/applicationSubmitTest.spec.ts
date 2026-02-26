@@ -15,43 +15,48 @@ test.describe("Application Submission", () => {
 			password: password,
 		});
 		await authPage.submitLogin();
+		await page.waitForLoadState("networkidle");
 	});
 
-	test("User will login and press view my applications then verify that the page exists", async ({
+	test("User can apply for a role and view their application", async ({
 		page,
 	}) => {
-		const homePage = new HomePage(page);
-		const applicationPage = new ApplicationPage(page);
-		await homePage.gotoUserApplications();
-		await expect
-			.poll(() => applicationPage.checkMyRecentApplications())
-			.toBe(true);
-	});
+		await test.step("User navigates to job role and applies", async () => {
+			const homePage = new HomePage(page);
+			const applicationPage = new ApplicationPage(page);
+			await page.goto("/home");
+			await page.waitForLoadState("networkidle");
+			await homePage.gotoUserApplications();
+			await expect
+				.poll(() => applicationPage.checkMyRecentApplications())
+				.toBe(true);
+		});
 
-	test("User will login and create an application then view it", async ({
-		page,
-	}) => {
-		const homePage = new HomePage(page);
-		const applicationPage = new ApplicationPage(page);
-		const jobRolePage = new JobRolePage(page);
-		await homePage.goToAllJobRoles();
-		await jobRolePage.openJobRole();
-		await applicationPage.applyForRole();
-		await applicationPage.populateApplicationForm();
+		await test.step("User will login and create an application then view it", async () => {
+			const homePage = new HomePage(page);
+			const applicationPage = new ApplicationPage(page);
+			const jobRolePage = new JobRolePage(page);
+			await page.goto("/home");
+			await page.waitForLoadState("networkidle");
+			await homePage.goToAllJobRoles();
+			await jobRolePage.openJobRole();
+			await applicationPage.applyForRole();
+			await applicationPage.populateApplicationForm();
 
-		await expect
-			.poll(() => applicationPage.checkApplicationSubmitted())
-			.toBe(true);
-	});
+			await expect
+				.poll(() => applicationPage.checkApplicationSubmitted())
+				.toBe(true);
+		});
 
-	test("User will login and view their applications and verify that the application they just submitted exists", async ({
-		page,
-	}) => {
-		const homePage = new HomePage(page);
-		const applicationPage = new ApplicationPage(page);
-		await homePage.gotoUserApplications();
-		await expect
-			.poll(() => applicationPage.checkMyRecentApplicationExists())
-			.toBe(true);
+		await test.step("User will login and view their applications and verify that the application they just submitted exists", async () => {
+			const homePage = new HomePage(page);
+			const applicationPage = new ApplicationPage(page);
+			await page.goto("/home");
+			await page.waitForLoadState("networkidle");
+			await homePage.gotoUserApplications();
+			await expect
+				.poll(() => applicationPage.checkMyRecentApplicationExists())
+				.toBe(true);
+		});
 	});
 });
