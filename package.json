@@ -15,6 +15,7 @@
 		"bdd:gen": "bddgen",
 		"pretest:bdd": "npm run bdd:gen",
 		"pretest:pw": "npm run bdd:gen",
+		"pretest:pw:ui": "npm run bdd:gen",
 
 		"test:e2e": "playwright test --project=e2e",
 		"test:e2e:ui": "playwright test --project=e2e --ui",
@@ -23,6 +24,7 @@
 		"test:bdd:ui": "playwright test --project=bdd --ui",
 
 		"test:pw": "playwright test",
+		"test:pw:ui": "playwright test --ui --project=e2e --project=bdd",
 
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --write .",
