@@ -10,11 +10,11 @@ const userPasswordForTesting =
 const userEmailForTesting = process.env.PLAYWRIGHT_USER_USERNAME || "";
 const userFullName = process.env.PLAYWRIGHT_USER_FULLNAME || "Test User";
 
-Given("that i am on the home page", async ({ page }) => {
+Given("that I am on the home page", async ({ page }) => {
 	await page.goto("/");
 });
 
-When("i click the login button", async ({ page }) => {
+When("I click the login button", async ({ page }) => {
 	const authPage = new AuthPage(page);
 	await authPage.gotoLogin();
 });
@@ -25,7 +25,7 @@ Then("I should be redirected to login page", async ({ page }) => {
 	await expect.poll(() => authPage.isLoginHeadingVisible()).toBe(true);
 });
 
-When("i submit valid login credentials", async ({ page }) => {
+When("I submit valid login credentials", async ({ page }) => {
 	const authPage = new AuthPage(page);
 	await authPage.fillLoginForm({
 		email: userEmailForTesting,
