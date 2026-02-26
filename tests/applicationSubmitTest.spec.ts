@@ -32,10 +32,15 @@ test.describe("Application Submission", () => {
         await homePage.goToAllJobRoles();
         await jobRolePage.openJobRole();
         await applicationPage.applyForRole();
-        //await page.waitForURL(/\/apply/);
         await applicationPage.populateApplicationForm();
 
-        
-        //await applicationPage.checkMyRecentApplicationExists();  
+        await expect.poll(() => applicationPage.checkApplicationSubmitted()).toBe(true);
+    });
+
+    test('User will login and view their applications and verify that the application they just submitted exists', async ({ page }) => {
+        const homePage = new HomePage(page);
+        const applicationPage = new ApplicationPage(page);
+        await homePage.gotoUserApplications();
+        await expect.poll(() => applicationPage.checkMyRecentApplicationExists()).toBe(true);
     });
 });

@@ -7,6 +7,7 @@ export class ApplicationPage {
     readonly chooseFileButton: Locator;
     readonly submitButton: Locator;
     readonly applicationSubmittedText: Locator;
+    readonly applicationStatus: Locator;
 
     constructor(private readonly page: Page) {
         this.myRecentApplications = this.page.getByText("My Recent Applications");
@@ -14,14 +15,11 @@ export class ApplicationPage {
         this.chooseFileButton = this.page.getByRole('button', { name: 'Choose file to upload' });
         this.submitButton = this.page.getByRole('button', { name: 'Submit' });
         this.applicationSubmittedText = this.page.getByText('Application submitted');
+        this.applicationStatus = this.page.getByRole('row').getByText('Submitted');
     }
 
     async checkMyRecentApplications(): Promise<Boolean> {
         return await this.myRecentApplications.isVisible();
-    }
-
-    checkMyRecentApplicationExists(applicationName: string): Locator {
-        return this.page.getByRole("row", { name: applicationName });
     }
 
     async applyForRole(): Promise<void> {
@@ -30,8 +28,14 @@ export class ApplicationPage {
 
     async populateApplicationForm(): Promise<void> {
         await this.chooseFileButton.click();
-        await this.chooseFileButton.setInputFiles('/Users/sam/Downloads/Bee-Movie-2007.pdf');
+        await this.chooseFileButton.setInputFiles('TEST_CV.pdf');
         await this.submitButton.click();
-        await this.applicationSubmittedText.isVisible();
+    }
+    async checkApplicationSubmitted(): Promise<Boolean> {
+        return await this.applicationSubmittedText.isVisible();
+    }
+
+    async checkMyRecentApplicationExists(): Promise<Boolean> {
+        return await this.applicationStatus.isVisible();
     }
 }
