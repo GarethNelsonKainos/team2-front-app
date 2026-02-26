@@ -16,3 +16,4 @@ coverage/
 
 # BDD
 .features-gen
+tests/bdd-gen
