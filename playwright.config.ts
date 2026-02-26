@@ -24,6 +24,7 @@ export default defineConfig({
 				"**/steps/**",
 				"**/pages/**",
 				"**/support/**",
+				"**/bdd-gen/**",
 			],
 		},
 		{
