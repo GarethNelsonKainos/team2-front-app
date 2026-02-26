@@ -11,7 +11,6 @@ const userEmailForTesting = process.env.PLAYWRIGHT_USER_USERNAME || "";
 const userFullName = process.env.PLAYWRIGHT_USER_FULLNAME || "Test User";
 
 Given("that i am on the home page", async ({ page }) => {
-	const homePage = new HomePage(page);
 	await page.goto("/");
 });
 
@@ -23,7 +22,7 @@ When("i click the login button", async ({ page }) => {
 Then("I should be redirected to login page", async ({ page }) => {
 	const authPage = new AuthPage(page);
 	await expect(page).toHaveURL(/\/login$/);
-	await authPage.isLoginHeadingVisible();
+	await expect.poll(() => authPage.isLoginHeadingVisible()).toBe(true);
 });
 
 When("i submit valid login credentials", async ({ page }) => {
@@ -38,14 +37,18 @@ When("i submit valid login credentials", async ({ page }) => {
 Then("I should be redirected to home page", async ({ page }) => {
 	const homePage = new HomePage(page);
 	await expect(page).toHaveURL(/\/home$/);
-	await homePage.isWelcomeHeadingText(userFullName);
+	await expect
+		.poll(() => homePage.isWelcomeHeadingText(userFullName))
+		.toBe(true);
 });
 
 Then(
 	"I should be logged in and see my name on the homepage",
 	async ({ page }) => {
 		const homePage = new HomePage(page);
-		await homePage.isWelcomeHeadingText(userFullName);
+		await expect
+			.poll(() => homePage.isWelcomeHeadingText(userFullName))
+			.toBe(true);
 	},
 );
 
@@ -68,5 +71,6 @@ Then("I should be able to log out", async ({ page }) => {
 	const homePage = new HomePage(page);
 	const authPage = new AuthPage(page);
 	await homePage.Logout();
-	await authPage.isLoginHeadingVisible();
+	await expect(page).toHaveURL(/\/login$/);
+	await expect.poll(() => authPage.isLoginHeadingVisible()).toBe(true);
 });
