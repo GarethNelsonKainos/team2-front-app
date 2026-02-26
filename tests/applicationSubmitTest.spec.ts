@@ -23,10 +23,12 @@ test.describe("Application Submission", () => {
 		const homePage = new HomePage(page);
 		const applicationPage = new ApplicationPage(page);
 		await homePage.gotoUserApplications();
-		await applicationPage.checkMyRecentApplications();
+		await expect
+			.poll(() => applicationPage.checkMyRecentApplications())
+			.toBe(true);
 	});
 
-	test("User will login and create and application then view it", async ({
+	test("User will login and create an application then view it", async ({
 		page,
 	}) => {
 		const homePage = new HomePage(page);

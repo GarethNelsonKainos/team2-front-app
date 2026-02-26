@@ -1,10 +1,9 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { promises } from "node:dns";
 
 export class ApplicationPage {
 	readonly myRecentApplications: Locator;
 	readonly applyNowLink: Locator;
-	readonly chooseFileButton: Locator;
+	readonly chooseFileInput: Locator;
 	readonly submitButton: Locator;
 	readonly applicationSubmittedText: Locator;
 	readonly applicationStatus: Locator;
@@ -12,9 +11,7 @@ export class ApplicationPage {
 	constructor(private readonly page: Page) {
 		this.myRecentApplications = this.page.getByText("My Recent Applications");
 		this.applyNowLink = this.page.getByRole("link", { name: "Apply Now" });
-		this.chooseFileButton = this.page.getByRole("button", {
-			name: "Choose file to upload",
-		});
+		this.chooseFileInput = this.page.getByLabel("Choose file to upload");
 		this.submitButton = this.page.getByRole("button", { name: "Submit" });
 		this.applicationSubmittedText = this.page.getByText(
 			"Application submitted",
@@ -31,8 +28,7 @@ export class ApplicationPage {
 	}
 
 	async populateApplicationForm(): Promise<void> {
-		await this.chooseFileButton.click();
-		await this.chooseFileButton.setInputFiles("TEST_CV.pdf");
+		await this.chooseFileInput.setInputFiles("TEST_CV.pdf");
 		await this.submitButton.click();
 	}
 	async checkApplicationSubmitted(): Promise<boolean> {
