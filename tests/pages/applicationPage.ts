@@ -29,9 +29,6 @@ export class ApplicationPage {
 	async applyForRole(): Promise<void> {
 		await this.applyNowLink.click();
 	}
-	async applyForRole(): Promise<void> {
-		await this.applyNowLink.click();
-	}
 
 	async populateApplicationForm(): Promise<void> {
 		await this.chooseFileButton.click();

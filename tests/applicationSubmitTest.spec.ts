@@ -31,14 +31,6 @@ test.describe("Application Submission", () => {
 		await homePage.gotoUserApplications();
 		await applicationPage.checkMyRecentApplications();
 	});
-	test("User will login and press view my applications then verify that the page exists", async ({
-		page,
-	}) => {
-		const homePage = new HomePage(page);
-		const applicationPage = new ApplicationPage(page);
-		await homePage.gotoUserApplications();
-		await applicationPage.checkMyRecentApplications();
-	});
 
 	test("User will login and create and application then view it", async ({
 		page,
