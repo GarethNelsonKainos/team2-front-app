@@ -2,12 +2,8 @@ import { createBdd } from "playwright-bdd";
 import { env } from "process";
 import { AuthPage } from "../pages/authPage";
 import { AdminDashboardPage } from "../pages/adminDashboardPage";
-import { JobRolePage } from "../pages/jobRolePage";
 import { expect } from "@playwright/test";
-import dotenv from "dotenv";
 import { HomePage } from "../pages/homePage";
-
-dotenv.config({ path: ".env" });
 
 const { Given, When, Then } = createBdd();
 
@@ -28,13 +24,13 @@ When("I navigate to the admin dashboard", async ({ page }) => {
 	const homePage = new HomePage(page);
 	await homePage.gotoAdminDashboard();
 	const adminDashboardPage = new AdminDashboardPage(page);
-	await adminDashboardPage.expectAdminDetailsVisible();
-	await adminDashboardPage.expectHeadingVisible();
+	await expect.poll(() => adminDashboardPage.expectAdminDetailsVisible()).toBe(true);
+	await expect.poll(() => adminDashboardPage.expectHeadingVisible()).toBe(true);
 });
 
-Then("I should see a link to view all roles", async ({ page }) => {
+Then("I should see links to view all roles and create a new role", async ({ page }) => {
 	const adminDashboardPage = new AdminDashboardPage(page);
-	await adminDashboardPage.expectActionsVisible();
+	await expect.poll(() => adminDashboardPage.expectActionsVisible()).toBe(true);
 });
 
 When("I click on the link to view all roles", async ({ page }) => {
