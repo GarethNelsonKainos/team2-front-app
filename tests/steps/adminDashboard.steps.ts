@@ -24,14 +24,21 @@ When("I navigate to the admin dashboard", async ({ page }) => {
 	const homePage = new HomePage(page);
 	await homePage.gotoAdminDashboard();
 	const adminDashboardPage = new AdminDashboardPage(page);
-	await expect.poll(() => adminDashboardPage.expectAdminDetailsVisible()).toBe(true);
+	await expect
+		.poll(() => adminDashboardPage.expectAdminDetailsVisible())
+		.toBe(true);
 	await expect.poll(() => adminDashboardPage.expectHeadingVisible()).toBe(true);
 });
 
-Then("I should see links to view all roles and create a new role", async ({ page }) => {
-	const adminDashboardPage = new AdminDashboardPage(page);
-	await expect.poll(() => adminDashboardPage.expectActionsVisible()).toBe(true);
-});
+Then(
+	"I should see links to view all roles and create a new role",
+	async ({ page }) => {
+		const adminDashboardPage = new AdminDashboardPage(page);
+		await expect
+			.poll(() => adminDashboardPage.expectActionsVisible())
+			.toBe(true);
+	},
+);
 
 When("I click on the link to view all roles", async ({ page }) => {
 	const adminDashboardPage = new AdminDashboardPage(page);
