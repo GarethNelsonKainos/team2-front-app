@@ -22,7 +22,7 @@ export class ApplicationPage {
 		this.applicationStatus = this.page.getByRole("row").getByText("Submitted");
 	}
 
-	async checkMyRecentApplications(): Promise<Boolean> {
+	async checkMyRecentApplications(): Promise<boolean> {
 		return await this.myRecentApplications.isVisible();
 	}
 
@@ -35,12 +35,11 @@ export class ApplicationPage {
 		await this.chooseFileButton.setInputFiles("TEST_CV.pdf");
 		await this.submitButton.click();
 	}
-	async checkApplicationSubmitted(): Promise<Boolean> {
+	async checkApplicationSubmitted(): Promise<boolean> {
 		return await this.applicationSubmittedText.isVisible();
 	}
 
-	async checkMyRecentApplicationExists(): Promise<Boolean> {
+	async checkMyRecentApplicationExists(): Promise<boolean> {
 		return await this.applicationStatus.isVisible();
 	}
 }
-

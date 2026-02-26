@@ -53,4 +53,3 @@ test.describe("Application Submission", () => {
 			.toBe(true);
 	});
 });
-
