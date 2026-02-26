@@ -29,6 +29,9 @@ export class ApplicationPage {
 	async applyForRole(): Promise<void> {
 		await this.applyNowLink.click();
 	}
+	async applyForRole(): Promise<void> {
+		await this.applyNowLink.click();
+	}
 
 	async populateApplicationForm(): Promise<void> {
 		await this.chooseFileButton.click();
@@ -43,3 +46,4 @@ export class ApplicationPage {
 		return await this.applicationStatus.isVisible();
 	}
 }
+

@@ -10,13 +10,27 @@ test.describe("Application Submission", () => {
 		const password = process.env.PLAYWRIGHT_USER_PASSWORD || "";
 		const authPage = new AuthPage(page);
 		await authPage.gotoLogin();
+	test.beforeEach(async ({ page }) => {
+		const email = process.env.PLAYWRIGHT_USER_USERNAME || "";
+		const password = process.env.PLAYWRIGHT_USER_PASSWORD || "";
+		const authPage = new AuthPage(page);
+		await authPage.gotoLogin();
 		await authPage.fillLoginForm({
 			email: email,
 			password: password,
 		});
 		await authPage.submitLogin();
 	});
+	});
 
+	test("User will login and press view my applications then verify that the page exists", async ({
+		page,
+	}) => {
+		const homePage = new HomePage(page);
+		const applicationPage = new ApplicationPage(page);
+		await homePage.gotoUserApplications();
+		await applicationPage.checkMyRecentApplications();
+	});
 	test("User will login and press view my applications then verify that the page exists", async ({
 		page,
 	}) => {
@@ -53,3 +67,4 @@ test.describe("Application Submission", () => {
 			.toBe(true);
 	});
 });
+
