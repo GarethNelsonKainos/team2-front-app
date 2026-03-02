@@ -5,7 +5,7 @@ services:
       context: .
       args:
         PORT: ${PORT:-3001}
-        API_BASE_URL: ${API_BASE_URL:-http://team2-back-app:3000}
+        API_BASE_URL: ${API_CONTAINER_URL:-http://team2-back-app:3000}
     env_file:
       - .env
     ports:
