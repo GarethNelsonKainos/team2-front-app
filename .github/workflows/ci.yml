@@ -64,7 +64,7 @@ jobs:
           run: docker build -t team2-front-app-pipeline:latest .
 
         - name: Login to Azure Container Registry
-          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          
           uses: azure/docker-login@v1
           with:
             login-server: ${{ secrets.ACR_LOGIN_SERVER }}
@@ -72,13 +72,13 @@ jobs:
             password: ${{ secrets.ACR_PASSWORD }}
 
         - name: Tag Docker image
-          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          
           run: |
             docker tag team2-front-app-pipeline:latest ${{ secrets.ACR_LOGIN_SERVER }}/team2-front-app-pipeline:latest
             docker tag team2-front-app-pipeline:latest ${{ secrets.ACR_LOGIN_SERVER }}/team2-front-app-pipeline:${{ github.sha }}
 
         - name: Push Docker image
-          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          
           run: |
             docker push ${{ secrets.ACR_LOGIN_SERVER }}/team2-front-app-pipeline:latest
             docker push ${{ secrets.ACR_LOGIN_SERVER }}/team2-front-app-pipeline:${{ github.sha }}
