@@ -8,6 +8,8 @@ services:
         API_BASE_URL: ${API_BASE_URL:-http://team2-back-app:3000}
     env_file:
       - .env
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://team2-back-app:3000}
     ports:
       - "${PORT:-3001}:${PORT:-3001}"
     networks:
