@@ -11,7 +11,7 @@ services:
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://team2-back-app:3000}
     ports:
-      - "${PORT:-3001}:${PORT:-3001}"
+      - "${PORT:-3001}:3001"
     networks:
       - team2-network
 
