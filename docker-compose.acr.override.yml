@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: academyacrj3r5dv.azurecr.io/nick-team2-front-app:latest
+    image: ${FRONTEND_IMAGE:-academyacrj3r5dv.azurecr.io/team2-front-app-pipeline:latest}
     pull_policy: always
     environment:
       API_BASE_URL: ${API_BASE_URL:-${API_CONTAINER_URL:-http://team2-back-app:3000}}
