@@ -22,6 +22,6 @@ COPY --from=builder /app/views ./views
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 
-EXPOSE 3001
+EXPOSE 80
 
 CMD ["dist/index.js"]
