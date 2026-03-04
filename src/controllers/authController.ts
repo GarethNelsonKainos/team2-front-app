@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import type { AuthService } from "../services/authService.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
-const ALLOWED_REDIRECTS = ["http://localhost:3001"];
+const ALLOWED_REDIRECTS = [process.env.CURRENT_HOST || "http://localhost:3001"];
 
 const isAllowedRedirectURL = (url: string): boolean => {
 	return ALLOWED_REDIRECTS.some((allowed) => url.startsWith(allowed));
