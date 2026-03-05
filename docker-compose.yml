@@ -1,0 +1,17 @@
+services:
+  frontend:
+    container_name: team2-front-app
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://team2-back-app:3000}
+    ports:
+      - "${PORT:-3001}:3001"
+    networks:
+      - team2-network
+
+networks:
+  team2-network:
+    external: true

@@ -8,6 +8,9 @@ on:
     branches: 
         - "**"
 
+env:
+  IMAGE_NAME: team2-front-app-pipeline
+
 jobs:
     code-quality:
         runs-on: ubuntu-latest
@@ -26,7 +29,6 @@ jobs:
           run: npm run format:check
 
     accessibility:
-        needs: code-quality
         runs-on: ubuntu-latest
 
         steps:
@@ -40,7 +42,7 @@ jobs:
           run: npm run test:pa11y:local
 
     build:
-        needs: accessibility
+        needs: [code-quality, accessibility]
         runs-on: ubuntu-latest
 
         steps:
@@ -52,3 +54,38 @@ jobs:
 
         - name: Build Application
           run: npm run build
+
+    docker-build:
+        needs: build
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Build Docker image
+          run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+
+        - name: Azure Login (Service Principal)
+          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          uses: azure/login@v2
+          with:
+            client-id: ${{ secrets.CLIENT_ID }}
+            tenant-id: ${{ secrets.TENANT_ID }}
+            subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+
+        - name: Login to Azure Container Registry
+          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          run: az acr login --name $(echo "${{ secrets.ACR_LOGIN_SERVER }}" | cut -d'.' -f1)
+
+        - name: Tag Docker image
+          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          run: |
+            docker tag ${{ env.IMAGE_NAME }}:latest ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+            docker tag ${{ env.IMAGE_NAME }}:latest ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+        - name: Push Docker image
+          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          run: |
+            docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+            docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

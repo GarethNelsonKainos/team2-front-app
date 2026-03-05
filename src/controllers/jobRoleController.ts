@@ -149,7 +149,7 @@ export class JobRoleController {
 						applicationState = null;
 				}
 			} else if (!res.locals.user) {
-				const currentHost = "http://localhost:3001";
+				const currentHost = process.env.CURRENT_HOST || "http://localhost:3001";
 				const redirectUrl = `/login?redirect=${currentHost}/job-roles/${roleId}`;
 				applicationState = `<div class="alert kainos-blue" role="alert"> <i class="bi bi-info-circle"></i> Please <a href="${redirectUrl}" class="text-white">log in</a> to apply for this role</div>`;
 			} else if (roleStatusName === JobRoleStatus.OPEN && openPositions > 0) {
