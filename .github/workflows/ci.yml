@@ -8,6 +8,10 @@ on:
     branches: 
         - "**"
 
+permissions:
+  contents: read
+  id-token: write
+
 env:
   IMAGE_NAME: team2-front-app-pipeline
 
@@ -55,7 +59,7 @@ jobs:
         - name: Build Application
           run: npm run build
 
-    docker-build:
+    containerise:
         needs: build
         runs-on: ubuntu-latest
 
@@ -63,29 +67,22 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v4
 
-        - name: Build Docker image
+        - name: Azure Login (Service Principal)
+          uses: azure/docker-login@v1
+          with:
+            login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+            username: ${{ secrets.ACR_USERNAME }}
+            password: ${{ secrets.ACR_PASSWORD }}
+
+        - name: Build Docker Image
           run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
-        - name: Azure Login (Service Principal)
-          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-          uses: azure/login@v2
-          with:
-            client-id: ${{ secrets.CLIENT_ID }}
-            tenant-id: ${{ secrets.TENANT_ID }}
-            subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
-
-        - name: Login to Azure Container Registry
-          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-          run: az acr login --name $(echo "${{ secrets.ACR_LOGIN_SERVER }}" | cut -d'.' -f1)
-
-        - name: Tag Docker image
-          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        - name: Tag Docker Image
           run: |
             docker tag ${{ env.IMAGE_NAME }}:latest ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
             docker tag ${{ env.IMAGE_NAME }}:latest ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-        - name: Push Docker image
-          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        - name: Push Docker Image
           run: |
             docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
             docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
