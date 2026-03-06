@@ -18,7 +18,7 @@ const loginSchema = yup.object().shape({
 		.string()
 		.email("Invalid email format")
 		.required("Email is required"),
-	password: passwordSchema,
+	password: yup.string().required("Password is required"),
 });
 
 const registrationSchema = yup.object().shape({
